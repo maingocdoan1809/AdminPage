@@ -1,0 +1,8 @@
+.nav {
+  box-shadow: 0 0 3px rgb(169, 167, 167);
+  padding: 0.2rem;
+  z-index: 10;
+  position: sticky;
+  top: 0;
+  background-color: rgb(255, 255, 255);
+}

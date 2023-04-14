@@ -1,0 +1,7 @@
+.sidebar {
+  width: 500px;
+  align-self: flex-start;
+  position: sticky;
+  top: calc(3rem);
+  background-color: rgb(218, 218, 218);
+}

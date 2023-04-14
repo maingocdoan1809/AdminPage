@@ -1,12 +1,18 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./App.css";
-
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import Error from "./pages/Error/Error"
+import Main from "./pages/Main/Main";
 function App() {
-  const [count, setCount] = useState(0);
 
   return (
     <div className="App">
-      <h3>Đoàn đẹp trai nè:))) dfdfdf</h3>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<Main />} />
+          <Route path="/*" element={<Error />} />
+        </Routes>
+      </BrowserRouter>
     </div>
   );
 }
