@@ -80,3 +80,13 @@ button:focus-visible {
   border-color: rgb(209, 209, 209);
   box-shadow: 0 0 0 inset rgb(209, 209, 209);
 }
+
+.is-valid {
+  border-color: green !important;
+  box-shadow: 0 0 0 inset green !important;
+}
+
+.is-invalid {
+  border-color: red !important;
+  box-shadow: 0 0 0 inset red !important;
+}
