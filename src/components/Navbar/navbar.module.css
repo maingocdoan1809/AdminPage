@@ -1,3 +1,7 @@
+ul {
+  list-style: none;
+}
+
 .nav {
   box-shadow: 0 0 3px rgb(169, 167, 167);
   padding: 0.2rem;
@@ -6,3 +10,50 @@
   top: 0;
   background-color: rgb(255, 255, 255);
 }
+
+nav a {
+  user-select: none;
+}
+
+.box-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  padding: 0;
+}
+
+.nav-item li {
+  margin: 0 25px;
+}
+
+.nav-item li:first-child {
+  margin-left: 50px;
+}
+
+.nav-item li:last-child {
+  margin-right: 50px;
+}
+
+.toggle {
+  display: none;
+  background-color: rgb(255, 255, 255);
+  color:rgb(0, 0, 0)
+}
+
+@media (max-width: 750px) {
+  .nav-item-left {
+      display: none;
+  }
+
+  .toggle {
+      display: inline
+  }
+}
+

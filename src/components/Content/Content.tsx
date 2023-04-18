@@ -2,6 +2,9 @@ import { useMemo, useState } from "react";
 import ValidInput from "../ValidInput/ValidInput";
 import style from "./content.module.css";
 
+import classNames from "classnames/bind";
+const cx = classNames.bind(style)
+
 function Content() {
   const [username, setUsername] = useState("");
   const [isValid, setIsValid] = useState<boolean | undefined>(undefined);
@@ -46,6 +49,10 @@ function Content() {
         ),
         []
       )}
+
+      <div className={cx("test")}>
+
+      </div>
     </div>
   );
 }
