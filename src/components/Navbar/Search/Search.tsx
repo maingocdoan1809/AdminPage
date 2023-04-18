@@ -10,23 +10,28 @@ const cx = classNames.bind(styles)
 
 function Search() {
     return (
-        <Tippy content="Tìm kiếm">
+        <TippyHeadless
+            render={attrs => (
+                <div className={cx("search-reasult")} tabIndex={-1} {...attrs}>
+                    My tippy box
+                </div>
+            )}
+
+        >
             <li>
                 <div className={cx("search")}>
                     <div className={cx("input-search")}>
                         <input placeholder='Tìm kiếm' spellCheck={false} />
-                        <div className={cx("clear-search")}>
-                            <i className={`fa-solid fa-circle-xmark `}></i>
-                        </div>
-                        
-                    </div>   
-                    <div className={cx("search-icon")}>
+                        <button className={cx("clear-search")}>
+                            <i className={`fa-solid fa-circle-xmark ${cx('clear')}`}></i>
+                        </button>
+                    </div>
+                    <button className={cx("search-icon")}>
                         <i className={`fa-solid fa-magnifying-glass`}></i>
-                    </div> 
-                    
+                    </button>
                 </div>
             </li>
-        </Tippy>
+        </TippyHeadless>
     );
 }
 
