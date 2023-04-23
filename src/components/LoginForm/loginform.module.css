@@ -12,14 +12,14 @@
   margin-bottom: 15px;
 }
 
-input[type="text"] {
-  border-bottom-right-radius: 0;
-  border-bottom-left-radius: 0;
+.top-border {
+  border-bottom-right-radius: 0 !important;
+  border-bottom-left-radius: 0 !important;
   margin-bottom: -1px !important;
 }
 
-input[type="password"] {
-  border-top-left-radius: 0;
-  border-top-right-radius: 0;
-  margin-top: 0;
+.bottom-border {
+  border-top-left-radius: 0 !important;
+  border-top-right-radius: 0 !important;
+  margin-top: 0 !important;
 }

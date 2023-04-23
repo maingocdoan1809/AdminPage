@@ -17,6 +17,7 @@ export function LoginForm() {
             callBack={(value) => {
               setUsername(value);
             }}
+            className={[style["top-border"]]}
           />
           <LabeledInput
             identifier="password"
@@ -25,6 +26,7 @@ export function LoginForm() {
             callBack={(value) => {
               setPassword(value);
             }}
+            className={[style["bottom-border"]]}
           />
         </div>
         <div className="d-flex justify-content-between">
@@ -34,7 +36,9 @@ export function LoginForm() {
           </span>
         </div>
         <button className="btn btn-primary">Login</button>
-        <button className="btn btn-outline-secondary">Or Sign up</button>
+        <a href="/register" className="btn btn-outline-secondary">
+          Or Sign up
+        </a>
         <div className="text-secondary">
           @copyright: {new Date().getFullYear()}
         </div>
