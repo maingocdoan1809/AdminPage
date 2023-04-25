@@ -10,13 +10,15 @@ export type ValidInputProps = {
   isValid?: boolean;
   identifier?: string;
   placeholder?: string;
+  delay?: number;
 };
 
 function ValidInput(props: ValidInputProps) {
   const [state, setState] = useState("");
   const debounce = useDebounce((value) => {
     props.callBack(value);
-  }, 500);
+  }, props.delay ?? 500);
+
   return (
     <>
       <input

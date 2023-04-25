@@ -3,7 +3,8 @@ import ValidInput from "../ValidInput/ValidInput";
 import style from "./content.module.css";
 
 import classNames from "classnames/bind";
-const cx = classNames.bind(style)
+import { BACKEND_URL } from "../../env";
+const cx = classNames.bind(style);
 
 function Content() {
   const [username, setUsername] = useState("");
@@ -25,7 +26,7 @@ function Content() {
                 setUsername("");
                 return;
               }
-              const data = await fetch("https://ye517l-3000.csb.app/", {
+              const data = await fetch(BACKEND_URL, {
                 method: "get",
               });
               const json = await data.json();
@@ -50,9 +51,7 @@ function Content() {
         []
       )}
 
-      <div className={cx("test")}>
-
-      </div>
+      <div className={cx("test")}></div>
     </div>
   );
 }

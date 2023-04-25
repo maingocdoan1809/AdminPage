@@ -99,3 +99,19 @@ button:focus-visible {
   border-color: red !important;
   box-shadow: 0 0 0 inset red !important;
 }
+
+.required {
+  position: relative;
+}
+
+.required::after {
+  position: absolute;
+  content: "*";
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: red;
+  right: -10px;
+  top: -50%;
+  transform: translateY(50%);
+}

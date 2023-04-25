@@ -3,6 +3,7 @@ import ValidInput, { ValidInputProps } from "./ValidInput";
 type LabeledInputProps = ValidInputProps & {
   placeholder: string;
   identifier: string;
+  delay?: number;
 };
 
 function LabeledInput(props: LabeledInputProps) {
@@ -16,6 +17,7 @@ function LabeledInput(props: LabeledInputProps) {
           type={props.type}
           placeholder={props.placeholder}
           identifier={props.identifier}
+          delay={props.delay}
         />
         <label htmlFor={props.identifier}>{props.placeholder}</label>
       </div>
