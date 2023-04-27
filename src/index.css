@@ -115,3 +115,34 @@ button:focus-visible {
   top: -50%;
   transform: translateY(50%);
 }
+
+
+
+.navbar-toggler:hover {
+  border: 1px solid rgb(164, 160, 160);
+
+}
+
+
+.navbar-toggler:focus {
+  box-shadow: 0 0 1px gray inset !important;
+
+}
+
+.dropdown-toggle::before {
+  position: absolute;
+  content: "" !important;
+  background-image: none;
+  right: -10px;
+  bottom: 50%;
+  transform: translateY(50%) rotate(-90deg);
+}
+
+.nav-link.dropdown-toggle.show.dropdown-toggle::before {
+  border: none !important;
+}
+
+.offcanvas.show .search-box {
+  position: relative;
+  width: 100%;
+}

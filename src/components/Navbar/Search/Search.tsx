@@ -1,38 +1,36 @@
-import TippyHeadless from '@tippyjs/react/headless';
-import 'tippy.js/dist/tippy.css';
-import Tippy from '@tippyjs/react';
-import { useState } from "react";
-
-import styles from "./search.module.css"
-import classNames from "classnames/bind";
-
-const cx = classNames.bind(styles)
-
+import { useEffect, useState } from "react";
+import styles from "./search.module.css";
 function Search() {
-    return (
-        <TippyHeadless
-            render={attrs => (
-                <div className={cx("search-reasult")} tabIndex={-1} {...attrs}>
-                    My tippy box
-                </div>
-            )}
-
+  return (
+    <>
+      <div className={`nav-link ${styles["collapse-container"]}`}>
+        <a
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#search-collapse"
+          aria-expanded="false"
+          aria-controls="search-collapse"
         >
-            <li>
-                <div className={cx("search")}>
-                    <div className={cx("input-search")}>
-                        <input placeholder='Tìm kiếm' spellCheck={false} />
-                        <button className={cx("clear-search")}>
-                            <i className={`fa-solid fa-circle-xmark ${cx('clear')}`}></i>
-                        </button>
-                    </div>
-                    <button className={cx("search-icon")}>
-                        <i className={`fa-solid fa-magnifying-glass`}></i>
-                    </button>
-                </div>
-            </li>
-        </TippyHeadless>
-    );
+          Search
+        </a>
+        <div className={`${styles["search-collapse"]} search-box`}>
+          <div className="collapse" id="search-collapse">
+            <div className="card card-body">
+              <div className="d-flex justify-content-end flex-column">
+                <input
+                  type="search"
+                  className="form-control mb-3"
+                  placeholder="Type something that interests you..."
+                />
+
+                <button>Search</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </>
+  );
 }
 
 export default Search;
