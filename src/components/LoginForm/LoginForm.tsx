@@ -106,7 +106,6 @@ function onLogging(
 ) {
   return (evt: React.MouseEvent<HTMLButtonElement>) => {
     evt.preventDefault();
-
     fetch(BACKEND_URL + "/login", {
       method: "POST",
       body: JSON.stringify({
@@ -116,7 +115,7 @@ function onLogging(
     })
       .then((response) => response.json())
       .then((data) => {
-        if (data.canLogin) {
+        if (data.isAuthenticated) {
           localStorage.setItem("user", JSON.stringify(data));
           navigae();
         } else {
