@@ -9,6 +9,7 @@ export function LoginForm() {
   const [password, setPassword] = useState("");
   const [isLoggedIn, setIsLoggedIn] = useState<boolean | undefined>(undefined);
   const [isLogginFail, setIsLogginFail] = useState(false);
+  const [isServerErr, setServerError] = useState(false);
   const navigate = useNavigate();
   useEffect(() => {
     const token = JSON.parse(localStorage.getItem("user") || "{}").token;
@@ -24,72 +25,83 @@ export function LoginForm() {
           } else {
             setIsLoggedIn(false);
           }
+        })
+        .catch((err) => {
+          setServerError(true);
         });
       return;
     } else {
       setIsLoggedIn(false);
     }
   }, []);
-  return (
+  return isServerErr ? (
+    <div className={`${style.servererror}`}>
+      <h1 className="text-danger">Opp! 505</h1>
+      <h3>Our server is running into a problem.</h3>
+      <p>We're trying to get it fixed.</p>
+    </div>
+  ) : (
     <>
       {isLoggedIn == false && (
-        <div className={`${style.login}`}>
-          <h2>Login</h2>
-          <div>
-            <LabeledInput
-              identifier="username"
-              placeholder="Username"
-              type="text"
-              callBack={(value) => {
-                setIsLogginFail(false);
-                setUsername(value);
-              }}
-              className={[style["top-border"]]}
-              delay={0}
-            />
-            <LabeledInput
-              identifier="password"
-              placeholder="Password"
-              type="password"
-              callBack={(value) => {
-                setIsLogginFail(false);
+        <div className={`${style.wrapper}`}>
+          <div className={`${style.login}`}>
+            <h2>Login</h2>
+            <div>
+              <LabeledInput
+                identifier="username"
+                placeholder="Username"
+                type="text"
+                callBack={(value) => {
+                  setIsLogginFail(false);
+                  setUsername(value);
+                }}
+                className={[style["top-border"]]}
+                delay={0}
+              />
+              <LabeledInput
+                identifier="password"
+                placeholder="Password"
+                type="password"
+                callBack={(value) => {
+                  setIsLogginFail(false);
 
-                setPassword(value);
-              }}
-              className={[style["bottom-border"]]}
-              delay={0}
-            />
-          </div>
-
-          {isLogginFail && (
-            <div className="alert alert-warning">
-              Your username or password is not correct
+                  setPassword(value);
+                }}
+                className={[style["bottom-border"]]}
+                delay={0}
+              />
             </div>
-          )}
-          <div className="d-flex justify-content-between">
-            <span>Forgot your password?</span>
-            <span>
-              <a href="">change</a>
-            </span>
-          </div>
-          <button
-            onClick={onLogging(
-              username,
-              password,
-              () => {
-                navigate("/");
-              },
-              setIsLogginFail
+
+            {isLogginFail && (
+              <div className="alert alert-warning">
+                Your username or password is not correct
+              </div>
             )}
-            className="btn btn-primary"
-          >
-            Login
-          </button>
-          <a href="/register" className="btn btn-outline-secondary">
-            Or Sign up
-          </a>
-          <div className="text-secondary">
-            @copyright: {new Date().getFullYear()}
+            <div className="d-flex justify-content-between">
+              <span>Forgot your password?</span>
+              <span>
+                <a href="">change</a>
+              </span>
+            </div>
+            <button
+              onClick={onLogging(
+                username,
+                password,
+                () => {
+                  navigate("/");
+                },
+                setIsLogginFail
+              )}
+              className="btn btn-primary"
+            >
+              Login
+            </button>
+            <a href="/register" className="btn btn-outline-secondary">
+              Or Sign up
+            </a>
+            <div className="text-secondary">
+              @copyright: {new Date().getFullYear()}
+            </div>
           </div>
         </div>
       )}
