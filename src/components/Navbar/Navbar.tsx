@@ -5,13 +5,9 @@ import styles from "./navbar.module.css";
 import { useState } from "react";
 
 function Navbar() {
-  const [visble, setVisble] = useState(true);
-  const show = () => setVisble(true);
-  const hide = () => setVisble(false);
-
   return (
     <nav
-      className={`${styles.nav} shadow-sm navbar bg-body-tertiary fixed-top navbar-expand-sm`}
+      className={`${styles.nav} shadow-sm navbar bg-body-tertiary sticky-top navbar-expand-sm`}
     >
       <div className="container-fluid">
         <a className="navbar-brand" href="#"></a>
@@ -33,7 +29,7 @@ function Navbar() {
         >
           <div className="offcanvas-header">
             <h5 className="offcanvas-title" id="offcanvasNavbarLabel">
-              Offcanvas
+              Menu
             </h5>
             <button
               type="button"

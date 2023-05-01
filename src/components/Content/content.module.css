@@ -1,11 +1,19 @@
 .content {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex: 1;
-  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  grid-gap: 15px;
 }
 
-.test {
-  height: 10000px
+@media screen and (max-width: 768px) {
+  .content {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+}
+
+@media screen and (max-width: 576px) {
+  .content {
+    grid-template-columns: 1fr 1fr !important;
+  }
 }

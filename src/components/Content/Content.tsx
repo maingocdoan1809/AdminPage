@@ -1,58 +1,33 @@
-import { useMemo, useState } from "react";
-import ValidInput from "../ValidInput/ValidInput";
 import style from "./content.module.css";
 
-import classNames from "classnames/bind";
-import { BACKEND_URL } from "../../env";
-const cx = classNames.bind(style);
+import ProductShow from "../ProductShow/ProductShow";
+import { ReactElement, ReactNode, useEffect, useRef, useState } from "react";
+import useInfiniteScroll from "../../utilities/infinitescroll";
 
 function Content() {
-  const [username, setUsername] = useState("");
-  const [isValid, setIsValid] = useState<boolean | undefined>(undefined);
-  const [password, setPassword] = useState("");
-  const [isValidPassword, setIsValidPassword] = useState<boolean | undefined>(
-    undefined
-  );
-  console.log(password);
+  const [products, lastItem, isLoading] = useInfiniteScroll(() => {
+    return new Promise<ReactNode[]>((resolve) => {
+      const a: ReactNode[] = [];
+      for (let i = 0; i < 10; i++) {
+        if (i == 9) {
+          a.push(<ProductShow key={products.length + i} ref={lastItem} />);
+        } else {
+          a.push(<ProductShow key={products.length + i} />);
+        }
+      }
+      setTimeout(() => {
+        resolve(a);
+      }, 2000);
+    });
+  });
+  useEffect(() => {
+    console.log(isLoading);
+  });
   return (
-    <div className={`${style.content}`}>
-      {useMemo(
-        () => (
-          <ValidInput
-            key={1}
-            callBack={async (text: string) => {
-              if (text == "") {
-                setIsValid(undefined);
-                setUsername("");
-                return;
-              }
-              const data = await fetch(BACKEND_URL, {
-                method: "get",
-              });
-              const json = await data.json();
-              setIsValid(text == json.username);
-              setUsername(text);
-            }}
-            isValid={isValid}
-            className={["1"]}
-          />
-        ),
-        [isValid]
-      )}
-      {useMemo(
-        () => (
-          <ValidInput
-            key={2}
-            callBack={(text: string) => {
-              setPassword(text);
-            }}
-          />
-        ),
-        []
-      )}
-
-      <div className={cx("test")}></div>
-    </div>
+    <>
+      <div className={`${style.content}`}>{products.map((e) => e)}</div>
+      {isLoading && <div>Loading...</div>}
+    </>
   );
 }
 
