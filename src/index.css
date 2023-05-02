@@ -117,14 +117,13 @@ button:focus-visible {
 
 
 
-.navbar-toggler:hover {
-  border: 1px solid rgb(164, 160, 160);
-
+.navbar-toggler {
+  border: none;
 }
 
 
 .navbar-toggler:focus {
-  box-shadow: 0 0 1px gray inset !important;
+  box-shadow: 0 0 0px gray inset !important;
 
 }
 

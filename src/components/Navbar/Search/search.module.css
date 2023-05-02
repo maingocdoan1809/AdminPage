@@ -12,3 +12,13 @@
     user-select: none;
     cursor: pointer;
 }
+
+.search-btn {
+    cursor: pointer;
+    font-size: 1.1rem;
+    user-select: none;
+}
+
+.search-btn:hover {
+    color: black;
+}
