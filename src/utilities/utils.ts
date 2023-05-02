@@ -9,3 +9,12 @@ export function checkPassword(password: string) {
     specialCharPtn.test(password)
   );
 }
+export function toMoney(realNumber: number) {
+  // Create our number formatter.
+  const formatter = new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "VND",
+  });
+
+  return formatter.format(realNumber);
+}

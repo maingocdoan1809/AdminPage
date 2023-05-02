@@ -3,7 +3,7 @@ import ValidInput from "../ValidInput/ValidInput";
 import style from "./registerform.module.css";
 import { BACKEND_URL } from "../../env";
 import sha256 from "crypto-js/sha256";
-import { checkPassword } from "../../utilities/checkpassword";
+import { checkPassword } from "../../utilities/utils";
 type RegisterStateUnit = {
   value: string;
   isValid?: boolean | undefined;
