@@ -64,16 +64,31 @@ function ToggleLoginBtn() {
               </li>
             </>
           ) : (
-            <li>
-              <div
-                onClick={(e) => {
-                  redirect("/login");
-                }}
-                className="dropdown-item"
-              >
-                Login
-              </div>
-            </li>
+            <>
+              <li>
+                <div
+                  onClick={(e) => {
+                    redirect("/login");
+                  }}
+                  className="dropdown-item"
+                >
+                  Login
+                </div>
+              </li>
+              <li>
+                <hr className="dropdown-divider" />
+              </li>
+              <li>
+                <div
+                  onClick={(e) => {
+                    redirect("/register");
+                  }}
+                  className="dropdown-item"
+                >
+                  Register
+                </div>
+              </li>
+            </>
           )}
         </ul>
       </div>

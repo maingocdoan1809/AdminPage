@@ -9,6 +9,14 @@ export function checkPassword(password: string) {
     specialCharPtn.test(password)
   );
 }
+export function checkEmail(email: string) {
+  const patterncheck = new RegExp("^\\w+@\\w+\\.(com|edu\\.vn|vn|gov)$");
+  return patterncheck.test(email);
+}
+export function checkPhonenumber(phonenumber: string) {
+  const patterncheck = new RegExp("^([0-9]{10,11})|(\\+(84)[0-9]{9,10})$");
+  return patterncheck.test(phonenumber);
+}
 export function toMoney(realNumber: number) {
   // Create our number formatter.
   const formatter = new Intl.NumberFormat("en-US", {

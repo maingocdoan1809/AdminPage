@@ -5,3 +5,8 @@
 .margin>div {
   margin-bottom: 10px;
 }
+
+.margin {
+  min-height: 100vh;
+  max-width: 960px !important;
+}

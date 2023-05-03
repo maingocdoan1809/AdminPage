@@ -1,9 +1,13 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import ValidInput from "../ValidInput/ValidInput";
 import style from "./registerform.module.css";
 import { BACKEND_URL } from "../../env";
 import sha256 from "crypto-js/sha256";
-import { checkPassword } from "../../utilities/utils";
+import {
+  checkEmail,
+  checkPassword,
+  checkPhonenumber,
+} from "../../utilities/utils";
 type RegisterStateUnit = {
   value: string;
   isValid?: boolean | undefined;
@@ -47,9 +51,23 @@ const initialState: RegisterState = {
 
 function RegisterForm() {
   const [stateForm, setStateForm] = useState(initialState);
+  const [isReadyToRegister, setIsReadyToRegister] = useState<
+    boolean | undefined
+  >(undefined);
+  useEffect(() => {
+    const entries = Object.entries(stateForm);
+    for (let i of entries) {
+      if (i[1].isValid == false || i[1].value == "") {
+        setIsReadyToRegister(false);
+        return;
+      }
+    }
+    setIsReadyToRegister(true);
+  });
+  console.log(isReadyToRegister);
 
   return (
-    <form id="registerform" className={`p-3 ${style.margin}`}>
+    <form id="registerform" className={`container p-3 ${style.margin}`}>
       <div>
         <img src="" alt="" />
         <h2>Register now!</h2>
@@ -92,6 +110,7 @@ function RegisterForm() {
               })
             );
           }}
+          textIfInvalid="This username has already exist."
           identifier="username"
           isValid={stateForm.username.isValid}
         />
@@ -112,6 +131,7 @@ function RegisterForm() {
                 })
               );
             }}
+            textIfInvalid="Password must include text, numbers and special characters."
             isValid={stateForm.password.isValid}
             identifier="password"
             type="password"
@@ -138,6 +158,7 @@ function RegisterForm() {
             }}
             identifier="retypepassword"
             type="password"
+            textIfInvalid="Your password does not match."
             isValid={stateForm.retypepassword.isValid}
           />
         </div>
@@ -151,11 +172,14 @@ function RegisterForm() {
                 updateField(pre, {
                   email: {
                     value,
+                    isValid: value == "" ? undefined : checkEmail(value),
                   },
                 })
               );
             }}
+            textIfInvalid="This pattern does not seem to be a valid email"
             identifier="email"
+            isValid={stateForm.email.isValid}
           />
         </div>
         <div className="col-md-6 col-sm-12">
@@ -166,20 +190,31 @@ function RegisterForm() {
                 updateField(pre, {
                   phonenumber: {
                     value,
+                    isValid: value == "" ? undefined : checkPhonenumber(value),
                   },
                 })
               );
             }}
             identifier="phonenumber"
+            textIfInvalid="This phonenumber does not valid in current country."
+            isValid={stateForm.phonenumber.isValid}
           />
         </div>
       </div>
       <div>
+        <hr className="my-4" />
         <button
-          onClick={onSubmit(stateForm)}
-          className="btn btn-outline-primary w-100"
+          onClick={(e) => {
+            if (!isReadyToRegister) {
+              e.preventDefault();
+              console.log("Nooe");
+            } else {
+              onSubmit(stateForm)(e);
+            }
+          }}
+          className={`btn btn-primary `}
         >
-          Submit
+          Ok
         </button>
       </div>
       <div className="d-flex justify-content-end">
@@ -199,6 +234,7 @@ function updateField(state: RegisterState, field: Partial<RegisterState>) {
 function onSubmit(state: RegisterState) {
   return async (evt: React.MouseEvent<HTMLButtonElement>) => {
     evt.preventDefault();
+
     const body = {
       username: sha256(state.username.value).toString(),
       fullname: state.fullname.value,

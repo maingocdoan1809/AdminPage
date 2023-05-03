@@ -11,6 +11,7 @@ export type ValidInputProps = {
   identifier?: string;
   placeholder?: string;
   delay?: number;
+  textIfInvalid?: string;
 };
 
 function ValidInput(props: ValidInputProps) {
@@ -39,6 +40,11 @@ function ValidInput(props: ValidInputProps) {
             : "is-invalid"
         }`}
       />
+      {props.isValid == false && props.textIfInvalid && (
+        <>
+          <small className="text-danger">{props.textIfInvalid}</small>
+        </>
+      )}
     </>
   );
 }
