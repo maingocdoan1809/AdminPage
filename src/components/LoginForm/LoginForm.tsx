@@ -4,6 +4,8 @@ import style from "./loginform.module.css";
 import { BACKEND_URL } from "../../env";
 import { Navigate, redirect, useNavigate } from "react-router";
 import sha256 from "crypto-js/sha256";
+import { checkUserIdentity } from "../../utilities/utils";
+import LoadingView from "../LoadingView/LoadingView";
 export function LoginForm() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -12,27 +14,22 @@ export function LoginForm() {
   const [isServerErr, setServerError] = useState(false);
   const navigate = useNavigate();
   useEffect(() => {
-    const token = JSON.parse(localStorage.getItem("user") || "{}").token;
-    if (token) {
-      fetch(BACKEND_URL + `/login?token=${token}`, {
-        method: "get",
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          if (data.isAuthenticated) {
-            navigate("/");
-            localStorage.setItem("user", JSON.stringify(data));
+    checkUserIdentity()
+      .then((data) => {
+        if (data.isAuthenticated) {
+          localStorage.setItem("user", JSON.stringify(data));
+          navigate("/");
+        } else {
+          if (data.err) {
+            setServerError(true);
           } else {
             setIsLoggedIn(false);
           }
-        })
-        .catch((err) => {
-          setServerError(true);
-        });
-      return;
-    } else {
-      setIsLoggedIn(false);
-    }
+        }
+      })
+      .catch((err) => {
+        setServerError(true);
+      });
   }, []);
   return isServerErr ? (
     <div className={`${style.servererror}`}>
@@ -105,7 +102,7 @@ export function LoginForm() {
           </div>
         </div>
       )}
-      {isLoggedIn == undefined && <p>Authenticating</p>}
+      {isLoggedIn == undefined && <LoadingView />}
     </>
   );
 }

@@ -1,3 +1,5 @@
+import { BACKEND_URL } from "../env";
+
 export function checkPassword(password: string) {
   const numberPtn = new RegExp("[0-9]");
   const charPtn = new RegExp("[A-Za-z]");
@@ -25,4 +27,23 @@ export function toMoney(realNumber: number) {
   });
 
   return formatter.format(realNumber);
+}
+
+export async function checkUserIdentity() {
+  const user = JSON.parse(localStorage.getItem("user") || "{}");
+  if (user.token && user.username) {
+    const response = await fetch(
+      BACKEND_URL + `/auth?username=${user.username}&token=${user.token}`,
+      {
+        method: "GET",
+      }
+    );
+
+    const data = await response.json();
+    localStorage.setItem("user", JSON.stringify(data));
+    return data;
+  }
+  return new Promise((resolve, rejects) => {
+    resolve({ isAuthenticated: false });
+  });
 }

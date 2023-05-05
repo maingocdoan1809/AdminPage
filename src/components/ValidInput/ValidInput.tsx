@@ -12,10 +12,13 @@ export type ValidInputProps = {
   placeholder?: string;
   delay?: number;
   textIfInvalid?: string;
+  onBlur?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  initialValue?: string;
+  disabled?: boolean;
 };
 
 function ValidInput(props: ValidInputProps) {
-  const [state, setState] = useState("");
+  const [state, setState] = useState(props.initialValue || "");
   const debounce = useDebounce((value) => {
     props.callBack(value);
   }, props.delay ?? 500);
@@ -23,6 +26,7 @@ function ValidInput(props: ValidInputProps) {
   return (
     <>
       <input
+        disabled={props.disabled || false}
         value={state}
         onChange={(e) => {
           debounce(e.target.value);
@@ -39,6 +43,11 @@ function ValidInput(props: ValidInputProps) {
             ? "is-valid"
             : "is-invalid"
         }`}
+        onBlur={(e) => {
+          if (props.onBlur) {
+            props.onBlur(e);
+          }
+        }}
       />
       {props.isValid == false && props.textIfInvalid && (
         <>

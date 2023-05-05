@@ -54,6 +54,7 @@ function RegisterForm() {
   const [isReadyToRegister, setIsReadyToRegister] = useState<
     boolean | undefined
   >(undefined);
+
   useEffect(() => {
     const entries = Object.entries(stateForm);
     for (let i of entries) {
@@ -64,7 +65,6 @@ function RegisterForm() {
     }
     setIsReadyToRegister(true);
   });
-  console.log(isReadyToRegister);
 
   return (
     <form id="registerform" className={`container p-3 ${style.margin}`}>

@@ -1,10 +1,13 @@
 import { useEffect, useState } from "react";
 import styles from "./navbar.module.css";
 import { useNavigate } from "react-router";
+import Profile from "../Profile/Profile";
 function ToggleLoginBtn() {
   const [isUserLoggedIn, setIsUserLoggedIn] = useState(false);
+  const [isClickLogout, setIsClickLogout] = useState(false);
   const redirect = useNavigate();
   const [userName, setUserName] = useState("anonymous");
+
   useEffect(() => {
     const data = JSON.parse(localStorage.getItem("user") || "{}");
     if (data.isAuthenticated) {
@@ -16,7 +19,7 @@ function ToggleLoginBtn() {
   });
   return (
     <>
-      <div className="position-positive dropdown">
+      <div className="dropdown">
         <a
           className="nav-link dropdown-toggle me-4 w-75 h-75"
           href="#"
@@ -45,8 +48,19 @@ function ToggleLoginBtn() {
             <>
               <li>
                 <div
+                  className="dropdown-item postition-relative"
+                  onClick={(e) => {
+                    redirect("/profile");
+                  }}
+                >
+                  Profile
+                </div>
+              </li>
+              <li>
+                <div
                   onClick={(e) => {
                     localStorage.clear();
+                    alert("You logged out!");
                     redirect("/");
                   }}
                   className="dropdown-item"
