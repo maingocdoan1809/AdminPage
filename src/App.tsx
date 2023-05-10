@@ -14,7 +14,7 @@ const products = [
   { id: 4, name: "Dress", price: 40, color: "red", image: "https://via.placeholder.com/150" },
 ];
 
-const App: React.FC = () => {
+function App() {
   return (
     <div className="App">
       <BrowserRouter>
