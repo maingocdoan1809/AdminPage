@@ -11,6 +11,7 @@ body {
   align-items: center;
   justify-content: center;
   background-color: #f5f5f5;
+
 }
 
 :root {
@@ -156,4 +157,9 @@ button:focus-visible {
 #footer {
   background-color: #0F0E0E;
 
+}
+
+input[class~="is-invalid"],
+input[class~="is-valid"] {
+  background-image: none !important;
 }

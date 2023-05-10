@@ -3,7 +3,7 @@ import style from "./editable.module.css";
 import ValidInput from "../ValidInput/ValidInput";
 
 type EditableProps = {
-  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onChange?: (e: string) => void;
   type: string;
   value?: string;
   canEdit: boolean;
@@ -17,7 +17,11 @@ function Editable({ onChange, type, value, name, canEdit }: EditableProps) {
     <>
       <div className={`${style.editable}`}>
         <ValidInput
-          callBack={(e) => {}}
+          callBack={(e) => {
+            if (onChange) {
+              onChange(e);
+            }
+          }}
           initialValue={value}
           onBlur={(e) => {
             setDisableText(true);

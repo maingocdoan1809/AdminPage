@@ -36,7 +36,7 @@ function ValidInput(props: ValidInputProps) {
         name={props.identifier ?? ""}
         placeholder={props.placeholder ?? ""}
         type={props.type || "text"}
-        className={`form-control ${props.className?.map((c) => c)} ${
+        className={`form-control ${props.className?.join(" ")} ${
           props.isValid == undefined
             ? ""
             : props.isValid == true

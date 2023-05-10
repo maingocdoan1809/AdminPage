@@ -6,6 +6,7 @@ import { Navigate, redirect, useNavigate } from "react-router";
 import sha256 from "crypto-js/sha256";
 import { checkUserIdentity } from "../../utilities/utils";
 import LoadingView from "../LoadingView/LoadingView";
+import PasswordInput from "../ValidInput/PasswordInput";
 export function LoginForm() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -55,16 +56,15 @@ export function LoginForm() {
                 className={[style["top-border"]]}
                 delay={0}
               />
-              <LabeledInput
+              <PasswordInput
                 identifier="password"
                 placeholder="Password"
-                type="password"
                 callBack={(value) => {
                   setIsLogginFail(false);
 
                   setPassword(value);
                 }}
-                className={[style["bottom-border"]]}
+                className={[style["bottom-border"], "p-3"]}
                 delay={0}
               />
             </div>

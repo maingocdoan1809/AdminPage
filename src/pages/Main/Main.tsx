@@ -11,7 +11,7 @@ function Main() {
       <div className={`${style.maincontent}`}>
         <Content />
       </div>
-      <Footer />
+      {/* <Footer /> */}
     </main>
   );
 }

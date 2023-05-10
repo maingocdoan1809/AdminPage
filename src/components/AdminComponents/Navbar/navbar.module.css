@@ -1,0 +1,27 @@
+.nav {
+  background-color: white;
+  padding: 0.6rem;
+  min-width: 250px;
+  height: 100vh;
+  flex-direction: column;
+  padding: 1rem;
+}
+
+@media screen and (max-width: 900px) {
+
+  .nav,
+  .nav ul {
+    flex-direction: row !important;
+  }
+
+  .nav {
+    height: initial;
+    padding: 0.5rem !important;
+    align-items: center;
+  }
+
+
+
+
+
+}

@@ -8,6 +8,8 @@ import {
   checkPassword,
   checkPhonenumber,
 } from "../../utilities/utils";
+import PasswordInput from "../ValidInput/PasswordInput";
+import { useNavigate } from "react-router";
 type RegisterStateUnit = {
   value: string;
   isValid?: boolean | undefined;
@@ -54,7 +56,7 @@ function RegisterForm() {
   const [isReadyToRegister, setIsReadyToRegister] = useState<
     boolean | undefined
   >(undefined);
-
+  const redirect = useNavigate();
   useEffect(() => {
     const entries = Object.entries(stateForm);
     for (let i of entries) {
@@ -120,7 +122,7 @@ function RegisterForm() {
           <label htmlFor="password" className="required">
             Password
           </label>
-          <ValidInput
+          <PasswordInput
             callBack={(value) => {
               setStateForm((pre) =>
                 updateField(pre, {
@@ -134,14 +136,13 @@ function RegisterForm() {
             textIfInvalid="Password must include text, numbers and special characters."
             isValid={stateForm.password.isValid}
             identifier="password"
-            type="password"
           />
         </div>
         <div className="col-md-6 col-sm-12">
           <label className="required" htmlFor="retypepassword">
             Retype Password
           </label>
-          <ValidInput
+          <PasswordInput
             callBack={(value) => {
               setStateForm((pre) =>
                 updateField(pre, {
@@ -157,7 +158,6 @@ function RegisterForm() {
               );
             }}
             identifier="retypepassword"
-            type="password"
             textIfInvalid="Your password does not match."
             isValid={stateForm.retypepassword.isValid}
           />
@@ -209,7 +209,7 @@ function RegisterForm() {
               e.preventDefault();
               console.log("Nooe");
             } else {
-              onSubmit(stateForm)(e);
+              onSubmit(stateForm, redirect)(e);
             }
           }}
           className={`btn btn-primary `}
@@ -231,7 +231,7 @@ function updateField(state: RegisterState, field: Partial<RegisterState>) {
   };
 }
 
-function onSubmit(state: RegisterState) {
+function onSubmit(state: RegisterState, redirect: (url: string) => void) {
   return async (evt: React.MouseEvent<HTMLButtonElement>) => {
     evt.preventDefault();
 
@@ -251,6 +251,13 @@ function onSubmit(state: RegisterState) {
     });
     const data = await response.json();
     console.log(data);
+    if (data.hasRegistered) {
+      alert("Registered!");
+      redirect("/login");
+    } else {
+      alert("Error");
+      redirect("/register");
+    }
   };
 }
 
