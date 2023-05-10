@@ -278,15 +278,17 @@ const changeBasicInfor = function (userInfo: any) {
   for (let key in userInfo) {
     formData.append(key, (userInfo as any)[key]);
   }
-  formData.append("newAvt", userInfo["newAvt"]);
   return (e: React.MouseEvent<HTMLButtonElement>) => {
     fetch(`http://localhost:3000/users/${userInfo["username"]}`, {
       method: "PUT",
       body: formData,
-      headers: {
-        "Content-Type": `multipart/form-data ; boundary= ------WebKitFormBoundary7MA4YWxkTrZu0gW`,
-      },
-    });
+    })
+      .then(async (response) => {
+        console.log(await response.json());
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 };
 
