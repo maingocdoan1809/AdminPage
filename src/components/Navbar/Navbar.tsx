@@ -1,11 +1,16 @@
-import Search from "./Search/Search";
+import SearchBar from "../../components/Navbar/Search/Search";
 import ToggleLoginBtn from "./ToggleLoginBtn";
 import styles from "./navbar.module.css";
+import { useNavigate, useParams } from 'react-router-dom';
+import { useEffect, useState } from "react";
+import React from "react";
 
-import { useState } from "react";
 
-function Navbar() {
+const Navbar: React.FC = () => {
+
+
   return (
+
     <nav
       className={`${styles.nav} shadow-sm navbar bg-body-tertiary sticky-top navbar-expand-sm`}
     >
@@ -66,7 +71,7 @@ function Navbar() {
               <li className="nav-item">
                 <ul className="navbar-nav">
                   <li className="nav-item">
-                    <Search />
+                  <SearchBar onSearch={(query, color, minPrice, maxPrice) => console.log(query, color, minPrice, maxPrice)} />
                   </li>
                 </ul>
               </li>
@@ -92,5 +97,6 @@ function Navbar() {
     </nav>
   );
 }
-
 export default Navbar;
+
+
