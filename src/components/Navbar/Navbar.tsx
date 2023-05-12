@@ -1,9 +1,10 @@
 import { useNavigate } from "react-router";
-import Search from "./Search/Search";
+import Search from "./Search/SearchBar";
+import SearchBar from "./Search/SearchBar";
 import ToggleLoginBtn from "./ToggleLoginBtn";
 import styles from "./navbar.module.css";
-
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import React from "react";
 
 function Navbar() {
   const redirect = useNavigate();
@@ -75,7 +76,11 @@ function Navbar() {
               <li className="nav-item">
                 <ul className="navbar-nav">
                   <li className="nav-item">
-                    <Search />
+                    <SearchBar
+                      onSearch={(query, color, minPrice, maxPrice) =>
+                        console.log(query, color, minPrice, maxPrice)
+                      }
+                    />
                   </li>
                 </ul>
               </li>
@@ -103,5 +108,4 @@ function Navbar() {
     </nav>
   );
 }
-
 export default Navbar;
