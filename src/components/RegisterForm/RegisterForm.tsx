@@ -10,11 +10,11 @@ import {
 } from "../../utilities/utils";
 import PasswordInput from "../ValidInput/PasswordInput";
 import { useNavigate } from "react-router";
-type RegisterStateUnit = {
+export type RegisterStateUnit = {
   value: string;
   isValid?: boolean | undefined;
 };
-type RegisterState = {
+export type RegisterState = {
   fullname: RegisterStateUnit;
   username: RegisterStateUnit;
   password: RegisterStateUnit;

@@ -33,9 +33,9 @@ export function LoginForm() {
       });
   }, []);
   return isServerErr ? (
-    <div className={`${style.servererror}`}>
+    <div className={`${style.servererror} container`}>
       <h1 className="text-danger">Opp! 505</h1>
-      <h3>Our server is running into a problem.</h3>
+      <h3>Our server is running into a problem or the connection was lost.</h3>
       <p>We're trying to get it fixed.</p>
     </div>
   ) : (
@@ -87,7 +87,8 @@ export function LoginForm() {
                 () => {
                   navigate("/");
                 },
-                setIsLogginFail
+                setIsLogginFail,
+                setServerError
               )}
               className="btn btn-primary"
             >
@@ -111,7 +112,8 @@ function onLogging(
   username: string,
   password: string,
   navigae: () => void,
-  fallBack: (param: any) => void
+  loginFail: (param: boolean) => void,
+  serverError: (param: boolean) => void
 ) {
   return (evt: React.MouseEvent<HTMLButtonElement>) => {
     evt.preventDefault();
@@ -124,11 +126,13 @@ function onLogging(
     })
       .then((response) => response.json())
       .then((data) => {
-        if (data.isAuthenticated) {
+        if (data.isAuthenticated == true) {
           localStorage.setItem("user", JSON.stringify(data));
           navigae();
+        } else if (data.err) {
+          serverError(true);
         } else {
-          fallBack(true);
+          loginFail(true);
         }
       });
   };
