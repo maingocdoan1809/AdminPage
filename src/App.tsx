@@ -13,13 +13,6 @@ import SearchPage from "./pages/SearchPage/SearchPage";
 
 const products = [
   {
-    id: 1,
-    name: "T-Shirt",
-    price: 10,
-    color: "red",
-    image: "https://via.placeholder.com/150",
-  },
-  {
     id: 2,
     name: "Jeans",
     price: 20,

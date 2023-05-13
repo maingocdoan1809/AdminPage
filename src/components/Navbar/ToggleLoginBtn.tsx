@@ -22,7 +22,7 @@ function ToggleLoginBtn() {
     <>
       <div className="dropdown">
         <a
-          className="nav-link dropdown-toggle me-4 w-75 h-75"
+          className="nav-link dropdown-toggle  w-75 h-75 postition-relative"
           href="#"
           role="button"
           data-bs-toggle="dropdown"
@@ -39,8 +39,8 @@ function ToggleLoginBtn() {
           ) : (
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              width="10px"
-              height="10px"
+              width="35px"
+              height="35px"
               fill="currentColor"
               className="bi bi-person-circle w-100 h-100"
               viewBox="0 0 16 16"
@@ -71,6 +71,7 @@ function ToggleLoginBtn() {
                 <div
                   onClick={(e) => {
                     localStorage.clear();
+                    redirect("/");
                     window.location.reload();
                   }}
                   className="dropdown-item"

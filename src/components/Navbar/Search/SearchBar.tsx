@@ -16,7 +16,7 @@ const products = [
     id: 1,
     name: "T-Shirt",
     price: 10,
-    color: "red",
+    color: "yellow",
     image: "https://via.placeholder.com/150",
   },
   {

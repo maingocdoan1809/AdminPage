@@ -107,12 +107,19 @@ function RegisterForm() {
               updateField(pre, {
                 username: {
                   value,
-                  isValid: value == "" ? undefined : !message.isExist,
+                  isValid:
+                    value == ""
+                      ? undefined
+                      : !message.isExist && value.length >= 10,
                 },
               })
             );
           }}
-          textIfInvalid="This username has already exist."
+          textIfInvalid={
+            stateForm.username.value.length <= 10
+              ? "Username must have more than 10 characters."
+              : "This username has already exist."
+          }
           identifier="username"
           isValid={stateForm.username.isValid}
         />
@@ -201,23 +208,27 @@ function RegisterForm() {
           />
         </div>
       </div>
-      <div>
-        <hr className="my-4" />
+      <hr className="my-4" />
+      <div className="d-flex justify-content-between">
         <button
+          disabled={
+            isReadyToRegister == false
+              ? true
+              : isReadyToRegister == true
+              ? false
+              : undefined
+          }
           onClick={(e) => {
             if (!isReadyToRegister) {
               e.preventDefault();
-              console.log("Nooe");
             } else {
               onSubmit(stateForm, redirect)(e);
             }
           }}
-          className={`btn btn-primary `}
+          className={`btn btn-primary w-25`}
         >
           Ok
         </button>
-      </div>
-      <div className="d-flex justify-content-end">
         <a href="/login">Back to login</a>
       </div>
     </form>
