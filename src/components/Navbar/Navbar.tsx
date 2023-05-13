@@ -1,13 +1,20 @@
 import SearchBar from "../../components/Navbar/Search/Search";
+import Checkout from "../Checkout/Checkout";
 import ToggleLoginBtn from "./ToggleLoginBtn";
 import styles from "./navbar.module.css";
-import { useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useEffect, useState } from "react";
 import React from "react";
 
 
 const Navbar: React.FC = () => {
 
+  const [showCheckout, setShowCheckout] = useState(false);
+  const navigate = useNavigate();
+  const handleCheckoutClick = () => {
+    setShowCheckout(true);
+    navigate('/checkout');
+  }
 
   return (
 
@@ -71,7 +78,7 @@ const Navbar: React.FC = () => {
               <li className="nav-item">
                 <ul className="navbar-nav">
                   <li className="nav-item">
-                  <SearchBar onSearch={(query, color, minPrice, maxPrice) => console.log(query, color, minPrice, maxPrice)} />
+                    <SearchBar onSearch={(query, color, minPrice, maxPrice) => console.log(query, color, minPrice, maxPrice)} />
                   </li>
                 </ul>
               </li>
@@ -79,7 +86,7 @@ const Navbar: React.FC = () => {
           </div>
         </div>
         <div className="d-flex justify-content-center align-items-center">
-          <a href="" className="w-50 h-50 me-3">
+          <a href="" className="w-50 h-50 me-3" onClick={handleCheckoutClick}>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="16"

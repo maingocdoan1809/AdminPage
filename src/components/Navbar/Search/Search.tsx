@@ -1,17 +1,12 @@
 import { useEffect, useState } from "react";
 import styles from "./search.module.css";
 import { useNavigate } from "react-router";
+import { products } from "../../Data/productsData";
 
 interface SearchBarProps {
   onSearch: (query: string, color?: string[], minPrice?: number, maxPrice?: number) => void;
 }
 
-const products = [
-  { id: 1, name: "T-Shirt", price: 10, color: "red", image: "https://via.placeholder.com/150" },
-  { id: 2, name: "Jeans", price: 20, color: "blue", image: "https://via.placeholder.com/150" },
-  { id: 3, name: "Sweater", price: 30, color: "green", image: "https://via.placeholder.com/150" },
-  { id: 4, name: "Dress", price: 40, color: "red", image: "https://via.placeholder.com/150" },
-];
 
 const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
   const [query, setQuery] = useState("");

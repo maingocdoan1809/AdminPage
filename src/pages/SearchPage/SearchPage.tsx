@@ -1,13 +1,18 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import Navbar from "../../components/Navbar/Navbar";
+import ProductShow from "../../components/ProductShow/ProductShow";
+import InfiniteScroll from "react-infinite-scroll-component";
+import LoadingView from "../../components/LoadingView/LoadingView";
 
 interface Product {
   id: number;
   name: string;
   price: number;
   color: string;
-  image: string;
+  imgUrl: string;
+  view?: number;
+  sold?: number;
 }
 
 interface SearchResultsProps {
@@ -39,6 +44,30 @@ const SearchResults: React.FC<SearchResultsProps> = ({ products }) => {
     return product.name.toLowerCase().includes(query.toLowerCase());
   });
 
+  const [items, setItems] = useState<Product[]>([]);
+  const [hasMore, setHasMore] = useState<boolean>(true);
+
+  useEffect(() => {
+    setItems(filteredProducts.slice(0, 8));
+  }, [filteredProducts.length, filteredProducts[0].id]);
+
+  const loadMore = () => {
+    setTimeout(() => {
+      const currentLength = items.length;
+      const newItems = filteredProducts.slice(
+        currentLength,
+        currentLength + 8
+      );
+      setItems([...items, ...newItems]);
+      if (filteredProducts.length <= currentLength + 8) {
+        setHasMore(false);
+      }
+    }, 1000); // thời gian delay là 1 giây (1000 millisecond)
+  };
+  
+  
+  
+
   if (filteredProducts.length === 0) {
     return (
       <div>
@@ -51,19 +80,33 @@ const SearchResults: React.FC<SearchResultsProps> = ({ products }) => {
   return (
     <div>
       <Navbar />
-      <h2>Kết quả tìm kiếm cho: {query}</h2>
-      <ul>
-        {filteredProducts.map((product) => (
-          <li key={product.id}>
-            <img src={product.image} alt={product.name} />
-            <div>
-              <h3>{product.name}</h3>
-              <p>{product.color}</p>
-              <p>${product.price}</p>
+      <div className="container">
+        <h2>Kết quả tìm kiếm cho: {query}</h2>
+        <hr />
+      <InfiniteScroll
+        dataLength={items.length}
+        next={loadMore}
+        hasMore={hasMore}
+        loader={<LoadingView />}
+        scrollThreshold={0.8}
+      >
+        <div className="row">
+          {items.map((product) => (
+            <div className="col-md-3 mb-4" key={product.id}>
+              <ProductShow
+                id={product.id.toString()}
+                name={product.name}
+                price={product.price}
+                imgUrl={product.imgUrl}
+                view={product.view}
+                sold={product.sold}
+              />
             </div>
-          </li>
-        ))}
-      </ul>
+          ))}
+        </div>
+      </InfiniteScroll>
+      </div>
+      
     </div>
   );
 };

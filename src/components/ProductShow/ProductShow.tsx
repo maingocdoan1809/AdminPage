@@ -1,17 +1,23 @@
-import { useEffect } from "react";
 import style from "./productshow.module.css";
-import React from "react";
+import React, { useState } from "react";
 import { toMoney } from "../../utilities/utils";
+
 type ProductProps = {
-  name: string;
-  imgUrl: string;
-  price: number;
   id: string;
+  name: string;
+  price: number;
+  imgUrl: string;
   view?: number;
   sold?: number;
 };
+
 const ProductShow = React.forwardRef<HTMLDivElement, ProductProps>(
   function ProductShow(props: ProductProps, ref) {
+    const [cartItems, setCartItems] = useState<ProductProps[]>([]);
+    const addToCartHandler = () => {
+      setCartItems((prevCartItems: any) => [...prevCartItems, props]);
+      console.log("Thêm sản phẩm vào giỏ hàng:", props.name);
+    };
     return (
       <>
         <div
@@ -28,7 +34,7 @@ const ProductShow = React.forwardRef<HTMLDivElement, ProductProps>(
               <small>
                 {toMoney(props.price)} <b>VND</b>
               </small>
-              <a href="" className="btn btn-outline-primary btn-sm">
+              <a href="" className="btn btn-outline-primary btn-sm" onClick={addToCartHandler}>
                 <small>Add to cart</small>{" "}
                 <i className="fa-regular fa-plus"></i>
               </a>
@@ -41,3 +47,4 @@ const ProductShow = React.forwardRef<HTMLDivElement, ProductProps>(
 );
 
 export default ProductShow;
+
