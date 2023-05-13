@@ -4,9 +4,13 @@ import { useNavigate } from "react-router";
 import { products } from "../../Data/productsData";
 
 interface SearchBarProps {
-  onSearch: (query: string, color?: string[], minPrice?: number, maxPrice?: number) => void;
+  onSearch: (
+    query: string,
+    color?: string[],
+    minPrice?: number,
+    maxPrice?: number
+  ) => void;
 }
-
 
 const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
   const [query, setQuery] = useState("");
@@ -20,7 +24,9 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
     params.set("q", query);
 
     // Chuyển đổi mảng products thành mảng colors
-    const selectedColors = colors.filter(color => products.some(product => product.color === color));
+    const selectedColors = colors.filter((color) =>
+      products.some((product) => product.color === color)
+    );
     if (selectedColors.length > 0) {
       params.set("colors", selectedColors.join(","));
     }
@@ -63,7 +69,13 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
                     <select
                       id="minPrice"
                       value={minPrice !== undefined ? minPrice : ""}
-                      onChange={(e) => setMinPrice(e.target.value !== "" ? Number(e.target.value) : undefined)}
+                      onChange={(e) =>
+                        setMinPrice(
+                          e.target.value !== ""
+                            ? Number(e.target.value)
+                            : undefined
+                        )
+                      }
                     >
                       <option value="">Any</option>
                       <option value="10">10</option>
@@ -74,7 +86,13 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
                     <select
                       id="maxPrice"
                       value={maxPrice !== undefined ? maxPrice : ""}
-                      onChange={(e) => setMaxPrice(e.target.value !== "" ? Number(e.target.value) : undefined)}
+                      onChange={(e) =>
+                        setMaxPrice(
+                          e.target.value !== ""
+                            ? Number(e.target.value)
+                            : undefined
+                        )
+                      }
                     >
                       <option value="">Any</option>
                       <option value="50">50</option>
@@ -164,6 +182,6 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
       </div>
     </>
   );
-}
+};
 
 export default SearchBar;

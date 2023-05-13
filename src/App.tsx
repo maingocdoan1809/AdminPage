@@ -25,7 +25,7 @@ function App() {
           <Route path="/unauth" element={<Unauthenticated />} />
           <Route path="/admin" element={<AdminPage />} />
           <Route path="/search" element={<SearchResults products={products} />}/>
-          <Route path="/checkout" element={<Checkout />}/>
+          <Route path="/checkout" element={<Checkout  />}/>
           <Route path="/servererror" element={<ServerError />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/*" element={<Error />} />

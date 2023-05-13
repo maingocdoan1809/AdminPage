@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { useLocation } from "react-router-dom";
 import Navbar from "../../components/Navbar/Navbar";
 import ProductShow from "../../components/ProductShow/ProductShow";
@@ -15,11 +15,11 @@ interface Product {
   sold?: number;
 }
 
-interface SearchResultsProps {
+interface SearchPageProps {
   products: Product[];
 }
 
-const SearchResults: React.FC<SearchResultsProps> = ({ products }) => {
+const SearchPage: React.FC<SearchPageProps> = ({ products }) => {
   const location = useLocation();
   const params = new URLSearchParams(location.search);
   const query = params.get("q") || "";
@@ -111,4 +111,4 @@ const SearchResults: React.FC<SearchResultsProps> = ({ products }) => {
   );
 };
 
-export default SearchResults;
+export default SearchPage;

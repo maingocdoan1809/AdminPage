@@ -7,12 +7,13 @@ function ToggleLoginBtn() {
   const [isClickLogout, setIsClickLogout] = useState(false);
   const redirect = useNavigate();
   const [userName, setUserName] = useState("anonymous");
-
+  const [avtUrl, setAvtUrl] = useState("");
   useEffect(() => {
     const data = JSON.parse(localStorage.getItem("user") || "{}");
     if (data.isAuthenticated) {
       setUserName(data.fullname);
       setIsUserLoggedIn(true);
+      setAvtUrl(data.avt);
     } else {
       setIsUserLoggedIn(false);
     }
@@ -21,26 +22,36 @@ function ToggleLoginBtn() {
     <>
       <div className="dropdown">
         <a
-          className="nav-link dropdown-toggle me-4 w-75 h-75"
+          className="nav-link dropdown-toggle  w-75 h-75 postition-relative"
           href="#"
           role="button"
           data-bs-toggle="dropdown"
           aria-expanded="false"
         >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="16"
-            height="16"
-            fill="currentColor"
-            className="bi bi-person-circle w-100 h-100"
-            viewBox="0 0 16 16"
-          >
-            <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0z" />
-            <path
-              fillRule="evenodd"
-              d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1z"
+          {avtUrl != "" ? (
+            <img
+              width={"35px"}
+              height={"35px"}
+              src={avtUrl}
+              alt="Avatar"
+              className="rounded-circle"
             />
-          </svg>
+          ) : (
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="35px"
+              height="35px"
+              fill="currentColor"
+              className="bi bi-person-circle w-100 h-100"
+              viewBox="0 0 16 16"
+            >
+              <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0z" />
+              <path
+                fillRule="evenodd"
+                d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1z"
+              />
+            </svg>
+          )}
         </a>
 
         <ul className={`dropdown-menu`} id={`${styles["dropdown-menu"]}`}>
@@ -60,8 +71,8 @@ function ToggleLoginBtn() {
                 <div
                   onClick={(e) => {
                     localStorage.clear();
-                    alert("You logged out!");
                     redirect("/");
+                    window.location.reload();
                   }}
                   className="dropdown-item"
                 >

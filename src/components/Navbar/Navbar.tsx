@@ -1,8 +1,7 @@
 import SearchBar from "../../components/Navbar/Search/Search";
-import Checkout from "../Checkout/Checkout";
 import ToggleLoginBtn from "./ToggleLoginBtn";
 import styles from "./navbar.module.css";
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { redirect, useNavigate, useParams } from 'react-router-dom';
 import { useEffect, useState } from "react";
 import React from "react";
 
@@ -11,13 +10,13 @@ const Navbar: React.FC = () => {
 
   const [showCheckout, setShowCheckout] = useState(false);
   const navigate = useNavigate();
+
   const handleCheckoutClick = () => {
     setShowCheckout(true);
     navigate('/checkout');
   }
 
   return (
-
     <nav
       className={`${styles.nav} shadow-sm navbar bg-body-tertiary sticky-top navbar-expand-sm`}
     >
@@ -59,9 +58,16 @@ const Navbar: React.FC = () => {
               <li className="nav-item">
                 <ul className="navbar-nav">
                   <li className="nav-item">
-                    <a className="nav-link active" aria-current="page" href="#">
+                    <div
+                      className="nav-link active"
+                      aria-current="page"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        redirect("/");
+                      }}
+                    >
                       All
-                    </a>
+                    </div>
                   </li>
                   <li className="nav-item">
                     <a className="nav-link" href="#">
@@ -78,7 +84,7 @@ const Navbar: React.FC = () => {
               <li className="nav-item">
                 <ul className="navbar-nav">
                   <li className="nav-item">
-                    <SearchBar onSearch={(query, color, minPrice, maxPrice) => console.log(query, color, minPrice, maxPrice)} />
+                  <SearchBar onSearch={(query, color, minPrice, maxPrice) => console.log(query, color, minPrice, maxPrice)} />
                   </li>
                 </ul>
               </li>
@@ -105,5 +111,3 @@ const Navbar: React.FC = () => {
   );
 }
 export default Navbar;
-
-

@@ -32,6 +32,10 @@
   margin-top: 0 !important;
 }
 
+.bottom-border~span {
+  top: 20px !important;
+}
+
 .servererror {
   min-width: 100vw;
   min-height: 100vh;

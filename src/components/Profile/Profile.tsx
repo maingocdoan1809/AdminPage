@@ -23,11 +23,7 @@ function Profile() {
   const [userInfo, setUserInfor] = useState({} as UserInfo);
   const [newAvt, setNewAvt] = useState<File>(null!);
   const avtRef = useRef<HTMLImageElement>(null!);
-  console.log({
-    ...userInfo,
-    newAvt: newAvt,
-  });
-
+  const [isPending, setIsPending] = useState(false);
   useEffect(() => {
     checkUserIdentity()
       .then((data) => {
@@ -220,13 +216,29 @@ function Profile() {
                   <button
                     className="btn btn-primary btn-sm w-100"
                     onClick={(e) => {
-                      changeBasicInfor({
-                        ...userInfo,
-                        newAvt,
-                      })(e);
+                      changeBasicInfor(
+                        {
+                          ...userInfo,
+                          newAvt,
+                        },
+                        () => {
+                          setIsPending(true);
+                        },
+                        () => {
+                          setIsPending(false);
+                        }
+                      )(e);
                     }}
                   >
-                    Save changes
+                    Save changes{" "}
+                    {isPending && (
+                      <div
+                        className="spinner-border spinner-border-sm"
+                        role="status"
+                      >
+                        <span className="visually-hidden">Loading...</span>
+                      </div>
+                    )}
                   </button>
                 </div>
               </div>
@@ -273,13 +285,20 @@ function Profile() {
   );
 }
 
-const changeBasicInfor = function (userInfo: any) {
+const changeBasicInfor = function (
+  userInfo: any,
+  whenUpdating?: () => void,
+  whenUpdated?: () => void
+) {
   const formData = new FormData();
   for (let key in userInfo) {
     formData.append(key, (userInfo as any)[key]);
   }
   return (e: React.MouseEvent<HTMLButtonElement>) => {
-    fetch(`http://localhost:3000/users/${userInfo["username"]}`, {
+    if (whenUpdating) {
+      whenUpdating();
+    }
+    fetch(`http://localhost:3000/users/edit/${userInfo["username"]}`, {
       method: "PUT",
       body: formData,
     })
@@ -288,6 +307,11 @@ const changeBasicInfor = function (userInfo: any) {
       })
       .catch((err) => {
         console.log(err);
+      })
+      .finally(() => {
+        if (whenUpdated) {
+          whenUpdated();
+        }
       });
   };
 };
