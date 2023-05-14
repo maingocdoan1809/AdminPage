@@ -1,20 +1,18 @@
 import SearchBar from "../../components/Navbar/Search/Search";
 import ToggleLoginBtn from "./ToggleLoginBtn";
 import styles from "./navbar.module.css";
-import { redirect, useNavigate, useParams } from 'react-router-dom';
+import { redirect, useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import React from "react";
 
-
 const Navbar: React.FC = () => {
-
   const [showCheckout, setShowCheckout] = useState(false);
   const navigate = useNavigate();
 
   const handleCheckoutClick = () => {
     setShowCheckout(true);
-    navigate('/checkout');
-  }
+    navigate("/checkout");
+  };
 
   return (
     <nav
@@ -84,7 +82,11 @@ const Navbar: React.FC = () => {
               <li className="nav-item">
                 <ul className="navbar-nav">
                   <li className="nav-item">
-                  <SearchBar onSearch={(query, color, minPrice, maxPrice) => console.log(query, color, minPrice, maxPrice)} />
+                    <SearchBar
+                      onSearch={(query, color, minPrice, maxPrice) =>
+                        console.log(query, color, minPrice, maxPrice)
+                      }
+                    />
                   </li>
                 </ul>
               </li>
@@ -92,11 +94,11 @@ const Navbar: React.FC = () => {
           </div>
         </div>
         <div className="d-flex justify-content-center align-items-center">
-          <a href="" className="w-50 h-50 me-3" onClick={handleCheckoutClick}>
+          <a href="" className="w-50 h-50 me-1" onClick={handleCheckoutClick}>
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              width="16"
-              height="16"
+              width="35px"
+              height="35px"
               fill="currentColor"
               className="bi bi-bag w-75 h-75"
               viewBox="0 0 16 16"
@@ -109,5 +111,5 @@ const Navbar: React.FC = () => {
       </div>
     </nav>
   );
-}
+};
 export default Navbar;

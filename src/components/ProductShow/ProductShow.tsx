@@ -1,6 +1,7 @@
 import style from "./productshow.module.css";
 import React, { useState } from "react";
 import { toMoney } from "../../utilities/utils";
+import { useNavigate } from "react-router";
 
 type ProductProps = {
   id: string;
@@ -13,6 +14,7 @@ type ProductProps = {
 
 const ProductShow = React.forwardRef<HTMLDivElement, ProductProps>(
   function ProductShow(props: ProductProps, ref) {
+    const redirect = useNavigate();
     const [cartItems, setCartItems] = useState<ProductProps[]>([]);
     const addToCartHandler = () => {
       setCartItems((prevCartItems: any) => [...prevCartItems, props]);
@@ -23,6 +25,13 @@ const ProductShow = React.forwardRef<HTMLDivElement, ProductProps>(
         <div
           ref={ref}
           className={`${style["card-hover"]} card position-positive h-100 mb-3`}
+          onClick={(e) => {
+            redirect("/product", {
+              state: {
+                id: props.id,
+              },
+            });
+          }}
         >
           <img src={props.imgUrl} className={`card-img-top ${style.img}`} />
           <div className="card-body">
@@ -34,7 +43,11 @@ const ProductShow = React.forwardRef<HTMLDivElement, ProductProps>(
               <small>
                 {toMoney(props.price)} <b>VND</b>
               </small>
-              <a href="" className="btn btn-outline-primary btn-sm" onClick={addToCartHandler}>
+              <a
+                href=""
+                className="btn btn-outline-primary btn-sm"
+                onClick={addToCartHandler}
+              >
                 <small>Add to cart</small>{" "}
                 <i className="fa-regular fa-plus"></i>
               </a>
@@ -47,4 +60,3 @@ const ProductShow = React.forwardRef<HTMLDivElement, ProductProps>(
 );
 
 export default ProductShow;
-

@@ -12,7 +12,7 @@ import AdminPage from "./pages/Admin/Admin";
 import SearchResults from "./pages/SearchPage/SearchPage";
 import { products } from "./components/Data/productsData";
 import Checkout from "./components/Checkout/Checkout";
-
+import ProductDetail from "./pages/ProductDetail/ProductDetail";
 
 function App() {
   return (
@@ -24,8 +24,13 @@ function App() {
           <Route path="/register" element={<Register />} />
           <Route path="/unauth" element={<Unauthenticated />} />
           <Route path="/admin" element={<AdminPage />} />
-          <Route path="/search" element={<SearchResults products={products} />}/>
-          <Route path="/checkout" element={<Checkout  />}/>
+          <Route
+            path="/search"
+            element={<SearchResults products={products} />}
+          />
+          <Route path="/checkout" element={<Checkout />} />
+          <Route path="/product" element={<ProductDetail />} />
+
           <Route path="/servererror" element={<ServerError />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/*" element={<Error />} />
