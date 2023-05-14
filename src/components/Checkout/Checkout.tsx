@@ -2,15 +2,16 @@ import Footer from "../Footer/Footer";
 import Navbar from "../Navbar/Navbar";
 import DeliveryInformation from "./DeliveryInformation/DeliveryInformation";
 import ShoppingCart from "./ShoppingCart/ShoppingCart";
+import styles from "./Checkout.module.css"
 
 function Checkout() {
     return (
         <>
         <Navbar />
-        <div className="container">
-            <div className="row g-5">
+        <div className={`container ${styles["checkout"]}`}>
+            <div className="row">
                 <ShoppingCart/>
-                <DeliveryInformation/>
+                <DeliveryInformation/>   
             </div>
         </div>
         <Footer/>
