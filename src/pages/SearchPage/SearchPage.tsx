@@ -1,22 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
+
 import Navbar from "../../components/Navbar/Navbar";
 import ProductShow from "../../components/ProductShow/ProductShow";
 import InfiniteScroll from "react-infinite-scroll-component";
 import LoadingView from "../../components/LoadingView/LoadingView";
-
-interface Product {
-  id: number;
-  name: string;
-  price: number;
-  color: string;
-  imgUrl: string;
-  view?: number;
-  sold?: number;
-}
+import styles from "./SearchPage.module.css";
+import { ProductProps } from "../../type/ProductProps"
 
 interface SearchPageProps {
-  products: Product[];
+  products: ProductProps[];
 }
 
 const SearchPage: React.FC<SearchPageProps> = ({ products }) => {
@@ -44,7 +37,7 @@ const SearchPage: React.FC<SearchPageProps> = ({ products }) => {
     return product.name.toLowerCase().includes(query.toLowerCase());
   });
 
-  const [items, setItems] = useState<Product[]>([]);
+  const [items, setItems] = useState<ProductProps[]>([]);
   const [hasMore, setHasMore] = useState<boolean>(true);
 
   useEffect(() => {
@@ -65,21 +58,24 @@ const SearchPage: React.FC<SearchPageProps> = ({ products }) => {
     }, 1000); // thời gian delay là 1 giây (1000 millisecond)
   };
   
-  
-  
-
   if (filteredProducts.length === 0) {
     return (
       <div>
         <Navbar />
+        <br />
         <h2>Không có sản phẩm nào</h2>
       </div>
     );
   }
 
+  function addToCart(props: ProductProps): void {
+    throw new Error("Function not implemented.");
+  }
+
   return (
     <div>
       <Navbar />
+      <br />
       <div className="container">
         <h2>Kết quả tìm kiếm cho: {query}</h2>
         <hr />
@@ -90,16 +86,17 @@ const SearchPage: React.FC<SearchPageProps> = ({ products }) => {
         loader={<LoadingView />}
         scrollThreshold={0.8}
       >
-        <div className="row">
+        <div className={`row ${styles["row-p"]}`}>
           {items.map((product) => (
             <div className="col-md-3 mb-4" key={product.id}>
               <ProductShow
-                id={product.id.toString()}
+                id={parseInt(product.id.toString())}
                 name={product.name}
                 price={product.price}
                 imgUrl={product.imgUrl}
                 view={product.view}
-                sold={product.sold}
+                sold={product.sold} color={""}
+                addToCart={addToCart}
               />
             </div>
           ))}

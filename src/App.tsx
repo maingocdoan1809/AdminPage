@@ -12,6 +12,7 @@ import AdminPage from "./pages/Admin/Admin";
 import SearchResults from "./pages/SearchPage/SearchPage";
 import { products } from "./components/Data/productsData";
 import Checkout from "./components/Checkout/Checkout";
+import Cart from "./components/Cart/Cart";
 
 
 function App() {

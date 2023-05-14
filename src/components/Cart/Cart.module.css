@@ -1,6 +1,6 @@
-.search-collapse {
+.cart-collapse {
     position: absolute;
-    width: 400px;
+    width: 100vw;
     right: 0;
     top: 60px;
 }
@@ -12,14 +12,4 @@
 .collapse-container a {
     user-select: none;
     cursor: pointer;
-}
-
-.search-btn {
-    cursor: pointer;
-    font-size: 1.1rem;
-    user-select: none;
-}
-
-.search-btn:hover {
-    color: black;
 }

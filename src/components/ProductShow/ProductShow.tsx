@@ -1,23 +1,15 @@
 import style from "./productshow.module.css";
 import React, { useState } from "react";
 import { toMoney } from "../../utilities/utils";
+import { ProductProps } from "../../type/ProductProps"
+import Cart from "../Cart/Cart";
 
-type ProductProps = {
-  id: string;
-  name: string;
-  price: number;
-  imgUrl: string;
-  view?: number;
-  sold?: number;
-};
+type ProductShowProps = {
+  onAddToCart: (product: ProductProps) => void;
+}
 
 const ProductShow = React.forwardRef<HTMLDivElement, ProductProps>(
-  function ProductShow(props: ProductProps, ref) {
-    const [cartItems, setCartItems] = useState<ProductProps[]>([]);
-    const addToCartHandler = () => {
-      setCartItems((prevCartItems: any) => [...prevCartItems, props]);
-      console.log("Thêm sản phẩm vào giỏ hàng:", props.name);
-    };
+  function ProductShow(props: ProductProps, ref) { 
     return (
       <>
         <div
@@ -32,12 +24,12 @@ const ProductShow = React.forwardRef<HTMLDivElement, ProductProps>(
               className={`d-flex justify-content-between align-items-center ${style["box-footer"]}`}
             >
               <small>
-                {toMoney(props.price)} <b>VND</b>
+                {toMoney(props.price)}
               </small>
-              <a href="" className="btn btn-outline-primary btn-sm" onClick={addToCartHandler}>
+              <button className="btn btn-outline-primary btn-sm">
                 <small>Add to cart</small>{" "}
                 <i className="fa-regular fa-plus"></i>
-              </a>
+              </button>
             </div>
           </div>
         </div>
