@@ -4,26 +4,50 @@ import Navbar from "../../components/Navbar/Navbar";
 import ProductShow from "../../components/ProductShow/ProductShow";
 import InfiniteScroll from "react-infinite-scroll-component";
 import LoadingView from "../../components/LoadingView/LoadingView";
-
-interface Product {
-  id: number;
-  name: string;
-  price: number;
-  color: string;
-  imgUrl: string;
-  view?: number;
-  sold?: number;
-}
-
+import { Product } from "../../utilities/utils";
+import p from "../../components/Data/productsData";
 interface SearchPageProps {
   products: Product[];
 }
 
-const SearchPage: React.FC<SearchPageProps> = ({ products }) => {
+const SearchPage = () => {
+  console.log(p);
+
   const location = useLocation();
   const params = new URLSearchParams(location.search);
   const query = params.get("q") || "";
   const selectedColors = params.get("colors")?.split(",") || [];
+
+  const [hasMore, setHasMore] = useState<boolean>(true);
+  const [pageNumber, setPagenumber] = useState(1);
+  const [products, setProducts] = useState(
+    p as {
+      id: number;
+      name: string;
+      price: number;
+      color: string;
+      imgUrl: string;
+    }[]
+  );
+  const [items, setItems] = useState<
+    {
+      id: number;
+      name: string;
+      price: number;
+      color: string;
+      imgUrl: string;
+    }[]
+  >([]);
+  useEffect(() => {
+    // tất cả các sản phẩm có trong db
+    // setProducts(p);
+    // fetch("/products")
+    //   .then((response) => response.json())
+    //   .then((data) => {
+    //     // sau khi loc xong
+    //     setProducts(data);
+    //   });
+  }, []);
   const minPrice = params.get("minPrice")
     ? Number(params.get("minPrice"))
     : undefined;
@@ -44,11 +68,18 @@ const SearchPage: React.FC<SearchPageProps> = ({ products }) => {
     return product.name.toLowerCase().includes(query.toLowerCase());
   });
 
-  const [items, setItems] = useState<Product[]>([]);
-  const [hasMore, setHasMore] = useState<boolean>(true);
-  const [pageNumber, setPagenumber] = useState(1);
   useEffect(() => {
-    setItems(filteredProducts.slice(0, 8));
+    // dua ra 8 san pham dau tien
+    const filtered = filteredProducts.slice(0, 8);
+    setItems(
+      filtered as {
+        id: number;
+        name: string;
+        price: number;
+        color: string;
+        imgUrl: string;
+      }[]
+    );
   }, [filteredProducts.length, filteredProducts[0].id]);
 
   const loadMore = () => {
@@ -70,6 +101,7 @@ const SearchPage: React.FC<SearchPageProps> = ({ products }) => {
       </div>
     );
   }
+  console.log("items: " + JSON.stringify(items));
 
   return (
     <div>
@@ -92,8 +124,6 @@ const SearchPage: React.FC<SearchPageProps> = ({ products }) => {
                   name={product.name}
                   price={product.price}
                   imgUrl={product.imgUrl}
-                  view={product.view}
-                  sold={product.sold}
                 />
               </div>
             ))}

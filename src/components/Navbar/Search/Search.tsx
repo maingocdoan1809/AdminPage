@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import styles from "./search.module.css";
 import { useNavigate } from "react-router";
-import { products } from "../../Data/productsData";
+import products from "../../Data/productsData";
 
 interface SearchBarProps {
   onSearch: (

@@ -16,7 +16,9 @@ function useInfiniteScroll(generator: () => Promise<ReactNode[]>) {
           setIsLoading(true);
           const response = await generator();
           setIsLoading(false);
-          setData([...data, ...response]);
+          if (response.length != 0) {
+            setData([...data, ...response]);
+          }
         }
       });
     },

@@ -11,7 +11,12 @@
   display: none;
 }
 
-
+@media screen and (min-width: 900px) {
+  .admin-dropdown {
+    bottom: 20px !important;
+    top: initial;
+  }
+}
 
 @media screen and (max-width: 900px) {
   .show-custom {
@@ -62,4 +67,5 @@
     align-items: center;
     justify-content: space-between;
   }
+
 }

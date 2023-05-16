@@ -1,43 +1,48 @@
 import SizeBox from "../SizeBox/SizeBox";
-import ColorBox from "../ColorBox/ColorBox";
+import ColorBox, { ColorBoxProps } from "../ColorBox/ColorBox";
 import { useState } from "react";
+import { Product } from "../../utilities/utils";
 
 export type SelectBoxProps = {
-  idproductinfo: string;
+  products: Product[];
 };
 
 export type SelectBoxState = {
+  selectedId: string | undefined;
   selectedColor: string | undefined;
   selectedSize: string | undefined;
   selectedQuantity: number;
 };
 
-function SelectBox({ idproductinfo }: SelectBoxProps) {
+function SelectBox({ products }: SelectBoxProps) {
   const [selectOptions, setSelectOptions] = useState({
     selectedColor: undefined,
     selectedQuantity: 0,
     selectedSize: undefined,
+    selectedId: undefined,
   } as SelectBoxState);
-
   return (
     <>
       <ColorBox
-        colorcodes={[
-          {
-            code: "#F266AB",
-            name: "Pink",
-            quantity: 0,
-          },
-          {
-            code: "#C88EA7",
-            name: "Faded Pink",
-            quantity: 10,
-          },
-        ]}
+        colorcodes={products.map((p) => {
+          return {
+            code: p.colorcode,
+            name: p.colorname,
+            quantity: p.quantity,
+          };
+        })}
         selectColor={(color) => {
           setSelectOptions({
             ...selectOptions,
             selectedColor: color,
+            selectedId: products.find((p) => {
+              if (
+                p.colorcode == color &&
+                p.size == selectOptions.selectedSize
+              ) {
+                return p;
+              }
+            })?.id,
           });
         }}
       />
@@ -46,18 +51,22 @@ function SelectBox({ idproductinfo }: SelectBoxProps) {
           setSelectOptions({
             ...selectOptions,
             selectedSize: size,
+            selectedId: products.find((p) => {
+              if (
+                p.colorcode == selectOptions.selectedColor &&
+                p.size == size
+              ) {
+                return p;
+              }
+            })?.id,
           });
         }}
-        sizes={[
-          {
-            name: "XL",
-            quantity: 0,
-          },
-          {
-            name: "M",
-            quantity: 20,
-          },
-        ]}
+        sizes={products.map((p) => {
+          return {
+            name: p.size,
+            quantity: p.quantity,
+          };
+        })}
       />
       <div className="mt-3">
         <h5>Quantity </h5>
@@ -83,9 +92,7 @@ function SelectBox({ idproductinfo }: SelectBoxProps) {
             : true
         }
         onClick={(e) => {
-          console.log(
-            "ID: " + idproductinfo + " - " + JSON.stringify(selectOptions)
-          );
+          console.log(JSON.stringify(selectOptions));
         }}
       >
         Add to your cart

@@ -9,7 +9,8 @@
   height: 250px;
   max-width: 250px;
   border-radius: 50%;
-  border: 5px solid rgb(202, 146, 128);
+  border: 3px solid #B799FF;
+  box-shadow: 0 0 3px #F266AB;
 }
 
 .link {

@@ -7,6 +7,7 @@ import sha256 from "crypto-js/sha256";
 import { checkUserIdentity } from "../../utilities/utils";
 import LoadingView from "../LoadingView/LoadingView";
 import PasswordInput from "../ValidInput/PasswordInput";
+
 export function LoginForm() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -19,7 +20,13 @@ export function LoginForm() {
       .then((data) => {
         if (data.isAuthenticated) {
           localStorage.setItem("user", JSON.stringify(data));
-          navigate("/");
+          console.log(data.priority);
+
+          if (data.priority == 1) {
+            navigate("/admin");
+          } else {
+            navigate("/");
+          }
         } else {
           if (data.err) {
             setServerError(true);
@@ -84,9 +91,7 @@ export function LoginForm() {
               onClick={onLogging(
                 username,
                 password,
-                () => {
-                  navigate("/");
-                },
+                navigate,
                 setIsLogginFail,
                 setServerError
               )}
@@ -111,7 +116,7 @@ export function LoginForm() {
 function onLogging(
   username: string,
   password: string,
-  navigae: () => void,
+  navigae: (to: string) => void,
   loginFail: (param: boolean) => void,
   serverError: (param: boolean) => void
 ) {
@@ -128,7 +133,11 @@ function onLogging(
       .then((data) => {
         if (data.isAuthenticated == true) {
           localStorage.setItem("user", JSON.stringify(data));
-          navigae();
+          if (data.priority == 1) {
+            navigae("/admin");
+          } else {
+            navigae("/");
+          }
         } else if (data.err) {
           serverError(true);
         } else {

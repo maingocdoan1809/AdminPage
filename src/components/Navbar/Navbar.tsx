@@ -61,21 +61,41 @@ const Navbar: React.FC = () => {
                       aria-current="page"
                       onClick={(e) => {
                         e.stopPropagation();
-                        redirect("/");
+                        navigate("/");
                       }}
                     >
                       All
                     </div>
                   </li>
                   <li className="nav-item">
-                    <a className="nav-link" href="#">
+                    <div
+                      className="nav-link"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigate("/", {
+                          state: {
+                            category: "1",
+                          },
+                        });
+                      }}
+                    >
                       Men
-                    </a>
+                    </div>
                   </li>
                   <li className="nav-item">
-                    <a className="nav-link" href="#">
+                    <div
+                      className="nav-link"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigate("/", {
+                          state: {
+                            category: "2",
+                          },
+                        });
+                      }}
+                    >
                       Woman
-                    </a>
+                    </div>
                   </li>
                 </ul>
               </li>

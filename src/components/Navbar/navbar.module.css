@@ -1,6 +1,6 @@
 #dropdown-menu {
-  left: -250% !important;
-  top: 150% !important;
+  left: -250%;
+  top: 150%;
 }
 
 #dropdown-menu div {

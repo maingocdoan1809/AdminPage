@@ -34,9 +34,8 @@ const ProductShow = React.forwardRef<HTMLDivElement, ProductProps>(
           }}
         >
           <img src={props.imgUrl} className={`card-img-top ${style.img}`} />
-          <div className="card-body">
-            <h6 className="card-title">{props.name}</h6>
-
+          <div className="card-body d-flex justify-content-between flex-column">
+            <h6 className={`card-title ${style.title}`}>{props.name}</h6>
             <div
               className={`d-flex justify-content-between align-items-center ${style["box-footer"]}`}
             >
