@@ -301,7 +301,7 @@ const changeBasicInfor = function (
     }
     const user = JSON.parse(localStorage.getItem("user") || "{}");
     fetch(
-      `http://localhost:3000/users/edit/${userInfo["username"]}?token=${user.token}`,
+      `${BACKEND_URL}/users/edit/${userInfo["username"]}?token=${user.token}`,
       {
         method: "PUT",
         body: formData,
