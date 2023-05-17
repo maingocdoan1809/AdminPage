@@ -74,3 +74,9 @@ export async function checkUserIdentity() {
     resolve({ isAuthenticated: false });
   });
 }
+
+function matchUnicode(strToMatch: string, searchStr: string) {
+  let regex = "";
+  for (let x in searchStr.split("")) {
+  }
+}

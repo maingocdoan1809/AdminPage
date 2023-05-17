@@ -21,6 +21,15 @@ function SelectBox({ products }: SelectBoxProps) {
     selectedSize: undefined,
     selectedId: undefined,
   } as SelectBoxState);
+  // remove duplicate:
+
+  const colorSet = new Set();
+  const sizeSet = new Set();
+  products.forEach((product) => {
+    colorSet.add(product.colorcode);
+    sizeSet.add(product.size);
+  });
+
   return (
     <>
       <ColorBox

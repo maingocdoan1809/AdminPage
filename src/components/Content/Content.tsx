@@ -1,7 +1,14 @@
 import style from "./content.module.css";
 
 import ProductShow from "../ProductShow/ProductShow";
-import { ReactElement, ReactNode, useEffect, useRef, useState } from "react";
+import {
+  ReactElement,
+  ReactNode,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import useInfiniteScroll from "../../utilities/infinitescroll";
 import { BACKEND_URL } from "../../env";
 import { Product } from "../../utilities/utils";
@@ -11,10 +18,10 @@ type ContentProps = {
 };
 
 function Content({ category }: ContentProps) {
-  const [page, setPage] = useState(0);
-  const [products, lastItem, isLoading] = useInfiniteScroll(() => {
+  const pageRef = useRef(0);
+  const generator = () => {
     return new Promise<ReactNode[]>((resolve) => {
-      fetch(BACKEND_URL + `/products?page=${page}`)
+      fetch(BACKEND_URL + `/products?page=${pageRef.current}`)
         .then((response) => response.json())
         .then((productsJson: Product[]) => {
           const a: ReactNode[] = [];
@@ -33,10 +40,9 @@ function Content({ category }: ContentProps) {
           resolve(a);
         });
     });
-  });
-  useEffect(() => {
-    setPage((page) => page + 1);
-  }, [products]);
+  };
+  const [products, lastItem, isLoading] = useInfiniteScroll(generator);
+  console.log(pageRef.current);
 
   return (
     <>

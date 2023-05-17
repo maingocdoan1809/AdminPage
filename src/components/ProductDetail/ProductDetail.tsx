@@ -1,15 +1,15 @@
 import { useLocation } from "react-router";
-import Navbar from "../../components/Navbar/Navbar";
-import Carousel from "../../components/Carousel/Carousel";
+import Navbar from "../Navbar/Navbar";
+import Carousel from "../Carousel/Carousel";
 import style from "./productdetail.module.css";
 import { Product, toMoney } from "../../utilities/utils";
-import ColorBox from "../../components/ColorBox/ColorBox";
-import SelectBox from "../../components/SelectBox/SelectBox";
-import CommentBox from "../../components/CommentBox/CommentBox";
-import Footer from "../../components/Footer/Footer";
+import ColorBox from "../ColorBox/ColorBox";
+import SelectBox from "../SelectBox/SelectBox";
+import CommentBox from "../CommentBox/CommentBox";
+import Footer from "../Footer/Footer";
 import { useEffect, useState } from "react";
 import { BACKEND_URL } from "../../env";
-import LoadingView from "../../components/LoadingView/LoadingView";
+import LoadingView from "../LoadingView/LoadingView";
 import Layout from "../../layouts/CustomerLayout/Layout";
 
 function ProductDetail() {
@@ -23,7 +23,6 @@ function ProductDetail() {
         setProducts(data);
       });
   }, []);
-  console.log(products.map((e) => e));
 
   return products.length == 0 ? (
     <LoadingView />

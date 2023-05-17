@@ -6,7 +6,7 @@ function Layout({ children }: LayoutProps) {
   return (
     <div className={`${style.admin}`}>
       <Navbar />
-      <div className={`${style.main} flex-grow-1`}>{children}</div>
+      <div className={`${style.main} d-flex flex-grow-1`}>{children}</div>
     </div>
   );
 }
