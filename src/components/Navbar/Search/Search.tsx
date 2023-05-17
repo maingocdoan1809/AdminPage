@@ -1,184 +1,384 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import styles from "./search.module.css";
 import { useNavigate } from "react-router";
-import { products } from "../../Data/productsData";
 
-interface SearchBarProps {
-  onSearch: (
-    query: string,
-    color?: string[],
-    minPrice?: number,
-    maxPrice?: number
-  ) => void;
+
+interface Product {
+  id: string;
+  name: string;
+  size: string;
+  price: number;
+  color: string;
+  hexCode: string;
+  imgUrl: string;
+  view?: string;
+
 }
 
-const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
-  const [query, setQuery] = useState("");
-  const [colors, setColors] = useState<string[]>([]);
-  const [minPrice, setMinPrice] = useState<number | undefined>(undefined);
-  const [maxPrice, setMaxPrice] = useState<number | undefined>(undefined);
+
+const SearchBar: React.FC = () => {
   const navigate = useNavigate();
+  const [products, setProducts] = useState<Product[]>([]);
+  const [searchKeyword, setSearchKeyword] = useState("");
+  const [showSearch, setShowSearch] = useState<boolean>(false);
+  const [similarProducts, setSimilarProducts] = useState<Product[]>([]);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const similarName = searchKeyword?.split(' ') ?? [];
+  const searchColor = similarName[similarName.length - 1];
+
+  useEffect(() => {
+    const apiproduct = [
+      {
+        id: "1",
+        name: "T-Shirt",
+        size: "M",
+        price: 100000,
+        color: "đỏ",
+        hexCode: "#FF0000",
+        imgUrl: "http://cdn.bpsofts.com/khaitam.top/1280x720/untitled-1-20180824123043.jpg"
+      },
+      {
+        id: "2",
+        name: "T-Shirt",
+        size: "M",
+        price: 150000,
+        color: "đỏ nâu",
+        hexCode: "#0000FF",
+        imgUrl: "http://cdn.bpsofts.com/khaitam.top/1280x720/untitled-1-20180824123043.jpg"
+      },
+      {
+        id: "3",
+        name: "T-Shirt",
+        size: "L",
+        price: 200000,
+        color: "green",
+        hexCode: "#00FF00",
+        imgUrl: "http://cdn.bpsofts.com/khaitam.top/1280x720/untitled-1-20180824123043.jpg"
+      },
+      {
+        id: "4",
+        name: "T-Shirt",
+        size: "L",
+        price: 250000,
+        color: "yellow",
+        hexCode: "#FFFF00",
+        imgUrl: "http://cdn.bpsofts.com/khaitam.top/1280x720/untitled-1-20180824123043.jpg"
+      },
+      {
+        id: "5",
+        name: "T-Shirt",
+        size: "L",
+        price: 300000,
+        color: "orange",
+        hexCode: "#FFA500",
+        imgUrl: "http://cdn.bpsofts.com/khaitam.top/1280x720/untitled-1-20180824123043.jpg"
+      },
+      {
+        id: "6",
+        name: "A-Shirt",
+        size: "XL",
+        price: 350000,
+        color: "purple",
+        hexCode: "#800080",
+        imgUrl: "http://cdn.bpsofts.com/khaitam.top/1280x720/untitled-1-20180824123043.jpg"
+      },
+      {
+        id: "7",
+        name: "A-Shirt",
+        size: "L",
+        price: 400000,
+        color: "pink",
+        hexCode: "#FFC0CB",
+        imgUrl: "http://cdn.bpsofts.com/khaitam.top/1280x720/untitled-1-20180824123043.jpg"
+      },
+      {
+        id: "8",
+        name: "A-Shirt",
+        size: "XL",
+        price: 450000,
+        color: "black",
+        hexCode: "#000000",
+        imgUrl: "http://cdn.bpsofts.com/khaitam.top/1280x720/untitled-1-20180824123043.jpg"
+      },
+      {
+        id: "9",
+        name: "A-Shirt",
+        size: "XL",
+        price: 500000,
+        color: "white",
+        hexCode: "#FFFFFF",
+        imgUrl: "http://cdn.bpsofts.com/khaitam.top/1280x720/untitled-1-20180824123043.jpg"
+      },
+      {
+        id: "10",
+        name: "X-Shirt",
+        size: "L",
+        price: 550000,
+        color: "gray",
+        hexCode: "#808080",
+        imgUrl: "http://cdn.bpsofts.com/khaitam.top/1280x720/untitled-1-20180824123043.jpg"
+      },
+      {
+        id: "11",
+        name: "X-Shirt",
+        size: "M",
+        price: 600000,
+        color: "brown",
+        hexCode: "#A52A2A",
+        imgUrl: "http://cdn.bpsofts.com/khaitam.top/1280x720/untitled-1-20180824123043.jpg"
+      },
+      {
+        id: "12",
+        name: "X-Shirt",
+        size: "XL",
+        price: 650000,
+        color: "navy",
+        hexCode: "#000080",
+        imgUrl: "http://cdn.bpsofts.com/khaitam.top/1280x720/untitled-1-20180824123043.jpg"
+      },
+      {
+        id: "13",
+        name: "X-Shirt",
+        size: "L",
+        price: 700000,
+        color: "maroon",
+        hexCode: "#800000",
+        imgUrl: "http://cdn.bpsofts.com/khaitam.top/1280x720/untitled-1-20180824123043.jpg"
+      },
+      {
+        id: "14",
+        name: "X-Shirt",
+        size: "L",
+        price: 750000,
+        color: "olive",
+        hexCode: "#808000",
+        imgUrl: "http://cdn.bpsofts.com/khaitam.top/1280x720/untitled-1-20180824123043.jpg"
+      },
+      {
+        id: "15",
+        name: "X-Shirt",
+        size: "S",
+        price: 100000,
+        color: "red",
+        hexCode: "#FF0000",
+        imgUrl: "http://cdn.bpsofts.com/khaitam.top/1280x720/untitled-1-20180824123043.jpg"
+      },
+      {
+        id: "16",
+        name: "Y-Shirt",
+        size: "S",
+        price: 150000,
+        color: "blue",
+        hexCode: "#0000FF",
+        imgUrl: "http://cdn.bpsofts.com/khaitam.top/1280x720/untitled-1-20180824123043.jpg"
+      },
+      {
+        id: "17",
+        name: "D-Shirt",
+        size: "S",
+        price: 200000,
+        color: "green",
+        hexCode: "#00FF00",
+        imgUrl: "http://cdn.bpsofts.com/khaitam.top/1280x720/untitled-1-20180824123043.jpg"
+      },
+      {
+        id: "18",
+        name: "Y-Shirt",
+        size: "S",
+        price: 75000,
+        color: "red",
+        hexCode: "#FF0000",
+        imgUrl: "http://cdn.bpsofts.com/khaitam.top/1280x720/untitled-1-20180824123043.jpg"
+      },
+      {
+        id: "19",
+        name: "Y-Shirt",
+        size: "L",
+        price: 120000,
+        color: "red",
+        hexCode: "#FF0000",
+        imgUrl: "http://cdn.bpsofts.com/khaitam.top/1280x720/untitled-1-20180824123043.jpg"
+      },
+      {
+        id: "20",
+        name: "Y-Shirt",
+        size: "L",
+        price: 175000,
+        color: "red",
+        hexCode: "#FF0000",
+        imgUrl: "http://cdn.bpsofts.com/khaitam.top/1280x720/untitled-1-20180824123043.jpg"
+      },
+      {
+        id: "21",
+        name: "Y-Shirt",
+        size: "XL",
+        price: 230000,
+        color: "red",
+        hexCode: "#FF0000",
+        imgUrl: "http://cdn.bpsofts.com/khaitam.top/1280x720/untitled-1-20180824123043.jpg"
+      },
+      {
+        id: "22",
+        name: "Z-Shirt",
+        size: "S",
+        price: 90000,
+        color: "blue",
+        hexCode: "#0000FF",
+        imgUrl: "http://cdn.bpsofts.com/khaitam.top/1280x720/untitled-1-20180824123043.jpg"
+      },
+      {
+        id: "23",
+        name: "Z-Shirt",
+        size: "M",
+        price: 145000,
+        color: "blue",
+        hexCode: "#0000FF",
+        imgUrl: "http://cdn.bpsofts.com/khaitam.top/1280x720/untitled-1-20180824123043.jpg"
+      },
+      {
+        id: "24",
+        name: "Z-Shirt",
+        size: "L",
+        price: 200000,
+        color: "blue",
+        hexCode: "#0000FF",
+        imgUrl: "http://cdn.bpsofts.com/khaitam.top/1280x720/untitled-1-20180824123043.jpg"
+      },
+      {
+        id: "25",
+        name: "Z-Shirt",
+        size: "XL",
+        price: 255000,
+        color: "blue",
+        hexCode: "#0000FF",
+        imgUrl: "http://cdn.bpsofts.com/khaitam.top/1280x720/untitled-1-20180824123043.jpg"
+      },
+      {
+        id: "26",
+        name: "Green T-Shirt",
+        size: "S",
+        price: 80000,
+        color: "green",
+        hexCode: "#00FF00",
+        imgUrl: "http://cdn.bpsofts.com/khaitam.top/1280x720/untitled-1-20180824123043.jpg"
+      },
+      {
+        id: "27",
+        name: "Z-Shirt",
+        size: "M",
+        price: 130000,
+        color: "green",
+        hexCode: "#00FF00",
+        imgUrl: "http://cdn.bpsofts.com/khaitam.top/1280x720/untitled-1-20180824123043.jpg"
+      },
+      {
+        id: "28",
+        name: "Z-Shirt",
+        size: "L",
+        price: 180000,
+        color: "green",
+        hexCode: "#00FF00",
+        imgUrl: "http://cdn.bpsofts.com/khaitam.top/1280x720/untitled-1-20180824123043.jpg"
+      },
+      {
+        id: "29",
+        name: "Z-Shirt",
+        size: "XL",
+        price: 230000,
+        color: "green",
+        hexCode: "#00FF00",
+        imgUrl: "http://cdn.bpsofts.com/khaitam.top/1280x720/untitled-1-20180824123043.jpg"
+      },
+      {
+        id: "30",
+        name: "Z-Shirt",
+        size: "S",
+        price: 95000,
+        color: "yellow",
+        hexCode: "#FFFF00",
+        imgUrl: "http://cdn.bpsofts.com/khaitam.top/1280x720/untitled-1-20180824123043.jpg"
+      },
+    ];
+    setProducts(apiproduct);
+  }, [])
+
+  useEffect(() => {
+    const fetchSimilarProducts = async () => {
+      // Perform the search logic here based on the provided keyword
+      const filteredProducts = products.filter((product) =>
+        product.name.toLowerCase().includes(searchKeyword.toLowerCase())
+      );
+      const limitedProduct = filteredProducts.slice(0, 4);
+      setSimilarProducts(limitedProduct);
+    };
+    fetchSimilarProducts();
+  }, [searchKeyword])
+
+
 
   const handleSearch = () => {
-    const params = new URLSearchParams();
-    params.set("q", query);
-
-    // Chuyển đổi mảng products thành mảng colors
-    const selectedColors = colors.filter((color) =>
-      products.some((product) => product.color === color)
-    );
-    if (selectedColors.length > 0) {
-      params.set("colors", selectedColors.join(","));
-    }
-
-    if (minPrice !== undefined && maxPrice !== undefined) {
-      params.set("minPrice", String(minPrice));
-      params.set("maxPrice", String(maxPrice));
-    }
-
-    navigate(`/search?${params.toString()}`);
-    onSearch(query, selectedColors, minPrice, maxPrice);
+    setShowSearch(false);
+    navigate(`/search?name=${encodeURIComponent(searchKeyword)}`);
   };
+
+  const handleKeyDown = (event: { key: string; }) => {
+    if (event.key === "Enter") {
+      setShowSearch(false);
+      handleSearch();
+    }
+  };
+  function handleSearchToggle() {
+    setShowSearch(!showSearch);
+    inputRef.current?.focus();
+  }
+
   return (
     <>
-      <div className={`nav-link ${styles["collapse-container"]}`}>
+      <div className={`${styles["search-container-wrapper"]}`}>
         <div
-          data-bs-toggle="collapse"
-          data-bs-target="#search-collapse"
-          aria-expanded="false"
-          aria-controls="search-collapse"
-          className={`${styles["search-btn"]}`}
+          className={`${styles["search-container"]} ${showSearch ? styles["search-container-active"] : ""}`}
         >
-          Search
+          <input
+            ref={inputRef}
+            className={`${styles["input-search"]}`}
+            type="search"
+            placeholder="Search..."
+            value={searchKeyword}
+            onChange={(e) => setSearchKeyword(e.target.value)}
+            onKeyDown={handleKeyDown}
+          />
+          <a className={`${styles["btn-search"]}`}
+            onClick={handleSearch}
+          >
+            <i className={`fa-solid fa-magnifying-glass fa-lg ${styles["fa-magnifying-glass"]}`} style={{ color: "#646cff" }}></i>
+          </a>
+          <a className={`${styles["btn-close"]}`}
+            onClick={handleSearch}
+          >
+            <i className={`fa-solid fa-xmark fa-lg ${styles["fa-xmark"]}`} style={{ color: "#777777" }}></i>
+          </a>
         </div>
-        <div className={`${styles["search-collapse"]} search-box`}>
-          <div className="collapse" id="search-collapse">
-            <div className="card card-body">
-              <div className="d-flex justify-content-end flex-column">
-                <input
-                  type="search"
-                  className="form-control mb-3"
-                  placeholder="Search..."
-                  value={query}
-                  onChange={(e) => setQuery(e.target.value)}
-                />
-                <div className="mb-3">
-                  <label htmlFor="range">Price:</label>
-                  <div className="d-flex gap-3 justify-content-center align-items-center">
-                    <label htmlFor="minPrice">Min price:</label>
-                    <select
-                      id="minPrice"
-                      value={minPrice !== undefined ? minPrice : ""}
-                      onChange={(e) =>
-                        setMinPrice(
-                          e.target.value !== ""
-                            ? Number(e.target.value)
-                            : undefined
-                        )
-                      }
-                    >
-                      <option value="">Any</option>
-                      <option value="10">10</option>
-                      <option value="20">20</option>
-                      <option value="30">30</option>
-                    </select>
-                    <label htmlFor="maxPrice">Max price:</label>
-                    <select
-                      id="maxPrice"
-                      value={maxPrice !== undefined ? maxPrice : ""}
-                      onChange={(e) =>
-                        setMaxPrice(
-                          e.target.value !== ""
-                            ? Number(e.target.value)
-                            : undefined
-                        )
-                      }
-                    >
-                      <option value="">Any</option>
-                      <option value="50">50</option>
-                      <option value="100">100</option>
-                      <option value="200">200</option>
-                      <option value="500">500</option>
-                    </select>
-                  </div>
-                </div>
-                {/* Color */}
-                <div className="d-flex mb-3 justify-content-between align-items-center">
-                  <label htmlFor="color">Color</label>
-                  <div
-                    className="btn-group"
-                    role="group"
-                    aria-label="Basic checkbox toggle button group"
-                  >
-                    <input
-                      type="checkbox"
-                      className="btn-check"
-                      id="btncheck1"
-                      autoComplete="off"
-                      checked={colors.includes("red")}
-                      onChange={(e) => {
-                        if (e.target.checked) {
-                          setColors([...colors, "red"]);
-                        } else {
-                          setColors(colors.filter((c) => c !== "red"));
-                        }
-                      }}
-                    />
-                    <label
-                      className="btn btn-outline-primary"
-                      htmlFor="btncheck1"
-                    >
-                      Red
-                    </label>
+        <a className={`${styles["btn-search-2"]}`}
+          onClick={handleSearchToggle}
+          style={{ display: showSearch ? "none" : "flex" }}
+        >
+          <i className="fa-solid fa-magnifying-glass fa-lg" style={{ color: "#646cff" }}></i>
+        </a>
 
-                    <input
-                      type="checkbox"
-                      className="btn-check"
-                      id="btncheck2"
-                      autoComplete="off"
-                      checked={colors.includes("green")}
-                      onChange={(e) => {
-                        if (e.target.checked) {
-                          setColors([...colors, "green"]);
-                        } else {
-                          setColors(colors.filter((c) => c !== "green"));
-                        }
-                      }}
-                    />
-                    <label
-                      className="btn btn-outline-primary"
-                      htmlFor="btncheck2"
-                    >
-                      Green
-                    </label>
 
-                    <input
-                      type="checkbox"
-                      className="btn-check"
-                      id="btncheck3"
-                      autoComplete="off"
-                      checked={colors.includes("blue")}
-                      onChange={(e) => {
-                        if (e.target.checked) {
-                          setColors([...colors, "blue"]);
-                        } else {
-                          setColors(colors.filter((c) => c !== "blue"));
-                        }
-                      }}
-                    />
-                    <label
-                      className="btn btn-outline-primary"
-                      htmlFor="btncheck3"
-                    >
-                      Blue
-                    </label>
-                  </div>
-                </div>
-                <button onClick={handleSearch}>Search</button>
-              </div>
-            </div>
+      </div>
+      <div className={`${styles["same-results"]}`}>
+        <br />
+        <h4>Có thể bạn đang tìm: </h4>
+        {similarProducts.map((product) => (
+          <div key={product.id} className={`${styles["similarProducts"]}`}>
+            <img src={product.imgUrl} alt={product.name} style={{ width: "40px", height: "40px" }} />
+            {product.name}
+            {product.color}
+            {/* product.description*/}
           </div>
-        </div>
+        ))}
       </div>
     </>
   );

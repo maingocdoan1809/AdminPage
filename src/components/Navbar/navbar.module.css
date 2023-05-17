@@ -1,5 +1,5 @@
 #dropdown-menu {
-  left: -250% !important;
+  left: -340% !important;
   top: 150% !important;
 }
 
@@ -16,9 +16,20 @@
 }
 
 .flex-end {
-  flex: 1;
+  /* flex: 1; */
   text-align: left;
   cursor: pointer;
   user-select: none;
   font-size: medium;
+}
+
+.search-bar {
+  margin-right: 20px;
+}
+.menu-2 {
+  margin-right: 10px;
+}
+
+.shopping-cart{
+  margin-right: 20px;
 }

@@ -1,10 +1,20 @@
+
 export type ProductProps = {
-    addToCart(props: ProductProps): void;
-    id: number;
-    name: string;
-    price: number;
+  id: number;
+  name: string;
+  price: number;
+  quantity: number;
+  variants: {
     color: string;
-    imgUrl: string;
-    view?: number;
-    sold?: number;
+    sizes: { size: string; quantity: number }[];
+  }[];
+  selectedVariant?: {
+    color: string;
+    size: string | { size: string; quantity: number }[];
+  };
+  imgUrl: string;
+  view?: number;
+  sold?: number;
+
+  onAddToCart?: (product: ProductProps) => void;
 };

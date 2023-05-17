@@ -32,7 +32,6 @@ function DeliveryInformation() {
         const response = await fetch(`https://vapi.vnappmob.com/api/province/ward/${districtId}`);
         const data = await response.json();
         setWards(data.results);
-        console.log(data);
     };
 
     useEffect(() => {
@@ -43,10 +42,9 @@ function DeliveryInformation() {
         };
         fetchProvinces();
     }, []);
-    console.log(provinces);
 
     return (
-        <div className="col-md-7 col-lg-8">
+        <div className="col-md-6 col-lg-7">
             <h4 className="mb-3">Thông tin vận chuyển</h4>
             <form className="needs-validation">
                 <div className="row g-3">

@@ -1,0 +1,73 @@
+.expand-btn,
+.expand-btn:hover {
+  color: black;
+  font-weight: 700;
+}
+
+.sticky-top {
+  position: sticky;
+  top: 100px;
+  align-self: flex-start;
+}
+
+.btn {
+  display: none;
+}
+
+.btn-close {
+  display: none;
+}
+
+@media screen and (max-width : 992px) {
+  .btn-close {
+    display: block;
+    position: absolute;
+    right: 20px;
+    top: 10px;
+    cursor: pointer;
+  }
+
+  .btn {
+    display: flex;
+    border-radius: 50%;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    width: 40px;
+    height: 40px;
+    right: 30px;
+    background-color: #FFD95A;
+    bottom: 30px;
+    z-index: 5;
+    color: #100720;
+  }
+
+  .show {
+    top: 55px !important;
+  }
+
+  .sticky-top {
+    position: fixed;
+    background-color: white;
+    padding: 40px 30px !important;
+    left: 0px;
+    top: 100%;
+    height: 100%;
+    border-radius: 10px;
+    z-index: 10;
+    overflow-y: scroll;
+    transition: all 0.3s ease-in-out;
+  }
+
+  .sticky-top::-webkit-scrollbar {
+    display: none;
+  }
+
+
+}
+
+@media screen and (max-width: 576px) {
+  .sticky-top {
+    padding: 10px 30px !important;
+  }
+}
