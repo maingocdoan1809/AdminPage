@@ -1,6 +1,6 @@
 import style from "./content.module.css";
 
-import ProductShow from "../ProductShow/ProductShow";
+import ProductShow from "../ProductCard/ProductCard";
 import {
   ReactElement,
   ReactNode,

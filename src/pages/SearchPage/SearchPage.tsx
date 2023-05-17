@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import Navbar from "../../components/Navbar/Navbar";
-import ProductShow from "../../components/ProductShow/ProductShow";
+import ProductShow from "../../components/ProductCard/ProductCard";
 import InfiniteScroll from "react-infinite-scroll-component";
 import LoadingView from "../../components/LoadingView/LoadingView";
 import { Product } from "../../utilities/utils";

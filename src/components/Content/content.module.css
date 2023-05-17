@@ -7,16 +7,23 @@
   padding: 0 min(10%, 300px);
 }
 
-@media screen and (max-width: 768px) {
+@media screen and (max-width: 990px) {
   .content {
     grid-template-columns: 1fr 1fr 1fr;
     padding: 0 5%;
   }
 }
 
+@media screen and (max-width: 768px) {
+  .content {
+    grid-template-columns: 1fr 1fr;
+    padding: 0 5%;
+  }
+}
+
 @media screen and (max-width: 576px) {
   .content {
-    grid-template-columns: 1fr 1fr !important;
+    grid-template-columns: 1fr !important;
     padding: 10px;
   }
 }
