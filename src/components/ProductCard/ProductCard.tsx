@@ -24,7 +24,7 @@ const ProductShow = React.forwardRef<HTMLDivElement, ProductProps>(
       <>
         <div
           ref={ref}
-          className={`${style["card-hover"]} card position-positive h-100 mb-3`}
+          className={`${style["card-hover"]} card position-positive mb-3`}
           onClick={(e) => {
             redirect("/product", {
               state: {

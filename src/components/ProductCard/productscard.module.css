@@ -23,19 +23,15 @@
   justify-content: end;
 }
 
-
-
 @media screen and (max-width: 790px) {
   .box-footer {
     flex-direction: column !important;
   }
 
-
-  .box-footer>* {
+  .box-footer > * {
     width: 100%;
     margin-top: 5px;
   }
-
 }
 
 @media screen and (max-width: 576px) {
@@ -45,6 +41,7 @@
 
   .img {
     max-width: 50%;
+    object-fit: cover;
   }
 
   .body-end {
@@ -56,5 +53,9 @@
   .wrapper {
     display: flex;
     flex-direction: column;
+  }
+  .img {
+    border-top-right-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
   }
 }
