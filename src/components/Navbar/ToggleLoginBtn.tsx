@@ -42,7 +42,7 @@ function ToggleLoginBtn({
               height={"35px"}
               src={avtUrl}
               alt="Avatar"
-              className="rounded-circle"
+              className={`rounded-circle ${styles["img"]}`}
             />
           ) : (
             <svg

@@ -58,7 +58,7 @@ function Profile() {
         <div className={`container mt-5 d-flex ${style.container}`}>
           <div className="col-lg-6 col-md-12 d-flex justify-content-center align-items-center">
             <div
-              className="col
+              className="col overflow-hidden
                 position-relative d-flex justify-content-center align-items-center flex-column"
             >
               <img
