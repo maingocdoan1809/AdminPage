@@ -8,7 +8,7 @@ export type SelectBoxProps = {
 };
 
 export type SelectBoxState = {
-  selectedId: string | undefined;
+  selectedId: Product | undefined;
   selectedColor: string | undefined;
   selectedSize: string | undefined;
   selectedQuantity: number;
@@ -23,35 +23,57 @@ function SelectBox({ products }: SelectBoxProps) {
   } as SelectBoxState);
   // remove duplicate:
 
-  const colorSet = new Set();
-  const sizeSet = new Set();
-  products.forEach((product) => {
-    colorSet.add(product.colorcode);
-    sizeSet.add(product.size);
+  const colorsAndSizes = products.flatMap((p) => {
+    return [[p.colorcode, p.colorname, p.size, p.quantity]];
   });
+
+  const colors = colorsAndSizes.map((p) => {
+    return {
+      code: p[0],
+      name: p[1],
+    };
+  });
+  const sizes = colorsAndSizes.map((p) => {
+    return p[2];
+  });
+
+  const x: { code: string | number; name: string | number }[] = [];
+  colors.forEach((c) => {
+    for (let i of x) {
+      if (JSON.stringify(c) == JSON.stringify(i)) {
+        return;
+      }
+    }
+    x.push(c);
+  });
+
+  const y = [...new Set(sizes)];
 
   return (
     <>
       <ColorBox
-        colorcodes={products.map((p) => {
+        colorcodes={x.map((p) => {
           return {
-            code: p.colorcode,
-            name: p.colorname,
-            quantity: p.quantity,
+            code: p.code as string,
+            name: p.name as string,
           };
         })}
+        availableQuantity={
+          selectOptions.selectedId ? selectOptions.selectedId.quantity : 1
+        }
         selectColor={(color) => {
           setSelectOptions({
             ...selectOptions,
             selectedColor: color,
-            selectedId: products.find((p) => {
-              if (
-                p.colorcode == color &&
-                p.size == selectOptions.selectedSize
-              ) {
-                return p;
-              }
-            })?.id,
+            selectedId:
+              products.find((p) => {
+                if (
+                  p.colorcode == color &&
+                  p.size == selectOptions.selectedSize
+                ) {
+                  return p;
+                }
+              }) || ({} as Product),
           });
         }}
       />
@@ -60,20 +82,23 @@ function SelectBox({ products }: SelectBoxProps) {
           setSelectOptions({
             ...selectOptions,
             selectedSize: size,
-            selectedId: products.find((p) => {
-              if (
-                p.colorcode == selectOptions.selectedColor &&
-                p.size == size
-              ) {
-                return p;
-              }
-            })?.id,
+            selectedId:
+              products.find((p) => {
+                if (
+                  p.colorcode == selectOptions.selectedColor &&
+                  p.size == size
+                ) {
+                  return p;
+                }
+              }) || ({} as Product),
           });
         }}
-        sizes={products.map((p) => {
+        availableQuantity={
+          selectOptions.selectedId ? selectOptions.selectedId.quantity : 1
+        }
+        sizes={y.map((p) => {
           return {
-            name: p.size,
-            quantity: p.quantity,
+            name: p + "",
           };
         })}
       />
@@ -81,11 +106,10 @@ function SelectBox({ products }: SelectBoxProps) {
         <h5>Quantity </h5>
         <input
           type="number"
-          value={selectOptions.selectedQuantity}
           onChange={(e) => {
             setSelectOptions({
               ...selectOptions,
-              selectedQuantity: Number.parseInt(e.target.value),
+              selectedQuantity: Number.parseInt(e.target.value || "0"),
             });
           }}
           className="form-control w-25"
@@ -96,7 +120,8 @@ function SelectBox({ products }: SelectBoxProps) {
         disabled={
           selectOptions.selectedColor &&
           selectOptions.selectedSize &&
-          selectOptions.selectedQuantity > 0
+          selectOptions.selectedQuantity > 0 &&
+          selectOptions.selectedId
             ? false
             : true
         }

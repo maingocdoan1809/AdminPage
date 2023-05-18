@@ -2,15 +2,15 @@ import { useState } from "react";
 import style from "./sizebox.module.css";
 type SizeState = {
   name: string;
-  quantity: number;
 };
 
 export type SizeBoxProps = {
   sizes: SizeState[];
   selectSize: (color: string) => void;
+  availableQuantity: number;
 };
 
-function SizeBox({ sizes, selectSize }: SizeBoxProps) {
+function SizeBox({ sizes, selectSize, availableQuantity }: SizeBoxProps) {
   const [selectedSize, setselectedSize] = useState<SizeState | undefined>(
     undefined
   );
@@ -25,7 +25,9 @@ function SizeBox({ sizes, selectSize }: SizeBoxProps) {
               className={`${
                 size.name == selectedSize?.name ? style.selected : ""
               } d-flex justify-content-center align-items-center ${
-                size.quantity > 0 ? "" : style.disabled
+                availableQuantity > 0 && size.name == selectedSize?.name
+                  ? ""
+                  : style.disabled
               }`}
               key={size.name}
               style={{
@@ -35,15 +37,14 @@ function SizeBox({ sizes, selectSize }: SizeBoxProps) {
                 height: "40px",
               }}
               onClick={(e) => {
-                if (size.quantity > 0) {
-                  e.stopPropagation();
-                  selectSize(size.name);
-                  setselectedSize(size);
-                }
+                // if (availableQuantity > 0) {
+                e.stopPropagation();
+                selectSize(size.name);
+                setselectedSize(size);
+                // }
               }}
             >
-              {" "}
-              {size.name}{" "}
+              {size.name}
             </div>
           );
         })}

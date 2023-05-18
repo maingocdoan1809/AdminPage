@@ -3,15 +3,19 @@ import style from "./colorbox.module.css";
 type ColorState = {
   code: string;
   name: string;
-  quantity: number;
 };
 
 export type ColorBoxProps = {
   colorcodes: ColorState[];
   selectColor: (color: string) => void;
+  availableQuantity: number;
 };
 
-function ColorBox({ colorcodes, selectColor }: ColorBoxProps) {
+function ColorBox({
+  colorcodes,
+  selectColor,
+  availableQuantity,
+}: ColorBoxProps) {
   const [selectedColor, setSelectedColor] = useState<ColorState | undefined>(
     undefined
   );
@@ -34,7 +38,11 @@ function ColorBox({ colorcodes, selectColor }: ColorBoxProps) {
             <div
               className={`${
                 colorcode.code == selectedColor?.code ? style.selected : ""
-              } ${colorcode.quantity > 0 ? "" : style.disabled}`}
+              } ${
+                availableQuantity > 0 && colorcode.code == selectedColor?.code
+                  ? ""
+                  : style.disabled
+              }`}
               key={colorcode.code}
               style={{
                 backgroundColor: colorcode.code,
@@ -42,11 +50,11 @@ function ColorBox({ colorcodes, selectColor }: ColorBoxProps) {
                 height: "60px",
               }}
               onClick={(e) => {
-                if (colorcode.quantity > 0) {
-                  e.stopPropagation();
-                  selectColor(colorcode.code);
-                  setSelectedColor(colorcode);
-                }
+                // if (availableQuantity > 0) {
+                e.stopPropagation();
+                selectColor(colorcode.code);
+                setSelectedColor(colorcode);
+                // }
               }}
             ></div>
           );
