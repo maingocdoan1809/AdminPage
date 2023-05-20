@@ -39,8 +39,9 @@ function Content({ category }: ContentProps) {
                 id={productsJson[i].id}
                 price={productsJson[i].price}
                 key={products.length + i}
-                ref={i == productsJson.length - 1 ? lastItem : null}
-              />
+                ref={i == productsJson.length - 1 ? lastItem : null} 
+                //color={""} 
+                />
             );
           }
           resolve(a);

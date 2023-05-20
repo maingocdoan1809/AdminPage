@@ -1,14 +1,6 @@
 import { useState } from "react";
 import { toMoney } from "../../../utilities/utils";
-
-type ProductProps = {
-    id: string;
-    name: string;
-    price: number;
-    imgUrl: string;
-    view?: number;
-    sold?: number;
-};
+import { ProductProps } from "../../../type/ProductProps"
 
 function ShoppingCart() {
     const [cartItems, setCartItems] = useState<ProductProps[]>([]);
@@ -28,24 +20,11 @@ function ShoppingCart() {
                         <span className="text-muted">{toMoney(item.price)}</span>
                     </li>
                 ))}
-                <li className="list-group-item d-flex justify-content-between bg-light">
-                    <div className="text-success">
-                        <h6 className="my-0">Promo code</h6>
-                        <small>EXAMPLECODE</small>
-                    </div>
-                    <span className="text-success">−$5</span>
-                </li>
                 <li className="list-group-item d-flex justify-content-between">
                     <span>Tổng cộng (VND)</span>
                     <strong>$20</strong>
                 </li>
             </ul>
-            <form className="card p-2">
-                <div className="input-group">
-                    <input type="text" className="form-control" placeholder="Promo code" />
-                    <button type="submit" className="btn btn-secondary">Redeem</button>
-                </div>
-            </form>
         </div>
     );
 }

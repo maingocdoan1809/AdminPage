@@ -11,6 +11,7 @@ export type LayoutProps = {
   children: React.ReactNode;
 };
 export interface Product {
+  uniqueKey?: string;
   id: string;
   infoid: string;
   size: string;

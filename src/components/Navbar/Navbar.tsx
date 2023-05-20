@@ -6,32 +6,33 @@ import { useEffect, useState } from "react";
 import React from "react";
 
 const Navbar: React.FC = () => {
+
   const [showCheckout, setShowCheckout] = useState(false);
   const navigate = useNavigate();
 
   const handleCheckoutClick = () => {
     setShowCheckout(true);
-    navigate("/checkout");
-  };
+    navigate('/checkout');
+  }
 
   return (
     <nav
       className={`${styles.nav} shadow-sm navbar bg-body-tertiary sticky-top navbar-expand-sm`}
     >
-      <div className="container-fluid">
-        {/* <a className="navbar-brand" href="#">
-          Menu
-        </a> */}
+      <div className="container-fluid d-flex justify-content-center align-items-center">
         <div className={`position-relative ${styles["flex-end"]}`}>
           <a
-            className="navbar-toggler navbar-brand"
+            className={`navbar-toggler navbar-brand ${styles["menu"]}`}
             data-bs-toggle="offcanvas"
             data-bs-target="#offcanvasNavbar"
             aria-controls="offcanvasNavbar"
             aria-label="Toggle navigation"
           >
-            Menu
+            <i className="fa-solid fa-bars"></i>
           </a>
+          <div className={`navbar-toggler navbar-brand ${styles["search-phone"]}`} >
+            <SearchBar />
+          </div>
         </div>
 
         <div
@@ -99,16 +100,8 @@ const Navbar: React.FC = () => {
                   </li>
                 </ul>
               </li>
-              <li className="nav-item">
-                <ul className="navbar-nav">
-                  <li className="nav-item">
-                    <SearchBar
-                      onSearch={(query, color, minPrice, maxPrice) =>
-                        console.log(query, color, minPrice, maxPrice)
-                      }
-                    />
-                  </li>
-                </ul>
+              <li>
+                <div className={`${styles["search-lap"]}`}><SearchBar /></div>
               </li>
             </ul>
           </div>
