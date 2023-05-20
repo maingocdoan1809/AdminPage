@@ -66,11 +66,12 @@ export async function checkUserIdentity() {
     );
 
     const data = await response.json();
-
-    localStorage.setItem("user", JSON.stringify(data));
+    if (data.isAuthenticated) {
+      localStorage.setItem("user", JSON.stringify(data));
+    }
     return data;
   }
-  return new Promise((resolve, rejects) => {
+  return new Promise((resolve, reject) => {
     resolve({ isAuthenticated: false });
   });
 }
