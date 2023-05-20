@@ -1,5 +1,32 @@
 import { BACKEND_URL } from "../env";
 
+export enum EAdminPage {
+  PRODUCT,
+  CATEGORY,
+  PROFILE,
+  ORDER,
+  CUSTOMER,
+}
+export type LayoutProps = {
+  children: React.ReactNode;
+};
+export interface Product {
+  uniqueKey?: string;
+  id: string;
+  infoid: string;
+  size: string;
+  colorcode: string;
+  colorname: string;
+  totalbought: number;
+  quantity: number;
+  state: number;
+  price: number;
+  name: string;
+  promotedprice: number;
+  imageurl: string;
+  description: string;
+}
+
 export function checkPassword(password: string) {
   const numberPtn = new RegExp("[0-9]");
   const charPtn = new RegExp("[A-Za-z]");
@@ -40,10 +67,17 @@ export async function checkUserIdentity() {
     );
 
     const data = await response.json();
+
     localStorage.setItem("user", JSON.stringify(data));
     return data;
   }
   return new Promise((resolve, rejects) => {
     resolve({ isAuthenticated: false });
   });
+}
+
+function matchUnicode(strToMatch: string, searchStr: string) {
+  let regex = "";
+  for (let x in searchStr.split("")) {
+  }
 }

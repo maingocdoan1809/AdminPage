@@ -1,4 +1,4 @@
-import styles from "./Footer.module.css"
+import styles from "./Footer.module.css";
 
 function Footer() {
   return (
@@ -8,26 +8,20 @@ function Footer() {
           <div className="row g-3">
             <div className="col-md-5 col-lg-3">
               <h5>UNIOLO lắng nghe bạn!</h5>
-              <p>Chúng tôi luôn chân trọng và mong đợi nhận được mọi ý
-                kiến đóng góp từ khách hàng để có thể nâng cấp trải ngiệm
-                dịch vụ sản phẩm tốt hơn nữa</p>
+              <p>
+                Chúng tôi luôn chân trọng và mong đợi nhận được mọi ý kiến đóng
+                góp từ khách hàng để có thể nâng cấp trải ngiệm dịch vụ sản phẩm
+                tốt hơn nữa
+              </p>
 
               <div className="row">
-                <div className="col-md-5 col-lg-3">
-                  icon
-                </div>
-                <div className="col-md-5 col-lg-3">
-                  0896011xxx
-                </div>
+                <div className="col-md-5 col-lg-3">icon</div>
+                <div className="col-md-5 col-lg-3">0896011xxx</div>
               </div>
 
               <div className="row">
-                <div className="col-md-5 col-lg-3">
-                  icon
-                </div>
-                <div className="col-md-5 col-lg-3">
-                  aaaa@gmail.com
-                </div>
+                <div className="col-md-5 col-lg-3">icon</div>
+                <div className="col-md-5 col-lg-3">aaaa@gmail.com</div>
               </div>
               <div className="row">
                 <div className="col-md-5 col-lg-3">
@@ -40,7 +34,6 @@ function Footer() {
                   <a href="">icon</a>
                 </div>
               </div>
-
             </div>
             <div className="col-md-5 col-lg-3">
               <h5>Dịch vụ khách hàng</h5>

@@ -1,0 +1,7 @@
+.selected {
+  border: 3px solid gray !important;
+}
+
+.disabled {
+  opacity: 0.3;
+}

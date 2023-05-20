@@ -1,5 +1,5 @@
 #dropdown-menu {
-  left: -250% !important;
+  left: -340% !important;
   top: 150% !important;
 }
 
@@ -17,8 +17,32 @@
 
 .flex-end {
   flex: 1;
+  display: flex;
   text-align: left;
   cursor: pointer;
   user-select: none;
   font-size: medium;
+  justify-content: space-evenly;
+}
+
+.menu {
+  display: flex;
+  align-items: center;
+  margin: 0 !important;
+}
+
+.search-phone {
+  display: inline-block;
+  width: 80%;
+  margin: 0 !important;
+}
+
+.shopping-cart{
+  margin-right: 20px;
+}
+
+@media screen and (max-width: 575.5px) {
+  .search-lap {
+      display: none !important;
+  }
 }

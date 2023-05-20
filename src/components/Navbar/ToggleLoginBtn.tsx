@@ -2,7 +2,15 @@ import { useEffect, useState } from "react";
 import styles from "./navbar.module.css";
 import { useNavigate } from "react-router";
 import Profile from "../Profile/Profile";
-function ToggleLoginBtn() {
+import { EAdminPage } from "../../utilities/utils";
+export type ToggleLoginBtnProps = {
+  className?: string[];
+  adminProfileAction?: (p: EAdminPage) => void;
+};
+function ToggleLoginBtn({
+  className,
+  adminProfileAction,
+}: ToggleLoginBtnProps) {
   const [isUserLoggedIn, setIsUserLoggedIn] = useState(false);
   const [isClickLogout, setIsClickLogout] = useState(false);
   const redirect = useNavigate();
@@ -54,14 +62,21 @@ function ToggleLoginBtn() {
           )}
         </a>
 
-        <ul className={`dropdown-menu`} id={`${styles["dropdown-menu"]}`}>
+        <ul
+          className={`dropdown-menu ${className?.join(" ")}`}
+          id={`${styles["dropdown-menu"]}`}
+        >
           {isUserLoggedIn ? (
             <>
               <li>
                 <div
                   className="dropdown-item postition-relative"
                   onClick={(e) => {
-                    redirect("/profile");
+                    if (adminProfileAction) {
+                      adminProfileAction(EAdminPage.PROFILE);
+                    } else {
+                      redirect("/profile");
+                    }
                   }}
                 >
                   Profile
@@ -71,7 +86,9 @@ function ToggleLoginBtn() {
                 <div
                   onClick={(e) => {
                     localStorage.clear();
+
                     redirect("/");
+
                     window.location.reload();
                   }}
                   className="dropdown-item"

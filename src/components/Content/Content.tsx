@@ -1,42 +1,49 @@
 import style from "./content.module.css";
 
-import ProductShow from "../ProductShow/ProductShow";
-import { ReactElement, ReactNode, useEffect, useRef, useState } from "react";
+import ProductShow from "../ProductCard/ProductCard";
+import {
+  ReactElement,
+  ReactNode,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import useInfiniteScroll from "../../utilities/infinitescroll";
+import { BACKEND_URL } from "../../env";
+import { Product } from "../../utilities/utils";
 
-function Content() {
-  const [products, lastItem, isLoading] = useInfiniteScroll(() => {
+type ContentProps = {
+  category: string;
+};
+
+function Content({ category }: ContentProps) {
+  const pageRef = useRef(0);
+  const generator = () => {
     return new Promise<ReactNode[]>((resolve) => {
-      const a: ReactNode[] = [];
-      for (let i = 0; i < 10; i++) {
-        if (i == 9) {
-          a.push(
-            <ProductShow
-              imgUrl="https://lp2.hm.com/hmgoepprod?set=quality%5B79%5D%2Csource%5B%2F1e%2Fbd%2F1ebd58a1b0df171671868a58d7cd14b25dee6fd8.jpg%5D%2Corigin%5Bdam%5D%2Ccategory%5B%5D%2Ctype%5BLOOKBOOK%5D%2Cres%5Bm%5D%2Chmver%5B1%5D&call=url[file:/product/main]"
-              name="Oxford shirt"
-              id="1323"
-              price={5000}
-              key={products.length + i}
-              ref={lastItem}
-            />
-          );
-        } else {
-          a.push(
-            <ProductShow
-              imgUrl="https://lp2.hm.com/hmgoepprod?set=quality%5B79%5D%2Csource%5B%2F1e%2Fbd%2F1ebd58a1b0df171671868a58d7cd14b25dee6fd8.jpg%5D%2Corigin%5Bdam%5D%2Ccategory%5B%5D%2Ctype%5BLOOKBOOK%5D%2Cres%5Bm%5D%2Chmver%5B1%5D&call=url[file:/product/main]"
-              name="Oxford shirt white"
-              id="1323323sdrfsd"
-              price={34000}
-              key={products.length + i}
-            />
-          );
-        }
-      }
-      setTimeout(() => {
-        resolve(a);
-      }, 2000);
+      fetch(BACKEND_URL + `/products?page=${pageRef.current}`)
+        .then((response) => response.json())
+        .then((productsJson: Product[]) => {
+          const a: ReactNode[] = [];
+          for (let i = 0; i < productsJson.length; i++) {
+            a.push(
+              <ProductShow
+                imgUrl={productsJson[i].imageurl}
+                name={productsJson[i].name}
+                id={productsJson[i].id}
+                price={productsJson[i].price}
+                key={products.length + i}
+                ref={i == productsJson.length - 1 ? lastItem : null} 
+                //color={""} 
+                />
+            );
+          }
+          resolve(a);
+        });
     });
-  });
+  };
+  const [products, lastItem, isLoading] = useInfiniteScroll(generator);
+  console.log(pageRef.current);
 
   return (
     <>

@@ -9,10 +9,11 @@ import Unauthenticated from "./pages/Error/Unauthenticated";
 import Profile from "./components/Profile/Profile";
 import ServerError from "./pages/Error/ServerError";
 import AdminPage from "./pages/Admin/Admin";
-import SearchResults from "./pages/SearchPage/SearchPage";
-import { products } from "./components/Data/productsData";
 import Checkout from "./components/Checkout/Checkout";
-import Cart from "./components/Cart/Cart";
+import SearchPage from "./pages/SearchPage/SearchPage";
+import Layout from "./layouts/CustomerLayout/Layout";
+import AdminPageContext from "./contexts/AdminPageContext/AdminPageContext";
+import ProductDetail from "./components/ProductDetail/ProductDetail";
 
 
 function App() {
@@ -24,11 +25,42 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/unauth" element={<Unauthenticated />} />
-          <Route path="/admin" element={<AdminPage />} />
-          <Route path="/search" element={<SearchResults products={products} />}/>
-          <Route path="/checkout" element={<Checkout  />}/>
+          <Route path="/search" element={<SearchPage />} />
+          <Route path="/checkout" element={<Checkout />} />
+          <Route
+            path="/product"
+            element={
+              <Layout>
+                <ProductDetail />
+              </Layout>
+            }
+          />
           <Route path="/servererror" element={<ServerError />} />
-          <Route path="/profile" element={<Profile />} />
+          <Route
+            path="/profile"
+            element={
+              <Layout>
+                <Profile />
+              </Layout>
+            }
+          />
+          {/* Admin */}
+          <Route
+            path="/admin"
+            element={
+              <AdminPageContext>
+                <AdminPage />
+              </AdminPageContext>
+            }
+          />
+          {/* <Route
+            path="/admin/profile"
+            element={
+              <AdminLayout>
+                <Profile />
+              </AdminLayout>
+            }
+          /> */}
           <Route path="/*" element={<Error />} />
         </Routes>
       </BrowserRouter>
