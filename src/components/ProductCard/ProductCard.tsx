@@ -1,4 +1,4 @@
-import style from "./productshow.module.css";
+import style from "./productscard.module.css";
 import React, { useState } from "react";
 import { toMoney } from "../../utilities/utils";
 import { redirect, useNavigate } from "react-router";
@@ -23,7 +23,7 @@ const ProductShow = React.forwardRef<HTMLDivElement, ProductProps>(
       <>
         <div
           ref={ref}
-          className={`${style["card-hover"]} card position-positive h-100 mb-3`}
+          className={`${style["card-hover"]} card position-positive mb-3`}
           onClick={(e) => {
             redirect("/product", {
               state: {
@@ -39,12 +39,16 @@ const ProductShow = React.forwardRef<HTMLDivElement, ProductProps>(
               className={`d-flex justify-content-between align-items-center ${style["box-footer"]}`}
             >
               <small>
-                {toMoney(props.price)}
+                {toMoney(props.price)} <b>VND</b>
               </small>
-              <button className="btn btn-outline-primary btn-sm" onClick={addToCartHandler}>
+              <a
+                href=""
+                className="btn btn-outline-primary btn-sm"
+                onClick={addToCartHandler}
+              >
                 <small>Add to cart</small>{" "}
                 <i className="fa-regular fa-plus"></i>
-              </button>
+              </a>
             </div>
           </div>
         </div>

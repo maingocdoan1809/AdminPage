@@ -97,10 +97,10 @@ function ProductDetail() {
             </svg>
           </div>
           <div>
-            <h1> {products[0].name}</h1>
+            <h1 className={`${style["title"]}`}> {products[0].name}</h1>
           </div>
           <div>
-            <h3>{toMoney(500000)}</h3>
+            <h3 className="text-secondary">{toMoney(500000)}</h3>
           </div>
           <div className="mt-5">
             <small>Thế giới thú vị của những khối Lego</small>

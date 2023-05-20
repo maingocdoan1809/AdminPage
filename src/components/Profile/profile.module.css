@@ -9,14 +9,15 @@
   height: 250px;
   max-width: 250px;
   border-radius: 50%;
-  border: 3px solid #B799FF;
-  box-shadow: 0 0 3px #F266AB;
+  border: 3px solid #b799ff;
+  box-shadow: 0 0 3px #f266ab;
+  overflow: hidden;
+  object-fit: cover;
 }
 
 .link {
   text-decoration: none;
 }
-
 
 .hidden {
   display: none;

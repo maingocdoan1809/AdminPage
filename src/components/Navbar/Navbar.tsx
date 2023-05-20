@@ -4,7 +4,6 @@ import styles from "./navbar.module.css";
 import { redirect, useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import React from "react";
-import { ProductProps } from "../../type/ProductProps";
 
 const Navbar: React.FC = () => {
 
