@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import Navbar from "../../components/Navbar/Navbar";
 import ProductShow from "../../components/ProductCard/ProductCard";
-import InfiniteScroll from "react-infinite-scroll-component";
 import LoadingView from "../../components/LoadingView/LoadingView";
 import { Product } from "../../utilities/utils";
 import p from "../../components/Data/productsData";
@@ -109,13 +108,6 @@ const SearchPage = () => {
       <div className="container">
         <h2>Kết quả tìm kiếm cho: {query}</h2>
         <hr />
-        <InfiniteScroll
-          dataLength={items.length}
-          next={loadMore}
-          hasMore={hasMore}
-          loader={<LoadingView />}
-          scrollThreshold={0.8}
-        >
           <div className="row m-0">
             {items.map((product) => (
               <div className="col-md-3 mb-4" key={product.id}>
@@ -128,7 +120,6 @@ const SearchPage = () => {
               </div>
             ))}
           </div>
-        </InfiniteScroll>
       </div>
     </div>
   );

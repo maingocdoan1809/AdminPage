@@ -9,20 +9,20 @@ import Unauthenticated from "./pages/Error/Unauthenticated";
 import Profile from "./components/Profile/Profile";
 import ServerError from "./pages/Error/ServerError";
 import AdminPage from "./pages/Admin/Admin";
-// import SearchPage from "./pages/SearchPage/SearchPage";
 import Checkout from "./components/Checkout/Checkout";
-import ProductDetail from "./components/ProductDetail/ProductDetail";
 import SearchPage from "./pages/SearchPage/SearchPage";
 import Layout from "./layouts/CustomerLayout/Layout";
-import AdminLayout from "./layouts/AdminLayout/Layout";
 import AdminPageContext from "./contexts/AdminPageContext/AdminPageContext";
+import ProductDetail from "./components/ProductDetail/ProductDetail";
+import { NewItemDataContext, NewItemDataProvider } from "./contexts/CartConText/CartConText";
 
 function App() {
   return (
     <div className="App">
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Main />} />
+
+          <Route path="/" element={<NewItemDataProvider> <Main /></NewItemDataProvider>} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/unauth" element={<Unauthenticated />} />
@@ -31,9 +31,11 @@ function App() {
           <Route
             path="/product"
             element={
-              <Layout>
-                <ProductDetail />
-              </Layout>
+              <NewItemDataProvider>
+                <Layout>
+                  <ProductDetail />
+                </Layout>
+              </NewItemDataProvider>
             }
           />
           <Route path="/servererror" element={<ServerError />} />
@@ -52,14 +54,6 @@ function App() {
               <AdminPageContext>
                 <AdminPage />
               </AdminPageContext>
-            }
-          />
-          <Route
-            path="/admin/profile"
-            element={
-              <AdminLayout>
-                <Profile />
-              </AdminLayout>
             }
           />
           <Route path="/*" element={<Error />} />

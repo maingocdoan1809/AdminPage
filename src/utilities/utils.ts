@@ -26,6 +26,15 @@ export interface Product {
   description: string;
 }
 
+export type CartItem = {
+  id: string;
+  color: string;
+  size: string;
+  quantity: number;
+  infoid: string;
+  newItemData?: null | React.Dispatch<React.SetStateAction<null>>;
+};
+
 export function checkPassword(password: string) {
   const numberPtn = new RegExp("[0-9]");
   const charPtn = new RegExp("[A-Za-z]");

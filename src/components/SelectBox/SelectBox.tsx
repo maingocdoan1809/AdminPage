@@ -1,7 +1,12 @@
 import SizeBox from "../SizeBox/SizeBox";
 import ColorBox, { ColorBoxProps } from "../ColorBox/ColorBox";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { Product } from "../../utilities/utils";
+import Cart from "../Cart/Cart";
+import ReactDOM from "react-dom";
+import { CartItem } from "../../utilities/utils"
+import { NewItemDataContext, NewItemDataProvider } from "../../contexts/CartConText/CartConText";
+
 
 export type SelectBoxProps = {
   products: Product[];
@@ -14,7 +19,8 @@ export type SelectBoxState = {
   selectedQuantity: number;
 };
 
-function SelectBox({ products }: SelectBoxProps) {
+function SelectBox({ products  }: SelectBoxProps) {
+  
   const [selectOptions, setSelectOptions] = useState({
     selectedColor: undefined,
     selectedQuantity: 0,
@@ -46,6 +52,18 @@ function SelectBox({ products }: SelectBoxProps) {
     }
     x.push(c);
   });
+  const { setNewItemData } = useContext(NewItemDataContext)!;
+  const handleAddToCart = () => {
+    const newItemData = {
+      id: selectOptions.selectedId ? selectOptions.selectedId.id : "",
+      color: selectOptions.selectedColor || "",
+      size: selectOptions.selectedSize || "",
+      quantity: selectOptions.selectedQuantity,
+      infoid: selectOptions.selectedId ? selectOptions.selectedId.infoid : "",
+    };
+    setNewItemData(newItemData);
+  };
+
 
   const y = [...new Set(sizes)];
 
@@ -119,18 +137,19 @@ function SelectBox({ products }: SelectBoxProps) {
         className="mt-5 btn btn-danger rounded-0 w-100"
         disabled={
           selectOptions.selectedColor &&
-          selectOptions.selectedSize &&
-          selectOptions.selectedQuantity > 0 &&
-          selectOptions.selectedId
+            selectOptions.selectedSize &&
+            selectOptions.selectedQuantity > 0 &&
+            selectOptions.selectedId
             ? false
             : true
         }
         onClick={(e) => {
+          handleAddToCart();
           console.log(JSON.stringify(selectOptions));
         }}
       >
         Add to your cart
-      </button>
+      </button >
     </>
   );
 }
