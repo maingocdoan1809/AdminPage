@@ -108,7 +108,11 @@ export function LoginForm() {
           </div>
         </div>
       )}
-      {isLoggedIn == undefined && <LoadingView />}
+      {isLoggedIn == undefined && (
+        <div className="flex-grow-1 d-flex justify-content-center align-items-center">
+          <LoadingView />
+        </div>
+      )}
     </>
   );
 }

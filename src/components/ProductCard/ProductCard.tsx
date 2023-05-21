@@ -1,7 +1,7 @@
 import style from "./productscard.module.css";
 import React, { useState } from "react";
 import { toMoney } from "../../utilities/utils";
-import { useNavigate } from "react-router";
+import { redirect, useNavigate } from "react-router";
 
 type ProductProps = {
   id: string;
@@ -11,11 +11,10 @@ type ProductProps = {
   view?: number;
   sold?: number;
 };
-
 const ProductShow = React.forwardRef<HTMLDivElement, ProductProps>(
   function ProductShow(props: ProductProps, ref) {
-    const redirect = useNavigate();
     const [cartItems, setCartItems] = useState<ProductProps[]>([]);
+    const redirect = useNavigate();
     const addToCartHandler = () => {
       setCartItems((prevCartItems: any) => [...prevCartItems, props]);
       console.log("Thêm sản phẩm vào giỏ hàng:", props.name);
@@ -34,26 +33,22 @@ const ProductShow = React.forwardRef<HTMLDivElement, ProductProps>(
           }}
         >
           <img src={props.imgUrl} className={`card-img-top ${style.img}`} />
-          <div className={`${style.wrapper}`}>
-            <div className={`card-body  d-flex ${style["body-end"]}`}>
-              <h6 className={`card-title ${style.title}`}>{props.name}</h6>
-            </div>
-            <div className="card-footer d-flex justify-content-between flex-column">
-              <div
-                className={`d-flex justify-content-between align-items-center ${style["box-footer"]}`}
+          <div className="card-body d-flex justify-content-between flex-column">
+            <h6 className={`card-title ${style.title}`}>{props.name}</h6>
+            <div
+              className={`d-flex justify-content-between align-items-center ${style["box-footer"]}`}
+            >
+              <small>
+                {toMoney(props.price)} <b>VND</b>
+              </small>
+              <a
+                href=""
+                className="btn btn-outline-primary btn-sm"
+                onClick={addToCartHandler}
               >
-                <small>
-                  {toMoney(props.price)} <b>VND</b>
-                </small>
-                <a
-                  href=""
-                  className="btn btn-outline-primary btn-sm"
-                  onClick={addToCartHandler}
-                >
-                  <small>Add to cart</small>{" "}
-                  <i className="fa-regular fa-plus"></i>
-                </a>
-              </div>
+                <small>Add to cart</small>{" "}
+                <i className="fa-regular fa-plus"></i>
+              </a>
             </div>
           </div>
         </div>

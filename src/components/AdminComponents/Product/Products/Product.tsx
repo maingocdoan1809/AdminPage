@@ -9,6 +9,7 @@ function Products() {
   const defferedValue = useDeferredValue(filterdProducts);
   const [novalueFound, setNovalueFound] = useState(false);
   useEffect(() => {
+    document.title = "Product";
     fetch(BACKEND_URL + "/products?page=0")
       .then((response) => {
         return response.json();
@@ -35,7 +36,9 @@ function Products() {
                 const newData = [] as Product[];
                 const value = e.target.value.trim();
                 products.forEach((product) => {
-                  if (product.name.toLowerCase().includes(value)) {
+                  if (
+                    product.name.toLowerCase().includes(value.toLowerCase())
+                  ) {
                     newData.push(product);
                   }
                 });
