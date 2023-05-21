@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { BACKEND_URL } from "../../../../env";
 import style from "./categories.module.css";
 import LoadingView from "../../../LoadingView/LoadingView";
-import AddCategory from "./AddCategory/AddCategory";
+import ShowCategory from "./ShowCategory/ShowCategory";
 export type Category = {
   id: string;
   name: string;
@@ -12,6 +12,8 @@ export type Category = {
 function Categories() {
   const [categories, setCategories] = useState([] as Category[]);
   const [isLoading, setIsLoading] = useState(true);
+  // pass to child, every update in category will force this component to re-render.
+  const [trigger, setTrigger] = useState(true);
   useEffect(() => {
     document.title = "Category";
 
@@ -25,7 +27,7 @@ function Categories() {
       .finally(() => {
         setIsLoading(false);
       });
-  }, []);
+  }, [trigger]);
 
   return (
     <>
@@ -36,7 +38,11 @@ function Categories() {
       ) : (
         <div className="flex-grow-1 d-flex flex-column">
           <div className="shadow-sm mb-3 p-2">
-            <AddCategory />
+            <ShowCategory
+              trigger={() => {
+                setTrigger(!trigger);
+              }}
+            />
           </div>
           <div className={`flex-grow-1 p-3 m-0  ${style.container}`}>
             {categories.length > 0 && (
@@ -56,19 +62,22 @@ function Categories() {
                   <tbody className="">
                     {categories.map((category, index) => {
                       return (
-                        <tr key={index}>
+                        <tr key={category.id}>
                           <th scope="row" className={`${style["small-col"]}`}>
                             {index + 1}
                           </th>
                           <td className={`${style["small-col"]}`}>
-                            <a href="">{category.id.substring(0, 5)}...</a>
+                            {category.id.substring(0, 5)}...
                           </td>
                           <td>{category.name}</td>
                           <td>{category.count}</td>
                           <td>
-                            <button className="btn btn-danger btn-sm">
-                              Remove
-                            </button>
+                            <ShowCategory
+                              trigger={() => {
+                                setTrigger(!trigger);
+                              }}
+                              category={category}
+                            />
                           </td>
                         </tr>
                       );

@@ -7,12 +7,14 @@
   padding: 1rem;
   position: sticky;
   top: 0;
-  z-index: 10000;
+  z-index: 3;
 }
 
 .btn-toggle {
   display: none;
 }
+
+
 
 @media screen and (min-width: 900px) {
   .admin-dropdown {
@@ -22,6 +24,8 @@
 }
 
 @media screen and (max-width: 900px) {
+
+
   .show-custom {
     display: block !important;
 

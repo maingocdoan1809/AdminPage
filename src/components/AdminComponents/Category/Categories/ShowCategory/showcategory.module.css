@@ -1,0 +1,58 @@
+.show {
+  display: block;
+}
+
+.fade {
+  display: none;
+}
+
+.card {
+  width: 50%;
+  min-height: 50%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  position: absolute;
+  padding: 10px;
+  z-index: 11;
+  background-color: white;
+  border-radius: 10px;
+}
+
+.btn-close {
+  position: absolute;
+  right: 20px;
+  top: 10px;
+  color: #C1AEFC;
+  transition: all 0.2s ease-in-out;
+}
+
+.btn-close:hover {
+  color: #4f4e4f;
+}
+
+.back-drop {
+  width: 100vw;
+  height: 100vh;
+  background-color: rgb(73, 73, 73);
+  opacity: 0.8;
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 10;
+}
+
+.content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  flex-direction: column;
+  height: 100%;
+}
+
+@media screen and (max-width: 900px) {
+  .card {
+    width: 90%;
+  }
+}

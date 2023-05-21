@@ -22,6 +22,7 @@ function ProductDetail() {
       .then((data) => {
         setProducts(data);
       });
+    ``;
   }, []);
 
   return products.length == 0 ? (
