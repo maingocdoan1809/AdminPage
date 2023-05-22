@@ -1,55 +1,55 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
+import { Cart, District, Province, User, Ward } from "../../../utilities/utils";
+import PROVINCES from "../../../utilities/provinces.json";
+import { CART_KEY } from "../../../env";
+import fs from "fs";
 // event: React.ChangeEvent<HTMLSelectElement>
-interface Provinces {
-  province_id: number;
-  province_name: string;
-  province_type: string;
-}
-interface District {
-  district_id: number;
-  district_name: string;
-}
-interface Wards {
-  ward_id: number;
-  ward_name: string;
-}
-function DeliveryInformation() {
-  const [provinces, setProvinces] = useState<Provinces[]>([]);
-  const [districts, setDistricts] = useState<District[]>([]);
-  const [wards, setWards] = useState<Wards[]>([]);
 
+function DeliveryInformation() {
+  const [cart, setCart] = useState({
+    information: {
+      username: JSON.parse(localStorage.getItem("user") || "{}").username,
+      address: "",
+      email: "",
+      phonenumber: "",
+    } as User,
+    items: JSON.parse(localStorage.getItem(CART_KEY) || "[]"),
+  } as Cart);
+
+  const [provinces, setProvinces] = useState<Province[]>(PROVINCES);
+  const [districts, setDistricts] = useState<District[]>([]);
+  const [wards, setWards] = useState<Ward[]>([]);
+
+  const selectedProvince = useRef("");
+  const selectedDistrict = useRef("");
+  const selectedWard = useRef("");
+  const detailedAddress = useRef("");
   const handleProvinceChange = async (
     e: React.ChangeEvent<HTMLSelectElement>
   ) => {
-    const provinceId = e.target.value;
-    const response = await fetch(
-      `https://vapi.vnappmob.com/api/province/district/${provinceId}`
-    );
-    const data = await response.json();
-    setDistricts(data.results);
-    console.log(data);
+    const province = PROVINCES.find((value) => {
+      if (value.name == e.target.value) {
+        return true;
+      }
+      return false;
+    });
+
+    setDistricts(province?.districts!);
+    setWards([]);
   };
 
   const handleDistrictChange = async (
     e: React.ChangeEvent<HTMLSelectElement>
   ) => {
-    const districtId = e.target.value;
-    const response = await fetch(
-      `https://vapi.vnappmob.com/api/province/ward/${districtId}`
-    );
-    const data = await response.json();
-    setWards(data.results);
-    console.log(data);
-  };
+    const district = districts.find((value) => {
+      if (value.name == e.target.value) {
+        return true;
+      }
+      return false;
+    });
 
-  useEffect(() => {
-    const fetchProvinces = async () => {
-      const response = await fetch("https://vapi.vnappmob.com/api/province/");
-      const data = await response.json();
-      setProvinces(data.results);
-    };
-    fetchProvinces();
-  }, []);
+    setWards(district?.wards!);
+  };
 
   return (
     <div className="col-md-7 col-lg-8">
@@ -109,22 +109,22 @@ function DeliveryInformation() {
               className="form-select"
               id="province"
               required={true}
-              onChange={handleProvinceChange}
+              onChange={(e) => {
+                handleProvinceChange(e);
+
+                selectedProvince.current = e.target.value;
+                console.log(selectedProvince.current);
+              }}
             >
               <option value="">Choose...</option>
               {provinces.length > 0 &&
                 provinces.map((province) => (
-                  <option
-                    key={province.province_id}
-                    value={province.province_id}
-                  >
-                    {province.province_name}
+                  <option key={province.name} value={province.name}>
+                    {province.name}
                   </option>
                 ))}
             </select>
-            <div className="invalid-feedback">
-              Please select a valid province.
-            </div>
+            <div className="">Please select a valid province.</div>
           </div>
           <div className="col-md-4">
             <label htmlFor="district" className="form-label">
@@ -134,16 +134,17 @@ function DeliveryInformation() {
               className="form-select"
               id="district"
               required={true}
-              onChange={handleDistrictChange}
+              onChange={(e) => {
+                handleDistrictChange(e);
+                selectedDistrict.current = e.target.value;
+                console.log(selectedDistrict.current);
+              }}
             >
               <option value="">Choose...</option>
               {districts.length > 0 &&
                 districts.map((district) => (
-                  <option
-                    key={district.district_id}
-                    value={district.district_id}
-                  >
-                    {district.district_name}
+                  <option key={district.name} value={district.name}>
+                    {district.name}
                   </option>
                 ))}
             </select>
@@ -155,12 +156,21 @@ function DeliveryInformation() {
             <label htmlFor="ward" className="form-label">
               Phường/Xã
             </label>
-            <select className="form-select" id="ward" required={true}>
+            <select
+              name="ward"
+              className="form-select"
+              id="ward"
+              required={true}
+              onChange={(e) => {
+                console.log(e.target.value);
+                selectedWard.current = e.target.value;
+              }}
+            >
               <option value="">Choose...</option>
               {wards.length > 0 &&
                 wards.map((ward) => (
-                  <option key={ward.ward_id} value={ward.ward_id}>
-                    {ward.ward_name}
+                  <option key={ward.name} value={ward.name}>
+                    {ward.name}
                   </option>
                 ))}
             </select>
@@ -176,6 +186,16 @@ function DeliveryInformation() {
               id="address"
               placeholder="Địa chỉ(ví dụ: số nhà 9, ngách 1, ngõ 43)"
               required={true}
+              onChange={(e) => {
+                detailedAddress.current = e.target.value;
+                setCart({
+                  ...cart,
+                  information: {
+                    ...cart.information,
+                    address: `${e.target.value} - ${selectedWard.current}, ${selectedDistrict.current}, ${selectedProvince.current}`,
+                  },
+                });
+              }}
             />
             <div className="invalid-feedback">
               Please enter your shipping address.
@@ -183,7 +203,14 @@ function DeliveryInformation() {
           </div>
         </div>
         <hr className="my-4" />
-        <button className="w-100 btn btn-primary btn-lg" type="submit">
+        <button
+          className="w-100 btn btn-primary btn-lg"
+          type="submit"
+          onClick={(e) => {
+            e.preventDefault();
+            console.log(cart);
+          }}
+        >
           Xác nhận đặt hàng
         </button>
       </form>

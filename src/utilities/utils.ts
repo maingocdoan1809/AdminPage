@@ -10,6 +10,17 @@ export enum EAdminPage {
 export type LayoutProps = {
   children: React.ReactNode;
 };
+export type Ward = {
+  name: string;
+};
+export type District = {
+  name: string;
+  wards: Ward[];
+};
+export type Province = {
+  name: string;
+  districts: District[];
+};
 export interface Product {
   uniqueKey?: string;
   id: string;
@@ -26,6 +37,29 @@ export interface Product {
   imageurl: string;
   description: string;
 }
+export type CartItem = {
+  id: string;
+  name: string;
+  size: string;
+  color: string;
+  colorName: string;
+  quantity: number;
+  originalPrice: number;
+  promotedPrice: number; // actualprice that user have to pay
+  imgUrl: string;
+};
+
+export type User = {
+  username: string;
+  phonenumber: string;
+  email: string;
+  address: string;
+};
+
+export type Cart = {
+  information: User;
+  items: CartItem[];
+};
 
 export function checkPassword(password: string) {
   const numberPtn = new RegExp("[0-9]");
@@ -52,8 +86,9 @@ export function toMoney(realNumber: number) {
     style: "currency",
     currency: "VND",
   });
+  const formated = formatter.format(realNumber);
 
-  return formatter.format(realNumber);
+  return formated.substring(1);
 }
 
 export async function checkUserIdentity() {

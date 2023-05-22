@@ -6,14 +6,13 @@ import { useEffect, useState } from "react";
 import React from "react";
 
 const Navbar: React.FC = () => {
-
-  const [showCheckout, setShowCheckout] = useState(false);
   const navigate = useNavigate();
 
-  const handleCheckoutClick = () => {
-    setShowCheckout(true);
-    navigate('/checkout');
-  }
+  const handleCheckoutClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.stopPropagation();
+    e.preventDefault();
+    navigate("/checkout");
+  };
 
   return (
     <nav
@@ -30,7 +29,9 @@ const Navbar: React.FC = () => {
           >
             <i className="fa-solid fa-bars"></i>
           </a>
-          <div className={`navbar-toggler navbar-brand ${styles["search-phone"]}`} >
+          <div
+            className={`navbar-toggler navbar-brand ${styles["search-phone"]}`}
+          >
             <SearchBar />
           </div>
         </div>
@@ -101,13 +102,15 @@ const Navbar: React.FC = () => {
                 </ul>
               </li>
               <li>
-                <div className={`${styles["search-lap"]}`}><SearchBar /></div>
+                <div className={`${styles["search-lap"]}`}>
+                  <SearchBar />
+                </div>
               </li>
             </ul>
           </div>
         </div>
         <div className="d-flex justify-content-center align-items-center">
-          <a href="" className="w-50 h-50 me-1" onClick={handleCheckoutClick}>
+          <a className="w-50 h-50 me-1" onClick={handleCheckoutClick}>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="35px"

@@ -1,6 +1,6 @@
 import style from "./content.module.css";
 
-import ProductShow from "../ProductCard/ProductCard";
+import ProductCard from "../ProductCard/ProductCard";
 import {
   ReactElement,
   ReactNode,
@@ -33,15 +33,14 @@ function Content({ category }: ContentProps) {
           const a: ReactNode[] = [];
           for (let i = 0; i < productsJson.length; i++) {
             a.push(
-              <ProductShow
+              <ProductCard
                 imgUrl={productsJson[i].imageurl}
                 name={productsJson[i].name}
                 id={productsJson[i].id}
-                price={productsJson[i].price}
+                price={productsJson[i].promotedPrice ?? productsJson[i].price}
                 key={products.length + i}
-                ref={i == productsJson.length - 1 ? lastItem : null} 
-                //color={""} 
-                />
+                ref={i == productsJson.length - 1 ? lastItem : null}
+              />
             );
           }
           resolve(a);

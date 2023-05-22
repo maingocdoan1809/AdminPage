@@ -4,4 +4,6 @@
 
 .disabled {
   opacity: 0.4;
+  position: relative;
+  border: 1px solid black;
 }

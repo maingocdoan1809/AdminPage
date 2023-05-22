@@ -1,6 +1,6 @@
 import style from "./productscard.module.css";
-import React, { useState } from "react";
-import { toMoney } from "../../utilities/utils";
+import React, { useState, useEffect } from "react";
+import { CartItem, toMoney } from "../../utilities/utils";
 import { redirect, useNavigate } from "react-router";
 
 type ProductProps = {
@@ -11,14 +11,22 @@ type ProductProps = {
   view?: number;
   sold?: number;
 };
-const ProductShow = React.forwardRef<HTMLDivElement, ProductProps>(
-  function ProductShow(props: ProductProps, ref) {
-    const [cartItems, setCartItems] = useState<ProductProps[]>([]);
+const ProductCard = React.forwardRef<HTMLDivElement, ProductProps>(
+  function ProductCard(props: ProductProps, ref) {
+    const [inCart, setInCart] = useState({} as CartItem);
     const redirect = useNavigate();
-    const addToCartHandler = () => {
-      setCartItems((prevCartItems: any) => [...prevCartItems, props]);
-      console.log("Thêm sản phẩm vào giỏ hàng:", props.name);
-    };
+    useEffect(() => {
+      const items = JSON.parse(
+        localStorage.getItem("cart") || "[]"
+      ) as CartItem[];
+      for (let item of items) {
+        if (item.id == props.id) {
+          setInCart(item);
+          return;
+        }
+      }
+    }, []);
+
     return (
       <>
         <div
@@ -38,17 +46,16 @@ const ProductShow = React.forwardRef<HTMLDivElement, ProductProps>(
             <div
               className={`d-flex justify-content-between align-items-center ${style["box-footer"]}`}
             >
-              <small>
+              <strong>
                 {toMoney(props.price)} <b>VND</b>
-              </small>
-              <a
-                href=""
-                className="btn btn-outline-primary btn-sm"
-                onClick={addToCartHandler}
-              >
-                <small>Add to cart</small>{" "}
-                <i className="fa-regular fa-plus"></i>
-              </a>
+              </strong>
+              {inCart.id && (
+                <div
+                  className={`d-flex align-items-center gap-2 justify-content-center ${style["group-btn"]}`}
+                >
+                  In cart : {inCart.quantity}
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -57,4 +64,4 @@ const ProductShow = React.forwardRef<HTMLDivElement, ProductProps>(
   }
 );
 
-export default ProductShow;
+export default ProductCard;

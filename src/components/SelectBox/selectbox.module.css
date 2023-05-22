@@ -1,0 +1,6 @@
+@media screen and (max-width: 900px) {
+  .sticky-bottom {
+    position: sticky;
+    bottom: 10px;
+  }
+}

@@ -7,8 +7,8 @@ type ColorState = {
 
 export type ColorBoxProps = {
   colorcodes: ColorState[];
-  selectColor: (color: string) => void;
-  availableQuantity: number;
+  selectColor: (color: string | undefined) => void;
+  availableQuantity: number | undefined;
 };
 
 function ColorBox({
@@ -26,9 +26,7 @@ function ColorBox({
         {selectedColor && (
           <span>
             {" : "}
-            <small style={{ color: selectedColor.code }}>
-              {selectedColor.name}
-            </small>{" "}
+            <small>{selectedColor.name}</small>{" "}
           </span>
         )}
       </h4>
@@ -39,10 +37,12 @@ function ColorBox({
               className={`${
                 colorcode.code == selectedColor?.code ? style.selected : ""
               } ${
-                availableQuantity > 0 && colorcode.code == selectedColor?.code
+                availableQuantity == undefined
+                  ? ""
+                  : availableQuantity > 0 && colorcode == selectedColor
                   ? ""
                   : style.disabled
-              }`}
+              } ${style.boder}`}
               key={colorcode.code}
               style={{
                 backgroundColor: colorcode.code,
@@ -52,6 +52,12 @@ function ColorBox({
               onClick={(e) => {
                 // if (availableQuantity > 0) {
                 e.stopPropagation();
+                if (selectedColor?.code == colorcode.code) {
+                  selectColor(undefined);
+                  setSelectedColor(undefined);
+
+                  return;
+                }
                 selectColor(colorcode.code);
                 setSelectedColor(colorcode);
                 // }

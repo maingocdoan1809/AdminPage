@@ -1,14 +1,15 @@
 import SizeBox from "../SizeBox/SizeBox";
 import ColorBox, { ColorBoxProps } from "../ColorBox/ColorBox";
 import { useState } from "react";
-import { Product } from "../../utilities/utils";
-
+import { CartItem, Product } from "../../utilities/utils";
+import { CART_KEY } from "../../env";
+import style from "./selectbox.module.css";
 export type SelectBoxProps = {
   products: Product[];
 };
 
 export type SelectBoxState = {
-  selectedId: Product | undefined;
+  product: Product | undefined;
   selectedColor: string | undefined;
   selectedSize: string | undefined;
   selectedQuantity: number;
@@ -19,53 +20,45 @@ function SelectBox({ products }: SelectBoxProps) {
     selectedColor: undefined,
     selectedQuantity: 0,
     selectedSize: undefined,
-    selectedId: undefined,
+    product: undefined,
   } as SelectBoxState);
+
   // remove duplicate:
 
-  const colorsAndSizes = products.flatMap((p) => {
-    return [[p.colorcode, p.colorname, p.size, p.quantity]];
-  });
-
-  const colors = colorsAndSizes.map((p) => {
-    return {
-      code: p[0],
-      name: p[1],
-    };
-  });
-  const sizes = colorsAndSizes.map((p) => {
-    return p[2];
-  });
-
-  const x: { code: string | number; name: string | number }[] = [];
-  colors.forEach((c) => {
-    for (let i of x) {
-      if (JSON.stringify(c) == JSON.stringify(i)) {
-        return;
+  const colors = products.reduce(
+    (pre, curr) => {
+      const p = {
+        code: curr.colorcode,
+        name: curr.colorname,
+      };
+      for (let pr of pre) {
+        if (pr.code == p.code) {
+          return pre;
+        }
       }
-    }
-    x.push(c);
-  });
-
-  const y = [...new Set(sizes)];
+      return [...pre, p];
+    },
+    [] as {
+      code: string;
+      name: string;
+    }[]
+  );
+  const sizes = products.reduce((pre, curr) => {
+    return [...new Set([...pre, curr.size])];
+  }, [] as string[]);
 
   return (
     <>
       <ColorBox
-        colorcodes={x.map((p) => {
-          return {
-            code: p.code as string,
-            name: p.name as string,
-          };
-        })}
+        colorcodes={colors}
         availableQuantity={
-          selectOptions.selectedId ? selectOptions.selectedId.quantity : 1
+          selectOptions.product ? selectOptions.product.quantity : 1
         }
         selectColor={(color) => {
           setSelectOptions({
             ...selectOptions,
             selectedColor: color,
-            selectedId:
+            product:
               products.find((p) => {
                 if (
                   p.colorcode == color &&
@@ -82,7 +75,7 @@ function SelectBox({ products }: SelectBoxProps) {
           setSelectOptions({
             ...selectOptions,
             selectedSize: size,
-            selectedId:
+            product:
               products.find((p) => {
                 if (
                   p.colorcode == selectOptions.selectedColor &&
@@ -94,18 +87,16 @@ function SelectBox({ products }: SelectBoxProps) {
           });
         }}
         availableQuantity={
-          selectOptions.selectedId ? selectOptions.selectedId.quantity : 1
+          selectOptions.product ? selectOptions.product.quantity : 1
         }
-        sizes={y.map((p) => {
-          return {
-            name: p + "",
-          };
-        })}
+        sizes={sizes}
       />
       <div className="mt-3">
         <h5>Quantity </h5>
         <input
           type="number"
+          pattern="[0-9]+"
+          min={1}
           onChange={(e) => {
             setSelectOptions({
               ...selectOptions,
@@ -116,17 +107,31 @@ function SelectBox({ products }: SelectBoxProps) {
         />
       </div>
       <button
-        className="mt-5 btn btn-danger rounded-0 w-100"
+        className={`mt-5 btn btn-danger rounded-0 w-100 ${style["sticky-bottom"]}`}
         disabled={
           selectOptions.selectedColor &&
           selectOptions.selectedSize &&
           selectOptions.selectedQuantity > 0 &&
-          selectOptions.selectedId
+          selectOptions.product
             ? false
             : true
         }
         onClick={(e) => {
-          console.log(JSON.stringify(selectOptions));
+          // add to localstorage:
+          saveCart({
+            id: selectOptions.product?.id,
+            color: selectOptions.product?.colorname,
+            size: selectOptions.selectedSize,
+            name: selectOptions.product?.name,
+            colorName: selectOptions.product?.colorname,
+            imgUrl: selectOptions.product?.imageurl,
+            originalPrice: selectOptions.product?.price,
+            promotedPrice:
+              selectOptions.product?.promotedprice == 0
+                ? selectOptions.product.price
+                : selectOptions.product?.promotedprice,
+            quantity: selectOptions.selectedQuantity,
+          } as CartItem);
         }}
       >
         Add to your cart
@@ -135,4 +140,25 @@ function SelectBox({ products }: SelectBoxProps) {
   );
 }
 
+function saveCart(item: CartItem) {
+  // first get all the items that already exist in storage:
+
+  const oldCart = JSON.parse(
+    localStorage.getItem(CART_KEY) || "[]"
+  ) as CartItem[];
+  let flag = false;
+  for (let i of oldCart) {
+    // check if item is in olcCart?
+    if (i.id == item.id) {
+      i.quantity += item.quantity;
+      flag = true;
+    }
+  }
+  if (!flag) {
+    oldCart.push(item);
+  }
+  // save to localstorage:
+  localStorage.setItem(CART_KEY, JSON.stringify(oldCart));
+  alert("Your cart is ready.");
+}
 export default SelectBox;
