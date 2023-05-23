@@ -1,66 +1,30 @@
 import { useEffect, useState } from "react";
 import style from "./commentbox.module.css";
+import { BACKEND_URL } from "../../env";
 type CommentBoxProps = {
   idproductinfo: string;
 };
 
 type CommentType = {
-  username: string;
-  commentDate: string;
-  content: string;
+  fullname: string;
+  datecreated: string;
+  comment: string;
 };
 
 function CommentBox({ idproductinfo }: CommentBoxProps) {
   const [comments, setComments] = useState([] as CommentType[]);
+  const [userComment, setUserComment] = useState("");
   useEffect(() => {
-    console.log("Load comment for id: " + idproductinfo);
-    setComments([
-      {
-        commentDate: "2023/10/12",
-        username: "Mai Ngoc Doan",
-        content: "Áo rất đẹp nha",
-      },
-      {
-        commentDate: "2023/10/12",
-        username: "Mai Ngoc Doan",
-        content: "Áo rất đẹp nha",
-      },
-      {
-        commentDate: "2023/10/12",
-        username: "Mai Ngoc Doan",
-        content: "Áo rất đẹp nha",
-      },
-      {
-        commentDate: "2023/10/12",
-        username: "Mai Ngoc Doan",
-        content: "Áo rất đẹp nha",
-      },
-      {
-        commentDate: "2023/10/12",
-        username: "Mai Ngoc Doan",
-        content: "Áo rất đẹp nha",
-      },
-      {
-        commentDate: "2023/10/12",
-        username: "Mai Ngoc Doan",
-        content: "Áo rất đẹp nha",
-      },
-      {
-        commentDate: "2023/10/12",
-        username: "Mai Ngoc Doan",
-        content: "Áo rất đẹp nha",
-      },
-      {
-        commentDate: "2023/10/12",
-        username: "Mai Ngoc Doan",
-        content: "Áo rất đẹp nha",
-      },
-      {
-        commentDate: "2023/10/12",
-        username: "Mai Ngoc Doan",
-        content: "Áo rất đẹp nha",
-      },
-    ]);
+    fetch(BACKEND_URL + "/comments/product/" + idproductinfo, {
+      method: "GET",
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   }, []);
   return (
     <div className="">
@@ -115,9 +79,9 @@ function CommentBox({ idproductinfo }: CommentBoxProps) {
           {comments.map((comment, index) => {
             return (
               <div key={index} className="border-bottom mb-3 col-12 ">
-                <div className="d-flex justify-content-between mb-3">
+                <div className="d-flex justify-comment-between mb-3">
                   <div className="d-flex gap-2">
-                    <h6>{comment.username}</h6>
+                    <h6>{comment.fullname}</h6>
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       width="16"
@@ -131,18 +95,52 @@ function CommentBox({ idproductinfo }: CommentBoxProps) {
                     </svg>
                   </div>
                   <small className="text-secondary">
-                    {comment.commentDate}
+                    {comment.datecreated}
                   </small>
                 </div>
-                <div className="mb-2">{comment.content}</div>
+                <div className="mb-2">{comment.comment}</div>
               </div>
             );
           })}
         </div>
-        <div>
-          <button className="btn btn-success w-100 btn-sm">
-            Load more comments
-          </button>
+        <div className="">
+          <label htmlFor="comment" className="form-label">
+            Leave your thoughts here.
+          </label>
+          <div className="mb-3 form-control position-relative d-flex gap-2">
+            <textarea
+              value={userComment}
+              onChange={(e) => {
+                setUserComment(e.target.value);
+              }}
+              className="form-control "
+              id={style["comment-box"]}
+              name="comment"
+            ></textarea>
+            <span
+              onClick={(e) => {
+                fetch(BACKEND_URL + "/comments/product/" + idproductinfo, {
+                  method: "POST",
+                  body: JSON.stringify({
+                    username: "",
+                    content: userComment,
+                  }),
+                });
+              }}
+              className={style["comment-button"]}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                fill="currentColor"
+                className="bi bi-send-fill"
+                viewBox="0 0 16 16"
+              >
+                <path d="M15.964.686a.5.5 0 0 0-.65-.65L.767 5.855H.766l-.452.18a.5.5 0 0 0-.082.887l.41.26.001.002 4.995 3.178 3.178 4.995.002.002.26.41a.5.5 0 0 0 .886-.083l6-15Zm-1.833 1.89L6.637 10.07l-.215-.338a.5.5 0 0 0-.154-.154l-.338-.215 7.494-7.494 1.178-.471-.47 1.178Z" />
+              </svg>
+            </span>
+          </div>
         </div>
       </div>
     </div>

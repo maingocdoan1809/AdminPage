@@ -15,9 +15,12 @@ export function LoginForm() {
   const [isLogginFail, setIsLogginFail] = useState(false);
   const [isServerErr, setServerError] = useState(false);
   const navigate = useNavigate();
+
   useEffect(() => {
     checkUserIdentity()
       .then((data) => {
+        console.log(data);
+
         if (data.isAuthenticated) {
           localStorage.setItem("user", JSON.stringify(data));
           console.log(data.priority);
@@ -36,6 +39,8 @@ export function LoginForm() {
         }
       })
       .catch((err) => {
+        console.log(err);
+
         setServerError(true);
       });
   }, []);

@@ -14,48 +14,51 @@ import SearchPage from "./pages/SearchPage/SearchPage";
 import Layout from "./layouts/CustomerLayout/Layout";
 import AdminPageContext from "./contexts/AdminPageContext/AdminPageContext";
 import ProductDetail from "./components/ProductDetail/ProductDetail";
+import UserContext from "./contexts/UserContext/UserContext";
 
 function App() {
   return (
-    <div className="App">
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Main />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/unauth" element={<Unauthenticated />} />
-          <Route path="/search" element={<SearchPage />} />
-          <Route path="/checkout" element={<Checkout />} />
-          <Route
-            path="/product"
-            element={
-              <Layout>
-                <ProductDetail />
-              </Layout>
-            }
-          />
-          <Route path="/servererror" element={<ServerError />} />
-          <Route
-            path="/profile"
-            element={
-              <Layout>
-                <Profile />
-              </Layout>
-            }
-          />
-          {/* Admin */}
-          <Route
-            path="/admin"
-            element={
-              <AdminPageContext>
-                <AdminPage />
-              </AdminPageContext>
-            }
-          />
-          <Route path="/*" element={<Error />} />
-        </Routes>
-      </BrowserRouter>
-    </div>
+    <UserContext>
+      <div className="App">
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<Main />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/unauth" element={<Unauthenticated />} />
+            <Route path="/search" element={<SearchPage />} />
+            <Route path="/checkout" element={<Checkout />} />
+            <Route
+              path="/product"
+              element={
+                <Layout>
+                  <ProductDetail />
+                </Layout>
+              }
+            />
+            <Route path="/servererror" element={<ServerError />} />
+            <Route
+              path="/profile"
+              element={
+                <Layout>
+                  <Profile />
+                </Layout>
+              }
+            />
+            {/* Admin */}
+            <Route
+              path="/admin"
+              element={
+                <AdminPageContext>
+                  <AdminPage />
+                </AdminPageContext>
+              }
+            />
+            <Route path="/*" element={<Error />} />
+          </Routes>
+        </BrowserRouter>
+      </div>
+    </UserContext>
   );
 }
 

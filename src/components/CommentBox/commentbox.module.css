@@ -3,3 +3,28 @@
   color: black;
   font-weight: 700;
 }
+
+#comment-box {
+  outline: none;
+  border: none;
+}
+
+#comment-box:focus {
+  border: none;
+  box-shadow: none;
+  outline: none;
+}
+
+.comment-button {
+  align-self: flex-end;
+  border-radius: 50%;
+  color: black;
+  padding: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.comment-button:hover {
+  color: blue;
+}
