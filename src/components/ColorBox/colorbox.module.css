@@ -1,5 +1,21 @@
 .selected {
   border: 3px solid gray !important;
+  position: relative;
+}
+
+.selected::before {
+  content: "\f00c";
+  font-family: "fontawesome";
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  color: blue;
+
 }
 
 .border {

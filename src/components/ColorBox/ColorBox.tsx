@@ -1,5 +1,6 @@
 import { useState } from "react";
 import style from "./colorbox.module.css";
+import { Product } from "../../utilities/utils";
 type ColorState = {
   code: string;
   name: string;
@@ -7,27 +8,31 @@ type ColorState = {
 
 export type ColorBoxProps = {
   colorcodes: ColorState[];
-  selectColor: (color: string | undefined) => void;
-  availableQuantity: number | undefined;
+  protentialColors: string[];
+  selectedColor: string | undefined;
+  setColor: (color: string | undefined) => void;
 };
 
 function ColorBox({
   colorcodes,
-  selectColor,
-  availableQuantity,
+  protentialColors,
+  setColor,
+  selectedColor,
 }: ColorBoxProps) {
-  const [selectedColor, setSelectedColor] = useState<ColorState | undefined>(
-    undefined
-  );
   return (
     <div className="mt-3">
       <h4>
-        Color{" "}
+        Color
         {selectedColor && (
-          <span>
-            {" : "}
-            <small>{selectedColor.name}</small>{" "}
-          </span>
+          <small>
+            {" "}
+            :{" "}
+            {
+              colorcodes.find((e) => {
+                return e.code == selectedColor;
+              })?.name
+            }{" "}
+          </small>
         )}
       </h4>
       <div className="d-flex gap-2">
@@ -35,14 +40,10 @@ function ColorBox({
           return (
             <div
               className={`${
-                colorcode.code == selectedColor?.code ? style.selected : ""
+                selectedColor == colorcode.code ? style.selected : ""
               } ${
-                availableQuantity == undefined
-                  ? ""
-                  : availableQuantity > 0 && colorcode == selectedColor
-                  ? ""
-                  : style.disabled
-              } ${style.boder}`}
+                protentialColors.includes(colorcode.code) ? "" : style.disabled
+              } `}
               key={colorcode.code}
               style={{
                 backgroundColor: colorcode.code,
@@ -50,17 +51,13 @@ function ColorBox({
                 height: "60px",
               }}
               onClick={(e) => {
-                // if (availableQuantity > 0) {
-                e.stopPropagation();
-                if (selectedColor?.code == colorcode.code) {
-                  selectColor(undefined);
-                  setSelectedColor(undefined);
-
-                  return;
+                if (protentialColors.includes(colorcode.code)) {
+                  if (selectedColor != colorcode.code) {
+                    setColor(colorcode.code);
+                  } else {
+                    setColor(undefined);
+                  }
                 }
-                selectColor(colorcode.code);
-                setSelectedColor(colorcode);
-                // }
               }}
             ></div>
           );

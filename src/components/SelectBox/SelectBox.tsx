@@ -47,14 +47,41 @@ function SelectBox({ products }: SelectBoxProps) {
     return [...new Set([...pre, curr.size])];
   }, [] as string[]);
 
+  const getProtentialColors = function () {
+    // neu chua chon size thi tat ca cac mau la co the co
+    if (selectOptions.selectedSize == undefined) {
+      return products.reduce((pre, curr) => {
+        return [...pre, curr.colorcode];
+      }, [] as string[]);
+    }
+    // nếu chọn size rồi thì lọc ra các màu ứng với
+    // size đã chọn mà có số lượng lớn hơn 0
+    return products.reduce((pre, curr) => {
+      if (selectOptions.selectedSize == curr.size && curr.quantity > 0) {
+        return [...pre, curr.colorcode];
+      }
+      return [...pre];
+    }, [] as string[]);
+  };
+
+  const getProtentialSizes = function () {
+    if (selectOptions.selectedColor == undefined) {
+      return products.reduce((pre, curr) => {
+        return [...pre, curr.size];
+      }, [] as string[]);
+    }
+    return products.reduce((pre, curr) => {
+      if (selectOptions.selectedColor == curr.colorcode && curr.quantity > 0) {
+        return [...pre, curr.size];
+      }
+      return [...pre];
+    }, [] as string[]);
+  };
   return (
     <>
       <ColorBox
         colorcodes={colors}
-        availableQuantity={
-          selectOptions.product ? selectOptions.product.quantity : 1
-        }
-        selectColor={(color) => {
+        setColor={(color) => {
           setSelectOptions({
             ...selectOptions,
             selectedColor: color,
@@ -64,14 +91,17 @@ function SelectBox({ products }: SelectBoxProps) {
                   p.colorcode == color &&
                   p.size == selectOptions.selectedSize
                 ) {
-                  return p;
+                  return true;
                 }
-              }) || ({} as Product),
+                return false;
+              }) || undefined,
           });
         }}
+        protentialColors={getProtentialColors()}
+        selectedColor={selectOptions.selectedColor}
       />
       <SizeBox
-        selectSize={(size) => {
+        setSize={(size) => {
           setSelectOptions({
             ...selectOptions,
             selectedSize: size,
@@ -81,14 +111,14 @@ function SelectBox({ products }: SelectBoxProps) {
                   p.colorcode == selectOptions.selectedColor &&
                   p.size == size
                 ) {
-                  return p;
+                  return true;
                 }
-              }) || ({} as Product),
+                false;
+              }) || undefined,
           });
         }}
-        availableQuantity={
-          selectOptions.product ? selectOptions.product.quantity : 1
-        }
+        protentialSizes={getProtentialSizes()}
+        selectedSize={selectOptions.selectedSize}
         sizes={sizes}
       />
       <div className="mt-3">
@@ -118,9 +148,10 @@ function SelectBox({ products }: SelectBoxProps) {
         }
         onClick={(e) => {
           // add to localstorage:
+
           saveCart({
             id: selectOptions.product?.id,
-            color: selectOptions.product?.colorname,
+            color: selectOptions.product?.colorcode,
             size: selectOptions.selectedSize,
             name: selectOptions.product?.name,
             colorName: selectOptions.product?.colorname,

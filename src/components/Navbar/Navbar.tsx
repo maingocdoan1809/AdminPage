@@ -54,8 +54,8 @@ const Navbar: React.FC = () => {
             ></button>
           </div>
           <div className="offcanvas-body ">
-            <ul className="navbar-nav justify-content-end flex-grow-1 pe-3 d-flex justify-content-between">
-              <li className="nav-item">
+            <ul className="navbar-nav justify-content-start flex-grow-1 pe-3 d-flex">
+              <li className="nav-item flex-grow-1 text-left">
                 <ul className="navbar-nav">
                   <li className="nav-item">
                     <div

@@ -20,13 +20,11 @@
 }
 
 .flex-end {
-  flex: 1;
   display: flex;
-  text-align: left;
   cursor: pointer;
   user-select: none;
   font-size: medium;
-  justify-content: space-evenly;
+  justify-content: space-between;
 }
 
 .menu {
@@ -48,5 +46,9 @@
 @media screen and (max-width: 575.5px) {
   .search-lap {
     display: none !important;
+  }
+
+  .flex-end {
+    flex: 1;
   }
 }

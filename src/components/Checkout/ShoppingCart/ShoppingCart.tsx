@@ -9,9 +9,12 @@ function ShoppingCart() {
     setCartItems(itemsInCart as CartItem[]);
   }, []);
   useEffect(() => {
+    if (cartItems.length > 0) {
+      localStorage.setItem(CART_KEY, JSON.stringify(cartItems));
+    }
     return () => {
       if (cartItems.length > 0) {
-        if (cartItems[0].quantity <= 0) {
+        if (cartItems.length == 1 && cartItems[0].quantity == 0) {
           localStorage.setItem(CART_KEY, "");
         } else {
           localStorage.setItem(CART_KEY, JSON.stringify(cartItems));
@@ -58,7 +61,7 @@ function ShoppingCart() {
                 <img src={item.imgUrl} width={"30%"} alt="Ảnh sản phẩm" />
                 <div className="d-flex flex-column gap-2">
                   <small>
-                    {item.color}
+                    {item.colorName}
                     <span
                       className="d-inline-block rounded-circle p-1 ms-2"
                       style={{
