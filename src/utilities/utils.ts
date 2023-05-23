@@ -1,6 +1,6 @@
 import { useUser } from "../contexts/UserContext/UserContext";
 import { BACKEND_URL } from "../env";
-
+import { User as AuthUser } from "../contexts/UserContext/UserContext";
 export enum EAdminPage {
   PRODUCT,
   CATEGORY,
@@ -92,24 +92,28 @@ export function toMoney(realNumber: number) {
   return formated.substring(1);
 }
 
-export async function checkUserIdentity() {
-  const user = JSON.parse(localStorage.getItem("user") || "{}");
-  if (user.token && user.username) {
-    const response = await fetch(
-      BACKEND_URL + `/auth?username=${user.username}&token=${user.token}`,
-      {
-        method: "GET",
+export async function checkUserIdentity(user: AuthUser | undefined) {
+  return new Promise(async (resolve, reject) => {
+    try {
+      if (user && user.token && user.username) {
+        const response = await fetch(
+          BACKEND_URL + `/auth?username=${user.username}&token=${user.token}`,
+          {
+            method: "GET",
+          }
+        );
+        const data = await response.json();
+        if (data.isAuthenticated) {
+          resolve(data as AuthUser);
+        } else {
+          reject({ isAuthenticated: false });
+        }
+      } else {
+        reject({ isAuthenticated: false });
       }
-    );
-
-    const data = await response.json();
-    if (data.isAuthenticated) {
-      localStorage.setItem("user", JSON.stringify(data));
+    } catch (err) {
+      reject({ err: "Server error" });
     }
-    return data;
-  }
-  return new Promise((resolve, reject) => {
-    resolve({ isAuthenticated: false });
   });
 }
 

@@ -8,6 +8,7 @@ import LoadingView from "../LoadingView/LoadingView";
 
 import ChangepassBox from "../ChangePass/Changepass";
 import { BACKEND_URL } from "../../env";
+import { User, useUser } from "../../contexts/UserContext/UserContext";
 export type UserInfo = {
   username: string;
   fullname: string;
@@ -25,25 +26,28 @@ function Profile() {
   const [newAvt, setNewAvt] = useState<File>(null!);
   const avtRef = useRef<HTMLImageElement>(null!);
   const [isPending, setIsPending] = useState(false);
+
+  const [user, setUser] = useUser();
   useEffect(() => {
-    checkUserIdentity()
-      .then((data) => {
-        if (!data.isAuthenticated) {
-          redirect("/unauth");
-        } else {
-          setUserInfor({
-            address: data.address,
-            avt: data.avt,
-            birthday: data.birthday,
-            email: data.email,
-            fullname: data.fullname,
-            phonenumber: data.phonenumber,
-            username: data.username,
-          });
-        }
+    checkUserIdentity(user)
+      .then((response) => {
+        const data = response as User;
+        setUserInfor({
+          address: data.address,
+          avt: data.avt,
+          birthday: data.birthday,
+          email: data.email,
+          fullname: data.fullname,
+          phonenumber: data.phonenumber,
+          username: data.username,
+        });
       })
       .catch((err) => {
-        redirect("/servererror");
+        if (err.err) {
+          redirect("/servererror");
+        } else {
+          redirect("/unauth");
+        }
       })
       .finally(() => {
         setChecking(false);
@@ -221,6 +225,7 @@ function Profile() {
                         avt: userInfo.avt?.replace(BACKEND_URL + "/avts/", ""),
                         newAvt,
                       },
+                      user,
                       () => {
                         setIsPending(true);
                       },
@@ -286,6 +291,7 @@ function Profile() {
 
 const changeBasicInfor = function (
   userInfo: any,
+  user: User | undefined,
   whenUpdating?: () => void,
   whenUpdated?: () => void
 ) {
@@ -299,9 +305,8 @@ const changeBasicInfor = function (
     if (whenUpdating) {
       whenUpdating();
     }
-    const user = JSON.parse(localStorage.getItem("user") || "{}");
     fetch(
-      `${BACKEND_URL}/users/edit/${userInfo["username"]}?token=${user.token}`,
+      `${BACKEND_URL}/users/edit/${userInfo["username"]}?token=${user!.token}`,
       {
         method: "PUT",
         body: formData,

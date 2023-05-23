@@ -1,4 +1,4 @@
-import { createContext, useState, useContext } from "react";
+import { createContext, useState, useContext, useEffect } from "react";
 
 export type User = {
   accesstimes: number;
@@ -28,6 +28,18 @@ type UserProps = {
 };
 function UserContext({ children }: UserProps) {
   const [user, setUser] = useState<undefined | User>(undefined);
+  useEffect(() => {
+    console.log("First render");
+    const localuser = JSON.parse(localStorage.getItem("user") || "{}");
+    setUser(localuser.username ? localuser : undefined);
+  }, []);
+  useEffect(() => {
+    return () => {
+      if (user) {
+        localStorage.setItem("user", JSON.stringify(user));
+      }
+    };
+  }, [user]);
   return (
     <userContext.Provider value={[user, setUser]}>
       {children}

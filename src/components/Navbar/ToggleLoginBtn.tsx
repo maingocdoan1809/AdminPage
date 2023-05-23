@@ -3,6 +3,7 @@ import styles from "./navbar.module.css";
 import { useNavigate } from "react-router";
 import Profile from "../Profile/Profile";
 import { EAdminPage } from "../../utilities/utils";
+import { useUser } from "../../contexts/UserContext/UserContext";
 export type ToggleLoginBtnProps = {
   className?: string[];
   adminProfileAction?: (p: EAdminPage) => void;
@@ -16,16 +17,18 @@ function ToggleLoginBtn({
   const redirect = useNavigate();
   const [userName, setUserName] = useState("anonymous");
   const [avtUrl, setAvtUrl] = useState("");
+  const [user, setUser] = useUser();
   useEffect(() => {
-    const data = JSON.parse(localStorage.getItem("user") || "{}");
-    if (data.isAuthenticated) {
-      setUserName(data.fullname);
+    if (user) {
+      setUserName(user.fullname);
       setIsUserLoggedIn(true);
-      setAvtUrl(data.avt);
+      setAvtUrl(user.avt);
     } else {
       setIsUserLoggedIn(false);
+      setUserName("");
+      setAvtUrl("");
     }
-  });
+  }, [user]);
   return (
     <>
       <div className="dropdown">
@@ -85,11 +88,8 @@ function ToggleLoginBtn({
               <li>
                 <div
                   onClick={(e) => {
-                    localStorage.clear();
-
+                    setUser(undefined);
                     redirect("/");
-
-                    window.location.reload();
                   }}
                   className="dropdown-item"
                 >

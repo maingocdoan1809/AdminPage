@@ -7,43 +7,30 @@ import sha256 from "crypto-js/sha256";
 import { checkUserIdentity } from "../../utilities/utils";
 import LoadingView from "../LoadingView/LoadingView";
 import PasswordInput from "../ValidInput/PasswordInput";
+import { User, useUser } from "../../contexts/UserContext/UserContext";
 
 export function LoginForm() {
+  const [user, setUser] = useUser();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [isLoggedIn, setIsLoggedIn] = useState<boolean | undefined>(undefined);
   const [isLogginFail, setIsLogginFail] = useState(false);
   const [isServerErr, setServerError] = useState(false);
   const navigate = useNavigate();
-
   useEffect(() => {
-    checkUserIdentity()
-      .then((data) => {
-        console.log(data);
-
-        if (data.isAuthenticated) {
-          localStorage.setItem("user", JSON.stringify(data));
-          console.log(data.priority);
-
-          if (data.priority == 1) {
-            navigate("/admin");
-          } else {
-            navigate("/");
-          }
-        } else {
-          if (data.err) {
-            setServerError(true);
-          } else {
-            setIsLoggedIn(false);
-          }
-        }
+    checkUserIdentity(user)
+      .then((response) => {
+        // auth ok;
+        navigate("/");
       })
       .catch((err) => {
-        console.log(err);
-
-        setServerError(true);
+        if (err.err) {
+          setServerError(true);
+        } else {
+          setIsLoggedIn(false);
+        }
       });
-  }, []);
+  }, [user]);
   return isServerErr ? (
     <div className={`${style.servererror} container`}>
       <h1 className="text-danger">Opp! 505</h1>
@@ -97,6 +84,7 @@ export function LoginForm() {
                 username,
                 password,
                 navigate,
+                setUser,
                 setIsLogginFail,
                 setServerError
               )}
@@ -126,6 +114,7 @@ function onLogging(
   username: string,
   password: string,
   navigae: (to: string) => void,
+  loginOk: (user: User | undefined) => void,
   loginFail: (param: boolean) => void,
   serverError: (param: boolean) => void
 ) {
@@ -142,6 +131,7 @@ function onLogging(
       .then((data) => {
         if (data.isAuthenticated == true) {
           localStorage.setItem("user", JSON.stringify(data));
+          loginOk(data as User);
           if (data.priority == 1) {
             navigae("/admin");
           } else {
