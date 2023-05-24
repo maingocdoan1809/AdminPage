@@ -27,12 +27,11 @@ type UserProps = {
   children: React.ReactNode;
 };
 function UserContext({ children }: UserProps) {
-  const [user, setUser] = useState<undefined | User>(undefined);
-  useEffect(() => {
+  const [user, setUser] = useState<undefined | User>(() => {
     console.log("First render");
     const localuser = JSON.parse(localStorage.getItem("user") || "{}");
-    setUser(localuser.username ? localuser : undefined);
-  }, []);
+    return localuser.username ? localuser : undefined;
+  });
   useEffect(() => {
     return () => {
       if (user) {

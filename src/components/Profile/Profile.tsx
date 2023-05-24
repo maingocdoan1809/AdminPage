@@ -21,13 +21,14 @@ export type UserInfo = {
 
 function Profile() {
   const redirect = useNavigate();
+  const [user, setUser] = useUser();
+
   const [isChecking, setChecking] = useState(true);
   const [userInfo, setUserInfor] = useState({} as UserInfo);
   const [newAvt, setNewAvt] = useState<File>(null!);
   const avtRef = useRef<HTMLImageElement>(null!);
   const [isPending, setIsPending] = useState(false);
 
-  const [user, setUser] = useUser();
   useEffect(() => {
     checkUserIdentity(user)
       .then((response) => {
@@ -46,13 +47,14 @@ function Profile() {
         if (err.err) {
           redirect("/servererror");
         } else {
+          setUser(undefined);
           redirect("/unauth");
         }
       })
       .finally(() => {
         setChecking(false);
       });
-  }, []);
+  }, [user]);
 
   return (
     <>
@@ -62,7 +64,7 @@ function Profile() {
         <div className={`container mt-5 d-flex ${style.container}`}>
           <div className="col-lg-6 col-md-12 d-flex justify-content-center align-items-center">
             <div
-              className="col overflow-hidden
+              className=" overflow-hidden
                 position-relative d-flex justify-content-center align-items-center flex-column"
             >
               <img
@@ -74,46 +76,32 @@ function Profile() {
                 ref={avtRef}
                 alt="Avatar"
               />
-              <div className="row mb-3">
-                <div className="">
-                  <div className="d-flex gap-1">
-                    <span>You can change your avatar </span>
-                    <label htmlFor="avt" className="form-label text-primary">
-                      <span>here</span>
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="16"
-                        height="16"
-                        fill="currentColor"
-                        className="bi bi-images"
-                        viewBox="0 0 16 16"
-                      >
-                        <path d="M4.502 9a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z" />
-                        <path d="M14.002 13a2 2 0 0 1-2 2h-10a2 2 0 0 1-2-2V5A2 2 0 0 1 2 3a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v8a2 2 0 0 1-1.998 2zM14 2H4a1 1 0 0 0-1 1h9.002a2 2 0 0 1 2 2v7A1 1 0 0 0 15 11V3a1 1 0 0 0-1-1zM2.002 4a1 1 0 0 0-1 1v8l2.646-2.354a.5.5 0 0 1 .63-.062l2.66 1.773 3.71-3.71a.5.5 0 0 1 .577-.094l1.777 1.947V5a1 1 0 0 0-1-1h-10z" />
-                      </svg>
-                    </label>
-                    <input
-                      type="file"
-                      className={`${style.hidden}`}
-                      name="avt"
-                      id="avt"
-                      onChange={(e) => {
-                        if (e.target.files) {
-                          var reader = new FileReader();
+              <div className={`row mb-3 ${style["avt-change-btn"]}`}>
+                <label
+                  htmlFor="avt"
+                  className="form-label text-primary w-100 h-100 d-flex justify-content-center align-items-center"
+                ></label>
+                <input
+                  type="file"
+                  className={`${style.hidden}`}
+                  name="avt"
+                  id="avt"
+                  style={{ display: "none" }}
+                  onChange={(e) => {
+                    if (e.target.files) {
+                      var reader = new FileReader();
 
-                          reader.onload = function (e) {
-                            avtRef.current.setAttribute(
-                              "src",
-                              e.target?.result as string
-                            );
-                          };
-                          reader.readAsDataURL(e.target.files![0]);
-                          setNewAvt(e.target.files[0]);
-                        }
-                      }}
-                    />
-                  </div>
-                </div>
+                      reader.onload = function (e) {
+                        avtRef.current.setAttribute(
+                          "src",
+                          e.target?.result as string
+                        );
+                      };
+                      reader.readAsDataURL(e.target.files![0]);
+                      setNewAvt(e.target.files[0]);
+                    }
+                  }}
+                />
               </div>
             </div>
           </div>

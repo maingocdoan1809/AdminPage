@@ -3,6 +3,17 @@
   min-height: 100vh;
 }
 
+.avt-change-btn {
+  position: absolute;
+  border-radius: 50%;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .avt {
   padding: 10px;
   width: 250px;
