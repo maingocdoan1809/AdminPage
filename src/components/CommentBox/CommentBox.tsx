@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import style from "./commentbox.module.css";
 import { BACKEND_URL } from "../../env";
+import { useUser } from "../../contexts/UserContext/UserContext";
 type CommentBoxProps = {
   idproductinfo: string;
 };
@@ -12,20 +13,25 @@ type CommentType = {
 };
 
 function CommentBox({ idproductinfo }: CommentBoxProps) {
+  const [user, setUser] = useUser();
   const [comments, setComments] = useState([] as CommentType[]);
   const [userComment, setUserComment] = useState("");
+  const [toggle, setToggle] = useState(true);
+  const [isSending, setIsSending] = useState(false);
+  const [isAccepted, setIsAccepted] = useState(true);
+  const [isEmptyComment, setIsEmptyComment] = useState(false);
   useEffect(() => {
     fetch(BACKEND_URL + "/comments/product/" + idproductinfo, {
       method: "GET",
     })
       .then((response) => response.json())
       .then((data) => {
-        console.log(data);
+        setComments(data);
       })
       .catch((err) => {
         console.log(err);
       });
-  }, []);
+  }, [toggle]);
   return (
     <div className="">
       <a
@@ -79,7 +85,7 @@ function CommentBox({ idproductinfo }: CommentBoxProps) {
           {comments.map((comment, index) => {
             return (
               <div key={index} className="border-bottom mb-3 col-12 ">
-                <div className="d-flex justify-comment-between mb-3">
+                <div className="d-flex justify-content-between mb-3">
                   <div className="d-flex gap-2">
                     <h6>{comment.fullname}</h6>
                     <svg
@@ -95,7 +101,7 @@ function CommentBox({ idproductinfo }: CommentBoxProps) {
                     </svg>
                   </div>
                   <small className="text-secondary">
-                    {comment.datecreated}
+                    {comment.datecreated.substring(0, 10)}
                   </small>
                 </div>
                 <div className="mb-2">{comment.comment}</div>
@@ -103,45 +109,86 @@ function CommentBox({ idproductinfo }: CommentBoxProps) {
             );
           })}
         </div>
-        <div className="">
-          <label htmlFor="comment" className="form-label">
-            Leave your thoughts here.
-          </label>
-          <div className="mb-3 form-control position-relative d-flex gap-2">
-            <textarea
-              value={userComment}
-              onChange={(e) => {
-                setUserComment(e.target.value);
-              }}
-              className="form-control "
-              id={style["comment-box"]}
-              name="comment"
-            ></textarea>
-            <span
-              onClick={(e) => {
-                fetch(BACKEND_URL + "/comments/product/" + idproductinfo, {
-                  method: "POST",
-                  body: JSON.stringify({
-                    username: "",
-                    content: userComment,
-                  }),
-                });
-              }}
-              className={style["comment-button"]}
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="16"
-                height="16"
-                fill="currentColor"
-                className="bi bi-send-fill"
-                viewBox="0 0 16 16"
+        {user && (
+          <div className="">
+            <label htmlFor="comment" className="form-label">
+              Leave your thoughts here.
+            </label>
+            <div className="mb-3 form-control position-relative d-flex gap-2">
+              <textarea
+                value={userComment}
+                onChange={(e) => {
+                  setUserComment(e.target.value);
+                  setIsEmptyComment(false);
+                }}
+                className="form-control "
+                id={style["comment-box"]}
+                name="comment"
+              ></textarea>
+              <span
+                onClick={(e) => {
+                  fetch(BACKEND_URL + "/comments/product/" + idproductinfo, {
+                    method: "POST",
+                    body: JSON.stringify({
+                      username: user.username,
+                      comment: userComment,
+                    }),
+                  })
+                    .then(async (data) => {
+                      if (data.status == 304) {
+                        // user comment it second time
+                        setIsAccepted(false);
+                      } else if (data.status == 406) {
+                        // user does't type anything.
+                        setIsEmptyComment(true);
+                      } else {
+                        setUserComment("");
+                        setToggle(!toggle);
+                      }
+                    })
+                    .catch((err) => {
+                      console.log(err);
+                    });
+                }}
+                className={style["comment-button"]}
               >
-                <path d="M15.964.686a.5.5 0 0 0-.65-.65L.767 5.855H.766l-.452.18a.5.5 0 0 0-.082.887l.41.26.001.002 4.995 3.178 3.178 4.995.002.002.26.41a.5.5 0 0 0 .886-.083l6-15Zm-1.833 1.89L6.637 10.07l-.215-.338a.5.5 0 0 0-.154-.154l-.338-.215 7.494-7.494 1.178-.471-.47 1.178Z" />
-              </svg>
-            </span>
+                {isSending ? (
+                  <div
+                    className="spinner-border spinner-border-sm"
+                    role="status"
+                  >
+                    <span className="visually-hidden">Loading...</span>
+                  </div>
+                ) : (
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    fill="currentColor"
+                    className="bi bi-send-fill"
+                    viewBox="0 0 16 16"
+                  >
+                    <path d="M15.964.686a.5.5 0 0 0-.65-.65L.767 5.855H.766l-.452.18a.5.5 0 0 0-.082.887l.41.26.001.002 4.995 3.178 3.178 4.995.002.002.26.41a.5.5 0 0 0 .886-.083l6-15Zm-1.833 1.89L6.637 10.07l-.215-.338a.5.5 0 0 0-.154-.154l-.338-.215 7.494-7.494 1.178-.471-.47 1.178Z" />
+                  </svg>
+                )}
+              </span>
+            </div>
+            {isEmptyComment && (
+              <div>
+                <span className="text-danger">
+                  Give us your thoughts, don't leave it blank!
+                </span>
+              </div>
+            )}
+            {!isAccepted && (
+              <div>
+                <span className="text-danger">
+                  You had already commented to this product before.
+                </span>
+              </div>
+            )}
           </div>
-        </div>
+        )}
       </div>
     </div>
   );
