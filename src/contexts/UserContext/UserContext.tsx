@@ -28,16 +28,15 @@ type UserProps = {
 };
 function UserContext({ children }: UserProps) {
   const [user, setUser] = useState<undefined | User>(() => {
-    console.log("First render");
     const localuser = JSON.parse(localStorage.getItem("user") || "{}");
     return localuser.username ? localuser : undefined;
   });
   useEffect(() => {
-    return () => {
-      if (user) {
-        localStorage.setItem("user", JSON.stringify(user));
-      }
-    };
+    if (user) {
+      localStorage.setItem("user", JSON.stringify(user));
+    } else {
+      localStorage.clear();
+    }
   }, [user]);
   return (
     <userContext.Provider value={[user, setUser]}>

@@ -89,6 +89,7 @@ function ToggleLoginBtn({
                 <div
                   onClick={(e) => {
                     setUser(undefined);
+                    localStorage.clear();
                     redirect("/");
                   }}
                   className="dropdown-item"
