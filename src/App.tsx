@@ -15,6 +15,7 @@ import Layout from "./layouts/CustomerLayout/Layout";
 import AdminPageContext from "./contexts/AdminPageContext/AdminPageContext";
 import ProductDetail from "./components/ProductDetail/ProductDetail";
 import UserContext from "./contexts/UserContext/UserContext";
+import AddProduct from "./components/AdminComponents/Product/AddProduct/AddProduct";
 
 function App() {
   return (

@@ -1,8 +1,10 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Cart, District, Province, User, Ward } from "../../../utilities/utils";
 import PROVINCES from "../../../utilities/provinces.json";
-import { CART_KEY } from "../../../env";
+import { BACKEND_URL, CART_KEY } from "../../../env";
 import fs from "fs";
+import { io } from "socket.io-client";
+import { useUser } from "../../../contexts/UserContext/UserContext";
 // event: React.ChangeEvent<HTMLSelectElement>
 
 function DeliveryInformation() {
@@ -24,6 +26,9 @@ function DeliveryInformation() {
   const selectedDistrict = useRef("");
   const selectedWard = useRef("");
   const detailedAddress = useRef("");
+  const [user] = useUser();
+  const [toast, setToast] = useState({ message: "", shouldShow: false });
+
   const handleProvinceChange = async (
     e: React.ChangeEvent<HTMLSelectElement>
   ) => {

@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import styles from "./navbar.module.css";
-import { useNavigate } from "react-router";
+import { useLocation, useNavigate } from "react-router";
 import Profile from "../Profile/Profile";
 import { EAdminPage } from "../../utilities/utils";
 import { useUser } from "../../contexts/UserContext/UserContext";
+
 export type ToggleLoginBtnProps = {
   className?: string[];
   adminProfileAction?: (p: EAdminPage) => void;
@@ -12,6 +13,8 @@ function ToggleLoginBtn({
   className,
   adminProfileAction,
 }: ToggleLoginBtnProps) {
+  const location = useLocation();
+
   const [isUserLoggedIn, setIsUserLoggedIn] = useState(false);
   const [isClickLogout, setIsClickLogout] = useState(false);
   const redirect = useNavigate();
@@ -85,6 +88,22 @@ function ToggleLoginBtn({
                   Profile
                 </div>
               </li>
+              {user?.priority == 1 && (
+                <li>
+                  <div
+                    onClick={(e) => {
+                      if (location.pathname == "/admin") {
+                        redirect("/");
+                      } else {
+                        redirect("/admin");
+                      }
+                    }}
+                    className="dropdown-item"
+                  >
+                    {location.pathname == "/admin" ? "Shop" : "Admin"}
+                  </div>
+                </li>
+              )}
               <li>
                 <div
                   onClick={(e) => {

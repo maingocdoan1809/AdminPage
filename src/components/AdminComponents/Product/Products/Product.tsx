@@ -67,6 +67,7 @@ function Products() {
                 <div
                   key={index}
                   className={`${style.card} d-flex flex-row mt-3`}
+                  onClick={(e) => {}}
                 >
                   <div>
                     <img

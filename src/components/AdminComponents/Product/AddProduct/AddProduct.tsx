@@ -1,5 +1,11 @@
+
 function AddProduct() {
-  return <>Add product</>;
+  
+  return <>
+    <div>
+      hjfhjfh
+    </div>  
+  </>;
 }
 
 export default AddProduct;
