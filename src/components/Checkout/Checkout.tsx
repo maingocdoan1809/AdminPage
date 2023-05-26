@@ -5,6 +5,7 @@ import ShoppingCart from "./ShoppingCart/ShoppingCart";
 import styles from "./Checkout.module.css";
 import Layout from "../../layouts/CustomerLayout/Layout";
 import { useEffect } from "react";
+import CartContext from "../../contexts/CartContext/CartContext";
 
 function Checkout() {
   useEffect(() => {
@@ -15,8 +16,10 @@ function Checkout() {
     <Layout>
       <div className={`container ${styles["checkout"]}`}>
         <div className="row">
-          <ShoppingCart />
-          <DeliveryInformation />
+          <CartContext>
+            <ShoppingCart />
+            <DeliveryInformation />
+          </CartContext>
         </div>
       </div>
     </Layout>

@@ -1,34 +1,55 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Cart, District, Province, User, Ward } from "../../../utilities/utils";
+import {
+  Cart,
+  District,
+  Province,
+  User,
+  Ward,
+  checkEmail,
+  checkPhonenumber,
+} from "../../../utilities/utils";
 import PROVINCES from "../../../utilities/provinces.json";
 import { BACKEND_URL, CART_KEY } from "../../../env";
 import fs from "fs";
 import { io } from "socket.io-client";
 import { useUser } from "../../../contexts/UserContext/UserContext";
+import { Fade } from "react-bootstrap";
+import { useCart } from "../../../contexts/CartContext/CartContext";
 // event: React.ChangeEvent<HTMLSelectElement>
 
+const enum ChangeType {
+  EMAIL = "email",
+  RECEIVENAME = "receiveName",
+  PHONENUMBER = "phonenumber",
+  ADDRESS = "address",
+}
+
 function DeliveryInformation() {
+  const [user] = useUser();
+  const [cartItems] = useCart();
   const [cart, setCart] = useState({
     information: {
       username: JSON.parse(localStorage.getItem("user") || "{}").username,
-      address: "",
+      receiveName: user?.fullname,
+      address: {
+        home: "",
+        district: "",
+        province: "",
+        ward: "",
+      },
       email: "",
       phonenumber: "",
     } as User,
-    items: JSON.parse(localStorage.getItem(CART_KEY) || "[]"),
+    items: cartItems,
   } as Cart);
 
+  useEffect(() => {
+    setCart({ ...cart, items: cartItems });
+  }, [cartItems]);
+  const [isSubmiting, setIsSubmiting] = useState(false);
   const [provinces, setProvinces] = useState<Province[]>(PROVINCES);
   const [districts, setDistricts] = useState<District[]>([]);
   const [wards, setWards] = useState<Ward[]>([]);
-
-  const selectedProvince = useRef("");
-  const selectedDistrict = useRef("");
-  const selectedWard = useRef("");
-  const detailedAddress = useRef("");
-  const [user] = useUser();
-  const [toast, setToast] = useState({ message: "", shouldShow: false });
-
   const handleProvinceChange = async (
     e: React.ChangeEvent<HTMLSelectElement>
   ) => {
@@ -52,10 +73,32 @@ function DeliveryInformation() {
       }
       return false;
     });
-
     setWards(district?.wards!);
   };
+  function reducer(type: ChangeType, valueToChange: any) {
+    if (type == ChangeType.ADDRESS) {
+      setCart({
+        ...cart,
+        information: {
+          ...cart.information,
+          address: {
+            ...cart.information.address,
+            [valueToChange.type]: valueToChange.value,
+          },
+        },
+      });
+    } else {
+      setCart({
+        ...cart,
+        information: {
+          ...cart.information,
+          [type]: valueToChange,
+        },
+      });
+    }
 
+    setIsSubmiting(false);
+  }
   return (
     <div className="col-md-7 col-lg-8">
       <h4 className="mb-3">Thông tin vận chuyển</h4>
@@ -67,14 +110,22 @@ function DeliveryInformation() {
             </label>
             <input
               type="text"
-              className="form-control"
+              className={`${
+                isSubmiting && cart.information.receiveName == ""
+                  ? "is-invalid"
+                  : ""
+              } form-control`}
+              value={cart.information.receiveName}
               id="fullName"
               placeholder="Full name"
               required={true}
+              onChange={(e) => {
+                reducer(ChangeType.RECEIVENAME, e.target.value);
+              }}
             />
-            <div className="invalid-feedback">
-              Valid first name is required.
-            </div>
+            {isSubmiting && cart.information.receiveName == "" && (
+              <small className="text-danger">Username is required</small>
+            )}
           </div>
           <div className="col-12">
             <label htmlFor="tel" className="form-label">
@@ -82,28 +133,56 @@ function DeliveryInformation() {
             </label>
             <input
               type="tel"
-              className="form-control"
+              className={`${
+                isSubmiting && cart.information.phonenumber == ""
+                  ? "is-invalid"
+                  : ""
+              } form-control`}
               id="tel"
+              value={cart.information.phonenumber}
               placeholder="Phone number"
               required={true}
+              onChange={(e) => {
+                reducer(ChangeType.PHONENUMBER, e.target.value);
+              }}
             />
-            <div className="invalid-feedback">
-              Please enter a valid email address for shipping updates.
-            </div>
+            {isSubmiting && cart.information.phonenumber == "" && (
+              <small className="text-danger">Phonenumber is required</small>
+            )}
+            {isSubmiting &&
+              !checkPhonenumber(cart.information.phonenumber) &&
+              cart.information.phonenumber != "" && (
+                <small className="text-danger">
+                  Phonenumber is not in valid format
+                </small>
+              )}
           </div>
           <div className="col-12">
             <label htmlFor="email" className="form-label">
-              Email <span className="text-muted">(Optional)</span>
+              Email <span className="text-muted">(Required)</span>
             </label>
             <input
               type="email"
-              className="form-control"
+              className={`${
+                isSubmiting && cart.information.email == "" ? "is-invalid" : ""
+              } form-control`}
               id="email"
               placeholder="you@gmail.com"
+              value={cart.information.email}
+              onChange={(e) => {
+                reducer(ChangeType.EMAIL, e.target.value);
+              }}
             />
-            <div className="invalid-feedback">
-              Please enter a valid email address for shipping updates.
-            </div>
+            {isSubmiting && cart.information.email == "" && (
+              <small className="text-danger">Email is required</small>
+            )}
+            {isSubmiting &&
+              !checkEmail(cart.information.email) &&
+              cart.information.email != "" && (
+                <small className="text-danger">
+                  Email is not in valid format
+                </small>
+              )}
           </div>
 
           <div className="col-md-4">
@@ -116,9 +195,10 @@ function DeliveryInformation() {
               required={true}
               onChange={(e) => {
                 handleProvinceChange(e);
-
-                selectedProvince.current = e.target.value;
-                console.log(selectedProvince.current);
+                reducer(ChangeType.ADDRESS, {
+                  type: "province",
+                  value: e.target.value,
+                });
               }}
             >
               <option value="">Choose...</option>
@@ -129,7 +209,9 @@ function DeliveryInformation() {
                   </option>
                 ))}
             </select>
-            <div className="">Please select a valid province.</div>
+            {isSubmiting && cart.information.address.province == "" && (
+              <small className="text-danger">Address is required</small>
+            )}
           </div>
           <div className="col-md-4">
             <label htmlFor="district" className="form-label">
@@ -141,8 +223,10 @@ function DeliveryInformation() {
               required={true}
               onChange={(e) => {
                 handleDistrictChange(e);
-                selectedDistrict.current = e.target.value;
-                console.log(selectedDistrict.current);
+                reducer(ChangeType.ADDRESS, {
+                  type: "district",
+                  value: e.target.value,
+                });
               }}
             >
               <option value="">Choose...</option>
@@ -153,9 +237,9 @@ function DeliveryInformation() {
                   </option>
                 ))}
             </select>
-            <div className="invalid-feedback">
-              Please provide a valid district.
-            </div>
+            {isSubmiting && cart.information.address.district == "" && (
+              <small className="text-danger">Address is required</small>
+            )}
           </div>
           <div className="col-md-4">
             <label htmlFor="ward" className="form-label">
@@ -167,8 +251,10 @@ function DeliveryInformation() {
               id="ward"
               required={true}
               onChange={(e) => {
-                console.log(e.target.value);
-                selectedWard.current = e.target.value;
+                reducer(ChangeType.ADDRESS, {
+                  type: "ward",
+                  value: e.target.value,
+                });
               }}
             >
               <option value="">Choose...</option>
@@ -179,7 +265,9 @@ function DeliveryInformation() {
                   </option>
                 ))}
             </select>
-            <div className="invalid-feedback">Please provide a valid ward.</div>
+            {isSubmiting && cart.information.address.ward == "" && (
+              <small className="text-danger">Address is required</small>
+            )}
           </div>
           <div className="col-12">
             <label htmlFor="address" className="form-label">
@@ -191,29 +279,27 @@ function DeliveryInformation() {
               id="address"
               placeholder="Địa chỉ(ví dụ: số nhà 9, ngách 1, ngõ 43)"
               required={true}
+              value={cart.information.address.home}
               onChange={(e) => {
-                detailedAddress.current = e.target.value;
-                setCart({
-                  ...cart,
-                  information: {
-                    ...cart.information,
-                    address: `${e.target.value} - ${selectedWard.current}, ${selectedDistrict.current}, ${selectedProvince.current}`,
-                  },
+                reducer(ChangeType.ADDRESS, {
+                  type: "home",
+                  value: e.target.value,
                 });
               }}
             />
-            <div className="invalid-feedback">
-              Please enter your shipping address.
-            </div>
+            {isSubmiting && cart.information.address.home == "" && (
+              <small className="text-danger">Address is required</small>
+            )}
           </div>
         </div>
         <hr className="my-4" />
         <button
-          className="w-100 btn btn-primary btn-lg"
+          className="w-100 btn btn-primary btn-sm"
           type="submit"
           onClick={(e) => {
             e.preventDefault();
-            console.log(cart);
+            setIsSubmiting(true);
+            console.log(checkBill(cart));
           }}
         >
           Xác nhận đặt hàng
@@ -223,4 +309,27 @@ function DeliveryInformation() {
   );
 }
 
+function checkBill(cart: Cart) {
+  const address = `${cart.information.address.home}, ${cart.information.address.ward}, ${cart.information.address.district}, ${cart.information.address.province}`;
+
+  if (cart.items.length == 0) {
+    return false;
+  } else {
+    const info = cart.information;
+    if (
+      info.receiveName.trim() == "" ||
+      info.email.trim() == "" ||
+      info.phonenumber.trim() == "" ||
+      info.address.home.trim() == "" ||
+      info.address.province.trim() == "" ||
+      info.address.district.trim() == "" ||
+      info.address.ward.trim() == "" ||
+      !checkEmail(info.email.trim()) ||
+      !checkPhonenumber(info.phonenumber.trim())
+    ) {
+      return false;
+    }
+  }
+  return true;
+}
 export default DeliveryInformation;

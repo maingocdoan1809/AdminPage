@@ -2,26 +2,9 @@ import { useEffect, useState } from "react";
 import { CartItem, Product, toMoney } from "../../../utilities/utils";
 import style from "./shoppingcart.module.css";
 import { CART_KEY } from "../../../env";
+import { useCart } from "../../../contexts/CartContext/CartContext";
 function ShoppingCart() {
-  const [cartItems, setCartItems] = useState<CartItem[]>([]);
-  useEffect(() => {
-    const itemsInCart = JSON.parse(localStorage.getItem("cart") || "[]");
-    setCartItems(itemsInCart as CartItem[]);
-  }, []);
-  useEffect(() => {
-    if (cartItems.length > 0) {
-      localStorage.setItem(CART_KEY, JSON.stringify(cartItems));
-    }
-    return () => {
-      if (cartItems.length > 0) {
-        if (cartItems.length == 1 && cartItems[0].quantity == 0) {
-          localStorage.setItem(CART_KEY, "");
-        } else {
-          localStorage.setItem(CART_KEY, JSON.stringify(cartItems));
-        }
-      }
-    };
-  }, [cartItems]);
+  const [cartItems, setCartItems] = useCart();
   return (
     <div className="col-md-5 col-lg-4 order-md-last">
       <h4 className="d-flex justify-content-between align-items-center mb-3">

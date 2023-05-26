@@ -53,8 +53,14 @@ export type CartItem = {
 export type User = {
   username: string;
   phonenumber: string;
+  receiveName: string;
   email: string;
-  address: string;
+  address: {
+    home: string;
+    ward: string;
+    district: string;
+    province: string;
+  };
 };
 
 export type Cart = {
@@ -78,7 +84,7 @@ export function checkEmail(email: string) {
   return patterncheck.test(email);
 }
 export function checkPhonenumber(phonenumber: string) {
-  const patterncheck = new RegExp("^([0-9]{10,11})|(\\+(84)[0-9]{9,10})$");
+  const patterncheck = new RegExp("^(0[0-9]{9,10})$|^(\\+(84)[0-9]{9,10})$");
   return patterncheck.test(phonenumber);
 }
 export function toMoney(realNumber: number) {
