@@ -5,11 +5,18 @@
 .title {
   font-size: 1rem;
 }
+
 .card-hover {
-  transition: all 0.3s ease;
+  overflow: hidden;
 }
-.card-hover:hover {
-  box-shadow: 0 0 3px 3px rgb(195, 195, 195);
+
+.card-hover img {
+  transition: all 0.3s ease;
+  overflow: hidden;
+}
+
+.card-hover:hover img {
+  transform: scale(1.05);
 }
 
 .body-end {
@@ -28,7 +35,7 @@
     flex-direction: column !important;
   }
 
-  .box-footer > * {
+  .box-footer>* {
     width: 100%;
     margin-top: 5px;
   }
@@ -54,6 +61,7 @@
     display: flex;
     flex-direction: column;
   }
+
   .img {
     border-top-right-radius: 0 !important;
     border-bottom-right-radius: 0 !important;

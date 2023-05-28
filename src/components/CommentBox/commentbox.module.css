@@ -7,6 +7,8 @@
 #comment-box {
   outline: none;
   border: none;
+  overflow: hidden;
+  resize: none;
 }
 
 #comment-box:focus {

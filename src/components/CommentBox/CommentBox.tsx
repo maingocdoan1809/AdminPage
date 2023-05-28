@@ -32,6 +32,16 @@ function CommentBox({ idproductinfo }: CommentBoxProps) {
         console.log(err);
       });
   }, [toggle]);
+  useEffect(() => {
+    const box = document.getElementById(style["comment-box"]);
+    console.log(box);
+    if (box) {
+      box.oninput = () => {
+        box.style.height = "auto";
+        box.style.height = box.scrollHeight + "px";
+      };
+    }
+  }, []);
   return (
     <div className="">
       <a
@@ -87,7 +97,7 @@ function CommentBox({ idproductinfo }: CommentBoxProps) {
               <div key={index} className="border-bottom mb-3 col-12 ">
                 <div className="d-flex justify-content-between mb-3">
                   <div className="d-flex gap-2">
-                    <h6>{comment.fullname}</h6>
+                    <h6>{comment.fullname} </h6>
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       width="16"

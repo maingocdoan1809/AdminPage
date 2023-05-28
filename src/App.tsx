@@ -54,7 +54,9 @@ function App() {
                   <AdminPage />
                 </AdminPageContext>
               }
-            />
+            >
+              <Route element={<div>Product ID</div>} path="product/:id" />
+            </Route>
             <Route path="/*" element={<Error />} />
           </Routes>
         </BrowserRouter>

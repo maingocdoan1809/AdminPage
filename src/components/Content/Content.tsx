@@ -9,53 +9,29 @@ import {
   useRef,
   useState,
 } from "react";
-import useInfiniteScroll from "../../utilities/infinitescroll";
+
 import { BACKEND_URL } from "../../env";
 import { Product } from "../../utilities/utils";
+import LoadingView from "../LoadingView/LoadingView";
+import usePagination from "../../utilities/pagination";
 
 type ContentProps = {
   category: string;
 };
 
 function Content({ category }: ContentProps) {
-  const pageRef = useRef(0);
-  const [isLoadFail, setIsLoadFail] = useState(false);
-  const generator = () => {
-    return new Promise<ReactNode[]>((resolve) => {
-      fetch(BACKEND_URL + `/products?page=${pageRef.current}`)
-        .then((response) => response.json())
-
-        .then((productsJson) => {
-          if (productsJson.err) {
-            setIsLoadFail(true);
-            return;
-          }
-          const a: ReactNode[] = [];
-          for (let i = 0; i < productsJson.length; i++) {
-            a.push(
-              <ProductCard
-                imgUrl={productsJson[i].imageurl}
-                name={productsJson[i].name}
-                id={productsJson[i].id}
-                price={productsJson[i].promotedPrice ?? productsJson[i].price}
-                key={products.length + i}
-                ref={i == productsJson.length - 1 ? lastItem : null}
-              />
-            );
-          }
-          resolve(a);
-          setIsLoadFail(false);
-        })
-        .catch((err) => {
-          setIsLoadFail(true);
-        });
-    });
+  const [currPage, setCurrPage] = useState(0);
+  const generator = async () => {
+    return fetch(BACKEND_URL + `/products?page=${currPage}`)
+      .then((response) => response.json())
+      .then((data) => data as Product[]);
   };
-  const [products, lastItem, isLoading] = useInfiniteScroll(generator);
-
+  const { products, isFetching, isSuccess, hasMore, loadMore } = usePagination({
+    generator,
+  });
   return (
     <>
-      {isLoadFail && (
+      {isSuccess == false ? (
         <div className="flex-grow-1 d-flex justify-content-center align-items-center flex-column w-100 h-100">
           <p className="fs-4 text-danger">Load fail.</p>
           <p>Check the connection.</p>
@@ -76,14 +52,50 @@ function Content({ category }: ContentProps) {
             and will inform you as soon as possible.
           </p>
         </div>
-      )}
-      {!isLoading && !isLoadFail && (
-        <div className={`${style.content}`}>{products.map((e) => e)}</div>
-      )}
-      {isLoading && (
-        <div className="d-flex justify-content-center mt-4">
-          <div className="spinner-border text-info" role="status">
-            <span className="visually-hidden">Loading...</span>
+      ) : (
+        <div className="flex-grow-1">
+          <div className={`${style.content}`}>
+            {products.map((e: Product) => (
+              <ProductCard
+                key={e.id}
+                id={e.id}
+                imgUrl={e.imageurl}
+                name={e.name}
+                price={e.price}
+              />
+            ))}
+          </div>
+          <div>{isFetching && <LoadingView />}</div>
+          <div className="text-center">
+            {!hasMore && (
+              <div className="text-center text-muted mt-3">
+                {" "}
+                Well done, we're still updating our new products{" "}
+              </div>
+            )}
+            {!isFetching && hasMore && (
+              <button
+                onClick={() => {
+                  setCurrPage((prev) => prev + 1);
+                  loadMore();
+                }}
+                className="btn btn-dark mt-4"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  fill="currentColor"
+                  className="bi bi-chevron-compact-down"
+                  viewBox="0 0 16 16"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M1.553 6.776a.5.5 0 0 1 .67-.223L8 9.44l5.776-2.888a.5.5 0 1 1 .448.894l-6 3a.5.5 0 0 1-.448 0l-6-3a.5.5 0 0 1-.223-.67z"
+                  />
+                </svg>
+              </button>
+            )}
           </div>
         </div>
       )}
