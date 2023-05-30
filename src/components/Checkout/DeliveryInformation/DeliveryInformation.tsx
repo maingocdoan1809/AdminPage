@@ -15,6 +15,7 @@ import { io } from "socket.io-client";
 import { useUser } from "../../../contexts/UserContext/UserContext";
 import { Fade } from "react-bootstrap";
 import { useCart } from "../../../contexts/CartContext/CartContext";
+import { useNavigate } from "react-router";
 // event: React.ChangeEvent<HTMLSelectElement>
 
 const enum ChangeType {
@@ -42,7 +43,7 @@ function DeliveryInformation() {
     } as User,
     items: cartItems,
   } as Cart);
-
+  const navigate = useNavigate();
   useEffect(() => {
     setCart({ ...cart, items: cartItems });
   }, [cartItems]);
@@ -291,19 +292,64 @@ function DeliveryInformation() {
               <small className="text-danger">Address is required</small>
             )}
           </div>
+          {isSubmiting && cart.items.length == 0 && (
+            <div className="col-12">
+              <small className="text-danger">Your cart is empty</small>
+            </div>
+          )}
         </div>
         <hr className="my-4" />
-        <button
-          className="w-100 btn btn-primary btn-sm"
-          type="submit"
-          onClick={(e) => {
-            e.preventDefault();
-            setIsSubmiting(true);
-            console.log(checkBill(cart));
-          }}
-        >
-          Xác nhận đặt hàng
-        </button>
+        {!isSubmiting ? (
+          <button
+            className="w-100 btn btn-primary btn-sm"
+            type="submit"
+            onClick={(e) => {
+              e.preventDefault();
+              setIsSubmiting(true);
+              if (user) {
+                if (!checkBill(cart)) {
+                  return;
+                }
+                fetch(BACKEND_URL + "/checkout", {
+                  method: "POST",
+                  body: JSON.stringify({
+                    cart: cart,
+                    username: user?.username,
+                    token: user?.token,
+                  }),
+                })
+                  .then(async (response) => {
+                    if (response.status == 401) {
+                      alert("Login to finish this process.");
+                      navigate("/login");
+                    } else {
+                      console.log(await response.json());
+                    }
+                  })
+                  .catch((err) => {
+                    console.log(err);
+                  })
+                  .finally(() => {
+                    setIsSubmiting(false);
+                  });
+              } else {
+                alert("Login to finish this process.");
+                navigate("/login");
+              }
+            }}
+          >
+            Xác nhận đặt hàng
+          </button>
+        ) : (
+          <div className="d-flex justify-content-center align-items-center">
+            <div
+              className="spinner-border text-dark spinner-border-sm "
+              role="status"
+            >
+              <span className="visually-hidden">Loading...</span>
+            </div>
+          </div>
+        )}
       </form>
     </div>
   );

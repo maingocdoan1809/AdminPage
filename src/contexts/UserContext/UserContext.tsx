@@ -1,4 +1,4 @@
-import { createContext, useState, useContext, useEffect } from "react";
+import { createContext, useState, useContext, useEffect, Context } from "react";
 
 export type User = {
   accesstimes: number;
@@ -22,7 +22,7 @@ type UserContextType = [
 const userContext = createContext<UserContextType>([
   undefined,
   (user: User | undefined) => {},
-]);
+]) as Context<UserContextType>;
 type UserProps = {
   children: React.ReactNode;
 };

@@ -34,7 +34,6 @@ function CommentBox({ idproductinfo }: CommentBoxProps) {
   }, [toggle]);
   useEffect(() => {
     const box = document.getElementById(style["comment-box"]);
-    console.log(box);
     if (box) {
       box.oninput = () => {
         box.style.height = "auto";
