@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from "react";
 import styles from "./search.module.css";
 import { useNavigate } from "react-router";
 
-
 interface Product {
   id: string;
   name: string;
@@ -12,9 +11,7 @@ interface Product {
   hexCode: string;
   imgUrl: string;
   view?: string;
-
 }
-
 
 const SearchBar: React.FC = () => {
   const navigate = useNavigate();
@@ -23,14 +20,10 @@ const SearchBar: React.FC = () => {
   const [showSearch, setShowSearch] = useState<boolean>(false);
   const [similarProducts, setSimilarProducts] = useState<Product[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
-  const storedSearchKeyword = localStorage.getItem('searchKeyword') || '';
+  const storedSearchKeyword = localStorage.getItem("searchKeyword") || "";
   const [searchKeyword, setSearchKeyword] = useState(storedSearchKeyword);
-  const similarName = searchKeyword?.split(' ') ?? [];
+  const similarName = searchKeyword?.split(" ") ?? [];
   const searchColor = similarName[similarName.length - 1];
-
-  useEffect(() => {
-    // call api
-  }, [])
 
   useEffect(() => {
     const fetchSimilarProducts = async () => {
@@ -42,7 +35,7 @@ const SearchBar: React.FC = () => {
       setSimilarProducts(limitedProduct);
     };
     fetchSimilarProducts();
-  }, [searchKeyword])
+  }, [searchKeyword]);
 
   const handleScrollToTop = () => {
     window.scrollTo({
@@ -60,7 +53,7 @@ const SearchBar: React.FC = () => {
     window.location.href = searchURL;
   };
 
-  const handleKeyDown = (event: { key: string; }) => {
+  const handleKeyDown = (event: { key: string }) => {
     if (event.key === "Enter") {
       setShowSearch(false);
       handleSearch();
@@ -70,7 +63,6 @@ const SearchBar: React.FC = () => {
     setShowSearch(!showSearch);
     inputRef.current?.focus();
   }
-
 
   return (
     <>
@@ -87,7 +79,10 @@ const SearchBar: React.FC = () => {
           className={`btn  ${styles["btn-search"]}`}
           onClick={handleSearch}
         >
-          <i className={`fa-solid fa-magnifying-glass fa-lg ${styles["fa-magnifying-glass"]}`} style={{ color: "#198754" }}></i>
+          <i
+            className={`fa-solid fa-magnifying-glass fa-lg ${styles["fa-magnifying-glass"]}`}
+            style={{ color: "#198754" }}
+          ></i>
         </button>
       </div>
       <div className={`${styles["same-results"]}`}>
@@ -95,7 +90,11 @@ const SearchBar: React.FC = () => {
         <h4>Có thể bạn đang tìm: </h4>
         {similarProducts.map((product) => (
           <div key={product.id} className={`${styles["similarProducts"]}`}>
-            <img src={product.imgUrl} alt={product.name} style={{ width: "40px", height: "40px" }} />
+            <img
+              src={product.imgUrl}
+              alt={product.name}
+              style={{ width: "40px", height: "40px" }}
+            />
             {product.name}
             {product.color}
             {/* product.description*/}

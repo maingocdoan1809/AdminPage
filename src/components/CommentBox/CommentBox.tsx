@@ -6,7 +6,7 @@ type CommentBoxProps = {
   idproductinfo: string;
 };
 
-type CommentType = {
+export type CommentType = {
   fullname: string;
   datecreated: string;
   comment: string;

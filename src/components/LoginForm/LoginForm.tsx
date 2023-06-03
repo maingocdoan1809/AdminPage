@@ -14,8 +14,10 @@ export function LoginForm() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [isLoggedIn, setIsLoggedIn] = useState<boolean | undefined>(undefined);
+  const [logging, setLogging] = useState(false);
   const [isLogginFail, setIsLogginFail] = useState(false);
   const [isServerErr, setServerError] = useState(false);
+  const [isRequired, setIsRequired] = useState<undefined | boolean>(undefined);
   const navigate = useNavigate();
   useEffect(() => {
     checkUserIdentity(user)
@@ -51,6 +53,7 @@ export function LoginForm() {
                 callBack={(value) => {
                   setIsLogginFail(false);
                   setUsername(value);
+                  setIsRequired(undefined);
                 }}
                 className={[style["top-border"]]}
                 delay={0}
@@ -60,7 +63,7 @@ export function LoginForm() {
                 placeholder="Password"
                 callBack={(value) => {
                   setIsLogginFail(false);
-
+                  setIsRequired(undefined);
                   setPassword(value);
                 }}
                 className={[style["bottom-border"], "p-3"]}
@@ -73,25 +76,43 @@ export function LoginForm() {
                 Your username or password is not correct
               </div>
             )}
+            {isRequired && (
+              <div className="alert alert-secondary">
+                Username and Password are required.
+              </div>
+            )}
             <div className="d-flex justify-content-between">
               <span>Forgot your password?</span>
               <span>
                 <a href="">change</a>
               </span>
             </div>
-            <button
-              onClick={onLogging(
-                username,
-                password,
-                navigate,
-                setUser,
-                setIsLogginFail,
-                setServerError
-              )}
-              className="btn btn-primary"
-            >
-              Login
-            </button>
+            {logging ? (
+              <div className="spinner-border text-success" role="status">
+                <span className="visually-hidden">Loading...</span>
+              </div>
+            ) : (
+              <button
+                onClick={(e) => {
+                  if (username.trim() == "" || password.trim() == "") {
+                    setIsRequired(true);
+                  } else {
+                    onLogging(
+                      username,
+                      password,
+                      navigate,
+                      setLogging,
+                      setUser,
+                      setIsLogginFail,
+                      setServerError
+                    )(e);
+                  }
+                }}
+                className="btn btn-primary"
+              >
+                Login
+              </button>
+            )}
             <a href="/register" className="btn btn-outline-secondary">
               Or Sign up
             </a>
@@ -114,12 +135,14 @@ function onLogging(
   username: string,
   password: string,
   navigae: (to: string) => void,
+  logging: (isLogging: boolean) => void,
   loginOk: (user: User | undefined) => void,
   loginFail: (param: boolean) => void,
   serverError: (param: boolean) => void
 ) {
   return (evt: React.MouseEvent<HTMLButtonElement>) => {
     evt.preventDefault();
+    logging(true);
     fetch(BACKEND_URL + "/login", {
       method: "POST",
       body: JSON.stringify({
@@ -142,6 +165,9 @@ function onLogging(
         } else {
           loginFail(true);
         }
+      })
+      .finally(() => {
+        logging(false);
       });
   };
 }
