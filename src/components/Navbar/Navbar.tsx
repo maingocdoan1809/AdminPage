@@ -59,7 +59,7 @@ const Navbar: React.FC = () => {
                 <ul className="navbar-nav">
                   <li className="nav-item">
                     <div
-                      className="nav-link active"
+                      className={`nav-link active ${styles["pointer"]}`}
                       aria-current="page"
                       onClick={(e) => {
                         e.stopPropagation();
@@ -71,7 +71,7 @@ const Navbar: React.FC = () => {
                   </li>
                   <li className="nav-item">
                     <div
-                      className="nav-link"
+                      className={`nav-link  ${styles["pointer"]}`}
                       onClick={(e) => {
                         e.stopPropagation();
                         navigate("/", {
@@ -86,7 +86,7 @@ const Navbar: React.FC = () => {
                   </li>
                   <li className="nav-item">
                     <div
-                      className="nav-link"
+                      className={`nav-link ${styles["pointer"]}`}
                       onClick={(e) => {
                         e.stopPropagation();
                         navigate("/", {

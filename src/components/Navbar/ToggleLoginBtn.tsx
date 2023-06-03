@@ -7,12 +7,9 @@ import { useUser } from "../../contexts/UserContext/UserContext";
 
 export type ToggleLoginBtnProps = {
   className?: string[];
-  adminProfileAction?: (p: EAdminPage) => void;
+  isAdmin?: boolean;
 };
-function ToggleLoginBtn({
-  className,
-  adminProfileAction,
-}: ToggleLoginBtnProps) {
+function ToggleLoginBtn({ className, isAdmin }: ToggleLoginBtnProps) {
   const location = useLocation();
 
   const [isUserLoggedIn, setIsUserLoggedIn] = useState(false);
@@ -78,8 +75,8 @@ function ToggleLoginBtn({
                 <div
                   className="dropdown-item postition-relative"
                   onClick={(e) => {
-                    if (adminProfileAction) {
-                      adminProfileAction(EAdminPage.PROFILE);
+                    if (isAdmin) {
+                      redirect("/admin/profile");
                     } else {
                       redirect("/profile");
                     }
@@ -92,7 +89,7 @@ function ToggleLoginBtn({
                 <li>
                   <div
                     onClick={(e) => {
-                      if (location.pathname == "/admin") {
+                      if (isAdmin) {
                         redirect("/");
                       } else {
                         redirect("/admin");
@@ -100,7 +97,7 @@ function ToggleLoginBtn({
                     }}
                     className="dropdown-item"
                   >
-                    {location.pathname == "/admin" ? "Shop" : "Admin"}
+                    {location.pathname.includes("/admin") ? "Shop" : "Admin"}
                   </div>
                 </li>
               )}

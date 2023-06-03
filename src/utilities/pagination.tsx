@@ -25,6 +25,8 @@ function usePagination({ generator }: PaginationProps) {
         setIsSuccess(true);
       })
       .catch((err) => {
+        console.log(err);
+
         setIsSuccess(false);
       })
       .finally(() => {

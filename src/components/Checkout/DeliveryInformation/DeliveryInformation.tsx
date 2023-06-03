@@ -38,8 +38,8 @@ function DeliveryInformation() {
         province: "",
         ward: "",
       },
-      email: "",
-      phonenumber: "",
+      email: user?.email,
+      phonenumber: user?.phonenumber,
     } as User,
     items: cartItems,
   } as Cart);

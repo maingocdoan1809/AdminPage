@@ -37,6 +37,8 @@ export interface Product {
   promotedprice: number;
   imageurl: string;
   description: string;
+  category: string;
+  categoryid: string;
 }
 export type CartItem = {
   id: string;
