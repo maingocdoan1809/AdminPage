@@ -18,6 +18,8 @@ function ProductDetail() {
   const [isLoading, setIsLoading] = useState(true);
 
   const [isLoadingComment, setIsLoadingComment] = useState(true);
+  const [isUpdating, setIsUpdating] = useState(false);
+  const [isUpdated, setIsUpdated] = useState<undefined | boolean>(undefined);
   /// state:
   const [name, setName] = useState("");
   const [categoryId, setCategoryID] = useState("");
@@ -69,16 +71,18 @@ function ProductDetail() {
         <div className="flex-grow-1 w-100">
           <div className={`${style["text-group"]}`}>
             <label htmlFor="">ID</label>
-            <Editable
-              canEdit={false}
-              type="text"
-              value={products[0].infoid}
-              onChange={(e) => {}}
-            />
+            <Editable canEdit={false} type="text" value={products[0].infoid} />
           </div>
           <div className={`${style["text-group"]}`}>
             <label htmlFor="">Name</label>
-            <Editable canEdit={true} type="text" value={products[0].name} />
+            <Editable
+              canEdit={true}
+              type="text"
+              value={products[0].name}
+              onChange={(e) => {
+                setName(e);
+              }}
+            />
           </div>
           <div className={`${style["text-group"]}`}>
             <label htmlFor="">Category</label>
@@ -92,10 +96,54 @@ function ProductDetail() {
                   text: category.name,
                 };
               })}
+              onChange={(e) => {
+                setCategoryID(e);
+              }}
             />
           </div>
+          {isUpdated == true && (
+            <div className={`${style["text-group"]}`}>
+              <div className="alert alert-success">Updated</div>
+            </div>
+          )}{" "}
+          {isUpdated == false && (
+            <div className={`${style["text-group"]}`}>
+              <div className="alert alert-danger">Error</div>
+            </div>
+          )}
           <div className={`${style["text-group"]} text-end`}>
-            <button className="btn btn-sm btn-danger">Save changes</button>
+            {isUpdating ? (
+              <div
+                className="spinner-border text-danger spinnner-sm"
+                role="status"
+              ></div>
+            ) : (
+              <button
+                onClick={(e) => {
+                  setIsUpdating(true);
+                  update({
+                    name: name,
+                    categoryid: categoryId,
+                    infoid: params.id!,
+                  })
+                    .then(async (response) => {
+                      if (response.status == 200) {
+                        setIsUpdated(true);
+                      } else {
+                        console.log(await response.json());
+
+                        setIsUpdated(false);
+                      }
+                    })
+                    .finally(() => {
+                      setIsUpdating(false);
+                    });
+                }}
+                className="btn btn-sm btn-danger"
+              >
+                Save changes
+              </button>
+            )}
           </div>
         </div>
       </div>
@@ -143,6 +191,21 @@ function ProductDetail() {
       </div>
     </div>
   );
+}
+
+function update({
+  name,
+  categoryid,
+  infoid,
+}: {
+  name: string;
+  categoryid: string;
+  infoid: string;
+}) {
+  return fetch(BACKEND_URL + "/products/" + infoid, {
+    method: "PUT",
+    body: JSON.stringify({ name, categoryid }),
+  });
 }
 
 export default ProductDetail;
