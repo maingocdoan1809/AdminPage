@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { addDays, subDays } from "date-fns";
+import { addDays, parse, subDays } from "date-fns";
 import styles from "./order.module.css"
 type AllOrders = {
   orderCode: string;
@@ -16,15 +16,18 @@ function Orders() {
   const [activeButton, setActiveButton] = useState('all');
   const [selectedOrderCode, setSelectedOrderCode] = useState('');
   const [searchOrder, setSearchOrder] = useState('');
-  const [selectedOrderLabel, setSelectedOrderLabel] = useState('');
-  const [selectedDate, setSelectedDate] = useState(new Date());
-  const thirtyDaysAgo = subDays(selectedDate, 30);
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [thirtyDaysAgo, setThirtyDaysAgo] = useState(subDays(new Date(), 30));
   const formattedThirtyDaysAgo = thirtyDaysAgo.toLocaleDateString();
-  const formattedSelectedDate = selectedDate.toLocaleDateString();
   const [selectedOrders, setSelectedOrders] = useState<string[]>([]);
   const [selectAll, setSelectAll] = useState(false);
   const [allOrders, setAllOrders] = useState<AllOrders[]>([]);
   const [filteredOrders, setFilteredOrders] = useState<AllOrders[]>([]);
+  const [filterClicked, setFilterClicked] = useState(false);
+  const [filterCleared, setFilterCleared] = useState(false);
+  const [selectedRows, setSelectedRows] = useState<string[]>([]);
+
+
 
   useEffect(() => {
     const Orders = [
@@ -33,7 +36,7 @@ function Orders() {
         status: "Chờ xác nhận",
         quantity: 2,
         totalAmount: 100,
-        datecreated: "03/06/2023",
+        datecreated: "03/06/2021",
         deadline: "03/06/2023",
       },
       {
@@ -62,36 +65,39 @@ function Orders() {
       },
     ];
     setAllOrders(Orders);
+  }, []);
+
+  useEffect(() => {
     let filtered = allOrders;
-  if (activeButton !== 'all') {
-    filtered = filtered.filter((order) => order.status === activeButton);
-  }
-  if (selectedOrderCode !== '') {
-    filtered = filtered.filter((order) => order.orderCode === selectedOrderCode);
-  }
-  if (searchOrder !== '') {
-    filtered = filtered.filter((order) => {
-      const searchOrderLowerCase = searchOrder.toLowerCase();
-      return (
-        order.orderCode.toLowerCase().includes(searchOrderLowerCase) ||
-        order.status.toLowerCase().includes(searchOrderLowerCase) ||
-        order.datecreated.includes(searchOrderLowerCase) ||
-        order.deadline.includes(searchOrderLowerCase)
-      );
-    });
-  }
-  // if (selectedDate) {
-  //   filtered = filtered.filter((order) => {
-  //     const orderDate = new Date(order.datecreated);
-  //     return (
-  //       orderDate >= thirtyDaysAgo && orderDate <= selectedDate
-  //     );
-  //   });
-  // }
-  setFilteredOrders(filtered);
-  }, [activeButton, selectedOrderCode, searchOrder, selectedOrderLabel, selectedDate]);
-
-
+    if (activeButton !== "all") {
+      filtered = filtered.filter((order) => order.status === activeButton);
+    }
+    if (filterClicked) {
+      if (selectedOrderCode !== "") {
+        filtered = filtered.filter((order) => order.orderCode === selectedOrderCode);
+      }
+      if (searchOrder !== "") {
+        filtered = filtered.filter((order) => {
+          const searchOrderLowerCase = searchOrder.toLowerCase();
+          return (
+            order.orderCode.toLowerCase().includes(searchOrderLowerCase) ||
+            order.status.toLowerCase().includes(searchOrderLowerCase) ||
+            order.datecreated.includes(searchOrderLowerCase) ||
+            order.deadline.includes(searchOrderLowerCase)
+          );
+        });
+      }
+      if (selectedDate) {
+        const thirtyDaysAgo = subDays(new Date(), 30);
+        filtered = filtered.filter((order) => {
+          const orderDate = parse(order.datecreated, 'dd/MM/yyyy', new Date());
+          return orderDate >= thirtyDaysAgo && orderDate <= new Date();
+        });
+      }
+    }
+    setFilteredOrders(filtered);
+    setFilterCleared(false);
+  }, [activeButton, selectedOrderCode, searchOrder, selectedDate, allOrders, filterClicked]);
   const handleClick = (buttonName: any) => {
     setActiveButton(buttonName);
   };
@@ -106,6 +112,20 @@ function Orders() {
 
   const handleDateChange = (date: Date) => {
     setSelectedDate(date);
+    const newThirtyDaysAgo = subDays(date, 30);
+    setThirtyDaysAgo(newThirtyDaysAgo);
+  };
+
+  const handleFilterClick = () => {
+    setFilterClicked(true);
+    setFilterCleared(false);
+  };
+
+  const handleClearFilter = () => {
+    setSelectedOrderCode('');
+    setSearchOrder('');
+    setSelectedDate(null);
+    setFilterCleared(true);
   };
 
   const handleOrderSelection = (orderCode: string) => {
@@ -118,12 +138,13 @@ function Orders() {
     }
   };
 
+
   const handleSelectAll = () => {
     setSelectAll(!selectAll);
     if (!selectAll) {
       // Nếu checkbox "Chọn tất cả" chưa được chọn, thêm tất cả các orderId vào danh sách selectedOrders
-      const allOrderIds = allOrders.map((order) => order.orderCode);
-      setSelectedOrders(allOrderIds);
+      const selectAllOrder = filteredOrders.map((order) => order.orderCode);
+      setSelectedOrders(selectAllOrder);
     } else {
       // Nếu checkbox "Chọn tất cả" đã được chọn, xóa tất cả các orderId khỏi danh sách selectedOrders
       setSelectedOrders([]);
@@ -150,35 +171,35 @@ function Orders() {
             </button>
             <button
               type="button"
-              className={`btn btn-outline-secondary mt-3 mb-3 ${activeButton === 'confirm' ? styles.activeButton : ''}`}
+              className={`btn btn-outline-secondary mt-3 mb-3 ${activeButton === 'Chờ xác nhận' ? styles.activeButton : ''}`}
               onClick={() => handleClick('Chờ xác nhận')}
             >
               Chờ xác nhận
             </button>
             <button
               type="button"
-              className={`btn btn-outline-secondary mt-3 mb-3 ${activeButton === 'process' ? styles.activeButton : ''}`}
+              className={`btn btn-outline-secondary mt-3 mb-3 ${activeButton === 'Đang xử lí' ? styles.activeButton : ''}`}
               onClick={() => handleClick('Đang xử lí')}
             >
               Đang xử lí
             </button>
             <button
               type="button"
-              className={`btn btn-outline-secondary mt-3 mb-3 ${activeButton === 'delivery' ? styles.activeButton : ''}`}
+              className={`btn btn-outline-secondary mt-3 mb-3 ${activeButton === 'Đang vận chuyển' ? styles.activeButton : ''}`}
               onClick={() => handleClick('Đang vận chuyển')}
             >
               Đang vận chuyển
             </button>
             <button
               type="button"
-              className={`btn btn-outline-secondary mt-3 mb-3 ${activeButton === 'delivered' ? styles.activeButton : ''}`}
+              className={`btn btn-outline-secondary mt-3 mb-3 ${activeButton === 'Đã giao hàng' ? styles.activeButton : ''}`}
               onClick={() => handleClick('Đã giao hàng')}
             >
               Đã giao hàng
             </button>
             <button
               type="button"
-              className={`btn btn-outline-secondary mt-3 mb-3 ${activeButton === 'cancelled' ? styles.activeButton : ''}`}
+              className={`btn btn-outline-secondary mt-3 mb-3 ${activeButton === 'Đã huỷ' ? styles.activeButton : ''}`}
               onClick={() => handleClick('Đã huỷ')}
             >
               Đã huỷ
@@ -196,7 +217,7 @@ function Orders() {
                   value={selectedOrderCode}
                   onChange={handleOrderCodeChange}
                 >
-                  <option value="">Mã đơn hàng</option>
+                  <option value="">Code orders</option>
                   {allOrders.map((order) => (
                     <option key={order.orderCode} value={order.orderCode}>
                       {order.orderCode}
@@ -232,16 +253,23 @@ function Orders() {
           <div className="row mt-3">
             <div className="d-flex col-md-12">
               <h5>Đang lọc:</h5>
-              <span className="px-3">
-                {selectedOrderCode && selectedOrderCode + " | "}
-                {searchOrder && searchOrder + " | "}
-                {selectedOrderLabel && selectedOrderLabel + " | "}
-                <span>ngày đặt: {formattedThirtyDaysAgo} đến {formattedSelectedDate}</span>
-              </span>
+              {selectedOrderCode && <span>{selectedOrderCode} | </span>}
+              {searchOrder && <span>{searchOrder} | </span>}
+              {selectedDate && (
+                <span>
+                  ngày đặt: {new Date(formattedThirtyDaysAgo).toLocaleDateString("vi-VN")} đến{" "}
+                  {selectedDate.toLocaleDateString("vi-VN")}
+                </span>
+              )}
+              <div className="d-flex justify-content-end">
+                {filterCleared && <span className="px-3 text-danger">Không có trạng thái lọc</span>}
+              </div>
             </div>
           </div>
+          <button type="button" className="btn btn-secondary btn-sm mt-2 px-3" onClick={handleClearFilter}>Huỷ lọc</button>
+          <button type="button" className="btn btn-primary btn-sm mt-2 px-3 mx-3" onClick={handleFilterClick}>Lọc</button>
         </div>
-        <div className={`${styles["order-table"]}`}>
+        <div className={`mt-3 ${styles["order-table"]}`}>
           <table className="table">
             <thead>
               <tr>
@@ -252,17 +280,20 @@ function Orders() {
                     onChange={handleSelectAll}
                   />
                 </th>
-                <th>Mã đơn hàng</th>
-                <th>Trạng thái</th>
-                <th>Số lượng</th>
-                <th>Số tiền khách phải trả</th>
-                <th>Hạn xác nhận</th>
-                <th>Thao tác</th>
+                <th>Code orders</th>
+                <th>Status</th>
+                <th>Quantity</th>
+                <th>Total amount</th>
+                <th>Confirmation deadline</th>
+                <th>Operation</th>
               </tr>
             </thead>
             <tbody>
               {filteredOrders.map((order) => (
-                <tr key={order.orderCode}>
+                <tr
+                  key={order.orderCode}
+                  className={selectedOrders.includes(order.orderCode) ? styles.selectedRow : ""}
+                >
                   <td>
                     <input
                       type="checkbox"
@@ -275,7 +306,7 @@ function Orders() {
                   <td>{order.quantity}</td>
                   <td>{order.totalAmount}</td>
                   <td>{order.deadline}</td>
-                  <td>Thao tác</td>
+                  <td><a href="#!">Xem chi tiết</a></td>
                 </tr>
               ))}
             </tbody>

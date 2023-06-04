@@ -17,3 +17,11 @@
     width: 100%;
     min-height: 100px;
 }
+
+
+/* table order */
+
+.selectedRow {
+    box-shadow: 0px 2px 2px #6c757d;
+}
+  
