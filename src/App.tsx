@@ -21,6 +21,7 @@ import Categories from "./components/AdminComponents/Category/Categories/Categor
 import Orders from "./components/AdminComponents/Order/Orders/Orders";
 import ProductDetail from "./components/AdminComponents/Product/ProductDetail/ProductDetail";
 import ClientProductDetail from "./components/ProductDetail/ProductDetail";
+import Customers from "./components/AdminComponents/Customers/Customers";
 function App() {
   return (
     <UserContext>
@@ -32,15 +33,15 @@ function App() {
             <Route path="/register" element={<Register />} />
             <Route path="/unauth" element={<Unauthenticated />} />
             <Route path="/search" element={<SearchPage />} />
-            {/* <Route path="/checkout" element={<Checkout />} /> */}
-            {/* <Route
+            <Route path="/checkout" element={<Checkout />} />
+            <Route
               path="/product"
               element={
                 <Layout>
                   <ClientProductDetail />
                 </Layout>
               }
-            /> */}
+            />
             <Route path="/servererror" element={<ServerError />} />
             <Route
               path="/profile"
@@ -77,6 +78,9 @@ function App() {
               </Route>
               <Route path="orders">
                 <Route path="" element={<AdminPage children={<Orders />} />} />
+              </Route>
+              <Route path="customers">
+                <Route path="" element={<AdminPage children={<Customers />} />} />
               </Route>
               <Route
                 path="profile"
