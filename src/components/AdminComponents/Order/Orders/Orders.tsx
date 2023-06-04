@@ -62,25 +62,34 @@ function Orders() {
       },
     ];
     setAllOrders(Orders);
-    const filteredButton = Orders.filter((order) => {
-      if (activeButton === 'all') {
-        return true;
-      } else if (activeButton === 'confirm' && order.status === 'Chờ xác nhận') {
-        return true;
-      } else if (activeButton === 'process' && order.status === 'Đang xử lí') {
-        return true;
-      } else if (activeButton === 'delivery' && order.status === 'Đang vận chuyển') {
-        return true;
-      } else if (activeButton === 'delivered' && order.status === 'Đã giao hàng') {
-        return true;
-      } else if (activeButton === 'cancelled' && order.status === 'Đã huỷ') {
-        return true;
-      } else {
-        return false;
-      }
+    let filtered = allOrders;
+  if (activeButton !== 'all') {
+    filtered = filtered.filter((order) => order.status === activeButton);
+  }
+  if (selectedOrderCode !== '') {
+    filtered = filtered.filter((order) => order.orderCode === selectedOrderCode);
+  }
+  if (searchOrder !== '') {
+    filtered = filtered.filter((order) => {
+      const searchOrderLowerCase = searchOrder.toLowerCase();
+      return (
+        order.orderCode.toLowerCase().includes(searchOrderLowerCase) ||
+        order.status.toLowerCase().includes(searchOrderLowerCase) ||
+        order.datecreated.includes(searchOrderLowerCase) ||
+        order.deadline.includes(searchOrderLowerCase)
+      );
     });
-    setFilteredOrders(filteredButton);
-  }, [activeButton]);
+  }
+  // if (selectedDate) {
+  //   filtered = filtered.filter((order) => {
+  //     const orderDate = new Date(order.datecreated);
+  //     return (
+  //       orderDate >= thirtyDaysAgo && orderDate <= selectedDate
+  //     );
+  //   });
+  // }
+  setFilteredOrders(filtered);
+  }, [activeButton, selectedOrderCode, searchOrder, selectedOrderLabel, selectedDate]);
 
 
   const handleClick = (buttonName: any) => {
@@ -93,10 +102,6 @@ function Orders() {
 
   const handleSearchOrderChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchOrder(event.target.value);
-  };
-
-  const handleOrderLabelChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    setSelectedOrderLabel(event.target.value);
   };
 
   const handleDateChange = (date: Date) => {
@@ -131,8 +136,6 @@ function Orders() {
   };
 
 
-
-
   return (
     <>
       <div className="container">
@@ -148,35 +151,35 @@ function Orders() {
             <button
               type="button"
               className={`btn btn-outline-secondary mt-3 mb-3 ${activeButton === 'confirm' ? styles.activeButton : ''}`}
-              onClick={() => handleClick('confirm')}
+              onClick={() => handleClick('Chờ xác nhận')}
             >
               Chờ xác nhận
             </button>
             <button
               type="button"
               className={`btn btn-outline-secondary mt-3 mb-3 ${activeButton === 'process' ? styles.activeButton : ''}`}
-              onClick={() => handleClick('process')}
+              onClick={() => handleClick('Đang xử lí')}
             >
               Đang xử lí
             </button>
             <button
               type="button"
               className={`btn btn-outline-secondary mt-3 mb-3 ${activeButton === 'delivery' ? styles.activeButton : ''}`}
-              onClick={() => handleClick('delivery')}
+              onClick={() => handleClick('Đang vận chuyển')}
             >
               Đang vận chuyển
             </button>
             <button
               type="button"
               className={`btn btn-outline-secondary mt-3 mb-3 ${activeButton === 'delivered' ? styles.activeButton : ''}`}
-              onClick={() => handleClick('delivered')}
+              onClick={() => handleClick('Đã giao hàng')}
             >
               Đã giao hàng
             </button>
             <button
               type="button"
               className={`btn btn-outline-secondary mt-3 mb-3 ${activeButton === 'cancelled' ? styles.activeButton : ''}`}
-              onClick={() => handleClick('cancelled')}
+              onClick={() => handleClick('Đã huỷ')}
             >
               Đã huỷ
             </button>
@@ -212,21 +215,6 @@ function Orders() {
                   onChange={handleSearchOrderChange}
                   placeholder="Nhập thông tin đơn hàng"
                 />
-              </div>
-            </div>
-            <div className="col-md-3">
-              <div className="form-group">
-                <select
-                  className="form-control"
-                  id="orderLabel"
-                  value={selectedOrderLabel}
-                  onChange={handleOrderLabelChange}
-                >
-                  <option value="">Nhãn đơn hàng</option>
-                  <option value="label1">Nhãn đơn hàng 1</option>
-                  <option value="label2">Nhãn đơn hàng 2</option>
-                  <option value="label3">Nhãn đơn hàng 3</option>
-                </select>
               </div>
             </div>
             <div className="col-md-3">
