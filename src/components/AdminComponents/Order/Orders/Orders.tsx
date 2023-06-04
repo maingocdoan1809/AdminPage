@@ -63,6 +63,70 @@ function Orders() {
         datecreated: "03/06/2023",
         deadline: "03/06/2023",
       },
+      {
+        orderCode: "ORD005",
+        status: "Chờ xác nhận",
+        quantity: 3,
+        totalAmount: 150,
+        datecreated: "03/06/2023",
+        deadline: "03/06/2023",
+      },
+      {
+        orderCode: "ORD006",
+        status: "Chờ xác nhận",
+        quantity: 3,
+        totalAmount: 150,
+        datecreated: "03/06/2023",
+        deadline: "03/06/2023",
+      },
+      {
+        orderCode: "ORD007",
+        status: "Chờ xác nhận",
+        quantity: 3,
+        totalAmount: 150,
+        datecreated: "03/06/2023",
+        deadline: "03/06/2023",
+      },
+      {
+        orderCode: "ORD008",
+        status: "Chờ xác nhận",
+        quantity: 3,
+        totalAmount: 150,
+        datecreated: "03/06/2023",
+        deadline: "03/06/2023",
+      },
+      {
+        orderCode: "ORD009",
+        status: "Chờ xác nhận",
+        quantity: 3,
+        totalAmount: 150,
+        datecreated: "03/06/2023",
+        deadline: "03/06/2023",
+      },
+      {
+        orderCode: "ORD0010",
+        status: "Chờ xác nhận",
+        quantity: 3,
+        totalAmount: 150,
+        datecreated: "03/06/2023",
+        deadline: "03/06/2023",
+      },
+      {
+        orderCode: "ORD0011",
+        status: "Chờ xác nhận",
+        quantity: 3,
+        totalAmount: 150,
+        datecreated: "03/06/2023",
+        deadline: "03/06/2023",
+      },
+      {
+        orderCode: "ORD0012",
+        status: "Chờ xác nhận",
+        quantity: 3,
+        totalAmount: 150,
+        datecreated: "03/06/2023",
+        deadline: "03/06/2023",
+      },
     ];
     setAllOrders(Orders);
   }, []);
@@ -159,95 +223,91 @@ function Orders() {
 
   return (
     <>
-      <div className="container">
-        <div className={`${styles["header-order"]}`}>
-          <div className={`btn-group ${styles["btn-group"]}`}>
-            <button
-              type="button"
-              className={`btn btn-outline-secondary mt-3 mb-3 ${activeButton === 'all' ? styles.activeButton : ''}`}
-              onClick={() => handleClick('all')}
-            >
-              Tất cả
-            </button>
-            <button
-              type="button"
-              className={`btn btn-outline-secondary mt-3 mb-3 ${activeButton === 'Chờ xác nhận' ? styles.activeButton : ''}`}
-              onClick={() => handleClick('Chờ xác nhận')}
-            >
-              Chờ xác nhận
-            </button>
-            <button
-              type="button"
-              className={`btn btn-outline-secondary mt-3 mb-3 ${activeButton === 'Đang xử lí' ? styles.activeButton : ''}`}
-              onClick={() => handleClick('Đang xử lí')}
-            >
-              Đang xử lí
-            </button>
-            <button
-              type="button"
-              className={`btn btn-outline-secondary mt-3 mb-3 ${activeButton === 'Đang vận chuyển' ? styles.activeButton : ''}`}
-              onClick={() => handleClick('Đang vận chuyển')}
-            >
-              Đang vận chuyển
-            </button>
-            <button
-              type="button"
-              className={`btn btn-outline-secondary mt-3 mb-3 ${activeButton === 'Đã giao hàng' ? styles.activeButton : ''}`}
-              onClick={() => handleClick('Đã giao hàng')}
-            >
-              Đã giao hàng
-            </button>
-            <button
-              type="button"
-              className={`btn btn-outline-secondary mt-3 mb-3 ${activeButton === 'Đã huỷ' ? styles.activeButton : ''}`}
-              onClick={() => handleClick('Đã huỷ')}
-            >
-              Đã huỷ
-            </button>
-          </div>
+      <div className={`container ${styles["container-order"]}`}>
+        <div className={`btn-group ${styles["btn-group"]}`}>
+          <button
+            type="button"
+            className={`btn btn-outline-secondary mt-3 mb-3 col-md-2 ${activeButton === 'all' ? styles.activeButton : ''}`}
+            onClick={() => handleClick('all')}
+          >
+            Tất cả
+          </button>
+          <button
+            type="button"
+            className={`btn btn-outline-secondary mt-3 mb-3 col-md-2 ${activeButton === 'Chờ xác nhận' ? styles.activeButton : ''}`}
+            onClick={() => handleClick('Chờ xác nhận')}
+          >
+            Chờ xác nhận
+          </button>
+          <button
+            type="button"
+            className={`btn btn-outline-secondary mt-3 mb-3 col-md-2 ${activeButton === 'Đang xử lí' ? styles.activeButton : ''}`}
+            onClick={() => handleClick('Đang xử lí')}
+          >
+            Đang xử lí
+          </button>
+          <button
+            type="button"
+            className={`btn btn-outline-secondary mt-3 mb-3 col-md-2 ${activeButton === 'Đang vận chuyển' ? styles.activeButton : ''}`}
+            onClick={() => handleClick('Đang vận chuyển')}
+          >
+            Đang vận chuyển
+          </button>
+          <button
+            type="button"
+            className={`btn btn-outline-secondary mt-3 mb-3 col-md-2 ${activeButton === 'Đã giao hàng' ? styles.activeButton : ''}`}
+            onClick={() => handleClick('Đã giao hàng')}
+          >
+            Đã giao hàng
+          </button>
+          <button
+            type="button"
+            className={`btn btn-outline-secondary mt-3 mb-3 col-md-2 ${activeButton === 'Đã huỷ' ? styles.activeButton : ''}`}
+            onClick={() => handleClick('Đã huỷ')}
+          >
+            Đã huỷ
+          </button>
         </div>
 
-        <div className={`${styles["filter-order"]}`}>
-          <div className="row">
-            <div className="col-md-3">
-              <div className="form-group">
-                <select
-                  className="form-control"
-                  id="orderCode"
-                  value={selectedOrderCode}
-                  onChange={handleOrderCodeChange}
-                >
-                  <option value="">Code orders</option>
-                  {allOrders.map((order) => (
-                    <option key={order.orderCode} value={order.orderCode}>
-                      {order.orderCode}
-                    </option>
-                  ))}
-                </select>
-              </div>
+        <div className={`row ${styles["filter-order"]}`}>
+          <div className="col-md-3">
+            <div className="form-group">
+              <select
+                className="form-control"
+                id="orderCode"
+                value={selectedOrderCode}
+                onChange={handleOrderCodeChange}
+              >
+                <option value="">Code orders</option>
+                {allOrders.map((order) => (
+                  <option key={order.orderCode} value={order.orderCode}>
+                    {order.orderCode}
+                  </option>
+                ))}
+              </select>
             </div>
-            <div className="col-md-3">
-              <div className="form-group">
-                <input
-                  type="text"
-                  className="form-control"
-                  id="searchOrder"
-                  value={searchOrder}
-                  onChange={handleSearchOrderChange}
-                  placeholder="Nhập thông tin đơn hàng"
-                />
-              </div>
+          </div>
+          <div className="col-md-3">
+            <div className="form-group">
+              <input
+                type="text"
+                className="form-control"
+                id="searchOrder"
+                value={searchOrder}
+                onChange={handleSearchOrderChange}
+                placeholder="Nhập thông tin đơn hàng"
+              />
             </div>
-            <div className="col-md-3">
-              <div className="form-group">
-                <DatePicker
-                  className="form-control"
-                  selected={selectedDate}
-                  onChange={handleDateChange}
-                  dateFormat="dd/MM/yyyy"
-                  placeholderText="Ngày đặt hàng"
-                />
-              </div>
+          </div>
+          <div className="col-md-3">
+            <div className="form-group">
+              <DatePicker
+                className="form-control"
+                selected={selectedDate}
+                onChange={handleDateChange}
+                dateFormat="dd/MM/yyyy"
+                placeholderText="Ngày đặt hàng"
+              />
             </div>
           </div>
           <div className="row mt-3">
@@ -266,11 +326,11 @@ function Orders() {
               </div>
             </div>
           </div>
-          <button type="button" className="btn btn-secondary btn-sm mt-2 px-3" onClick={handleClearFilter}>Huỷ lọc</button>
-          <button type="button" className="btn btn-primary btn-sm mt-2 px-3 mx-3" onClick={handleFilterClick}>Lọc</button>
         </div>
-        <div className={`mt-3 ${styles["order-table"]}`}>
-          <table className="table">
+        <button type="button" className="btn btn-secondary btn-sm mt-2 px-3 col-md-2" onClick={handleClearFilter}>Huỷ lọc</button>
+        <button type="button" className="btn btn-primary btn-sm mt-2 px-3 mx-3 col-md-2" onClick={handleFilterClick}>Lọc</button>
+        <div className={`mt-3 ${styles["order-table"]}`} style={{ overflow: "auto" }}>
+          <table className="table" style={{ minWidth: "900px" }}>
             <thead>
               <tr>
                 <th>
@@ -312,23 +372,24 @@ function Orders() {
             </tbody>
           </table>
         </div>
-
-        {selectedOrders.length > 0 && (
-          <div className={`${styles["selected-products"]}`}>
-            <h5>Đơn hàng được chọn:</h5>
-            <ul>
+        <div className={`my-3 ${styles["selected-products"]}`}>
+          <button
+            className={`btn btn-primary mb-3`}
+            onClick={handleBatchConfirmation}
+          >
+            Xác nhận hàng loạt
+          </button>
+          {selectedOrders.length > 0 && (
+            <div>
+              <h5>Đơn hàng được chọn:</h5>
               {selectedOrders.map((orderCode) => (
-                <li key={orderCode}>{orderCode}</li>
+                <span key={orderCode}>{orderCode + "  "}</span>
               ))}
-            </ul>
-            <button
-              className={`btn btn-primary`}
-              onClick={handleBatchConfirmation}
-            >
-              Xác nhận hàng loạt
-            </button>
-          </div>
-        )}
+
+            </div>
+          )}
+          
+        </div>
       </div>
     </>
   );
