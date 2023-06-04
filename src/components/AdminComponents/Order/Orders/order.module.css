@@ -1,0 +1,19 @@
+.header-order {
+    width: 100%;
+}
+
+.btn-group {
+    width: 100%;
+}
+
+.activeButton {
+    box-shadow: 0px 5px 5px #6c757d;
+}
+
+
+/* filter-order */
+.filter-order {
+    margin-top: 15px;
+    width: 100%;
+    min-height: 100px;
+}

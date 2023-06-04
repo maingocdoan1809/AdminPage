@@ -32,15 +32,15 @@ function App() {
             <Route path="/register" element={<Register />} />
             <Route path="/unauth" element={<Unauthenticated />} />
             <Route path="/search" element={<SearchPage />} />
-            <Route path="/checkout" element={<Checkout />} />
-            <Route
+            {/* <Route path="/checkout" element={<Checkout />} /> */}
+            {/* <Route
               path="/product"
               element={
                 <Layout>
                   <ClientProductDetail />
                 </Layout>
               }
-            />
+            /> */}
             <Route path="/servererror" element={<ServerError />} />
             <Route
               path="/profile"
