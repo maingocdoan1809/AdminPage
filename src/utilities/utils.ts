@@ -22,6 +22,10 @@ export type Province = {
   name: string;
   districts: District[];
 };
+export interface SelectOptionProps {
+  key: string;
+  text: string;
+}
 export interface Product {
   uniqueKey?: string;
   id: string;

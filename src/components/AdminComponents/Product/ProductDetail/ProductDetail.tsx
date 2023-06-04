@@ -8,17 +8,27 @@ import LoadingView from "../../../LoadingView/LoadingView";
 import { CommentType } from "../../../CommentBox/CommentBox";
 import ValidInput from "../../../ValidInput/ValidInput";
 import Editable from "../../../Editable/Editable";
+import { Category } from "../../Category/Categories/Categories";
 
 function ProductDetail() {
   const params = useParams();
   const [products, setProducts] = useState([] as Product[]);
   const [comments, setComments] = useState([] as CommentType[]);
+  const [categories, setCategories] = useState([] as Category[]);
   const [isLoading, setIsLoading] = useState(true);
 
   const [isLoadingComment, setIsLoadingComment] = useState(true);
+  /// state:
+  const [name, setName] = useState("");
+  const [categoryId, setCategoryID] = useState("");
   useEffect(() => {
     fetch(BACKEND_URL + "/products/" + params.id).then(async (response) => {
-      setProducts(await response.json());
+      const products = await response.json();
+      setProducts(products);
+      if (products.length > 0) {
+        setName(products[0].name);
+        setCategoryID(products[0].categoryid);
+      }
       setIsLoading(false);
     });
     fetch(BACKEND_URL + "/comments/product/" + params.id, {
@@ -28,6 +38,16 @@ function ProductDetail() {
       .then((data) => {
         setComments(data);
         setIsLoadingComment(false);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+    fetch(BACKEND_URL + "/categories")
+      .then((response) => {
+        return response.json();
+      })
+      .then((data) => {
+        setCategories(data);
       })
       .catch((err) => {
         console.log(err);
@@ -49,7 +69,12 @@ function ProductDetail() {
         <div className="flex-grow-1 w-100">
           <div className={`${style["text-group"]}`}>
             <label htmlFor="">ID</label>
-            <Editable canEdit={false} type="text" value={products[0].infoid} />
+            <Editable
+              canEdit={false}
+              type="text"
+              value={products[0].infoid}
+              onChange={(e) => {}}
+            />
           </div>
           <div className={`${style["text-group"]}`}>
             <label htmlFor="">Name</label>
@@ -57,7 +82,20 @@ function ProductDetail() {
           </div>
           <div className={`${style["text-group"]}`}>
             <label htmlFor="">Category</label>
-            <Editable canEdit={true} type="text" value={products[0].category} />
+            <Editable
+              canEdit={true}
+              type="text"
+              value={products[0].categoryid}
+              values={categories.map((category) => {
+                return {
+                  key: category.id,
+                  text: category.name,
+                };
+              })}
+            />
+          </div>
+          <div className={`${style["text-group"]} text-end`}>
+            <button className="btn btn-sm btn-danger">Save changes</button>
           </div>
         </div>
       </div>
