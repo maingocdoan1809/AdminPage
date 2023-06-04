@@ -45,14 +45,19 @@ function ValidInput(props: ValidInputProps) {
               ? "is-valid"
               : "is-invalid"
           }`}
+          defaultValue={props.initialValue}
           onBlur={(e) => {
             if (props.onBlur) {
               props.onBlur(e);
             }
           }}
         >
-          {props.values.map((v) => (
-            <option selected={v.key == props.initialValue} value={v.key}>
+          {props.values.map((v, index) => (
+            <option
+              key={index}
+              selected={v.key == props.initialValue}
+              value={v.key}
+            >
               {v.text}
             </option>
           ))}
