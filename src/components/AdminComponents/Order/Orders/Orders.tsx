@@ -3,6 +3,8 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { addDays, parse, subDays } from "date-fns";
 import styles from "./order.module.css"
+import OrderDetail from "../OrderDetail/OrderDetail";
+
 type AllOrders = {
   orderCode: string;
   status: string;
@@ -25,7 +27,7 @@ function Orders() {
   const [filteredOrders, setFilteredOrders] = useState<AllOrders[]>([]);
   const [filterClicked, setFilterClicked] = useState(false);
   const [filterCleared, setFilterCleared] = useState(false);
-  const [selectedRows, setSelectedRows] = useState<string[]>([]);
+  const [selectedOrderDetail, setSelectedOrderDetail] = useState<AllOrders | null>(null);
 
 
 
@@ -215,11 +217,13 @@ function Orders() {
     }
   };
 
-
   const handleBatchConfirmation = () => {
     console.log("Đơn hàng được chọn:", selectedOrders);
   };
 
+  const handleOrderDetail = (order: AllOrders) => {
+    setSelectedOrderDetail(order);
+  };
 
   return (
     <>
@@ -270,7 +274,7 @@ function Orders() {
         </div>
 
         <div className={`row ${styles["filter-order"]}`}>
-          <div className="col-md-3">
+          {/* <div className="col-md-3">
             <div className="form-group">
               <select
                 className="form-control"
@@ -279,14 +283,14 @@ function Orders() {
                 onChange={handleOrderCodeChange}
               >
                 <option value="">Code orders</option>
-                {allOrders.map((order) => (
+                {filteredOrders.map((order) => (
                   <option key={order.orderCode} value={order.orderCode}>
                     {order.orderCode}
                   </option>
                 ))}
               </select>
             </div>
-          </div>
+          </div> */}
           <div className="col-md-3">
             <div className="form-group">
               <input
@@ -295,7 +299,7 @@ function Orders() {
                 id="searchOrder"
                 value={searchOrder}
                 onChange={handleSearchOrderChange}
-                placeholder="Nhập thông tin đơn hàng"
+                placeholder="Nhập mã đơn hàng"
               />
             </div>
           </div>
@@ -331,7 +335,7 @@ function Orders() {
         <button type="button" className="btn btn-primary btn-sm mt-2 px-3 mx-3 col-md-2" onClick={handleFilterClick}>Lọc</button>
         <div className={`mt-3 ${styles["order-table"]}`} style={{ overflow: "auto" }}>
           <table className="table" style={{ minWidth: "900px" }}>
-            <thead>
+            <thead className="table-dark">
               <tr>
                 <th>
                   <input
@@ -350,7 +354,7 @@ function Orders() {
             </thead>
             <tbody>
               {filteredOrders.map((order) => (
-                <tr
+                <tr 
                   key={order.orderCode}
                   className={selectedOrders.includes(order.orderCode) ? styles.selectedRow : ""}
                 >
@@ -361,16 +365,34 @@ function Orders() {
                       onChange={() => handleOrderSelection(order.orderCode)}
                     />
                   </td>
-                  <td>{order.orderCode}</td>
+                  <td >{order.orderCode}</td>
                   <td>{order.status}</td>
                   <td>{order.quantity}</td>
                   <td>{order.totalAmount}</td>
                   <td>{order.deadline}</td>
-                  <td><a href="#!">Xem chi tiết</a></td>
+                  <td>
+                    <a
+                      data-bs-toggle="offcanvas"
+                      href="#offcanvasExample"
+                      role="button"
+                      aria-controls="offcanvasExample"
+                      onClick={() => handleOrderDetail(order)}
+                    >Xem chi tiết
+                    </a>
+                  </td>
                 </tr>
               ))}
             </tbody>
           </table>
+          <div style={{width: "100%"}} className="offcanvas offcanvas-end" tabIndex={-1} id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
+            <div className="offcanvas-header">
+              <h2 className="offcanvas-title mx-4" id="offcanvasExampleLabel">Order Detail</h2>
+              <button type="button" className="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+            </div>
+            <div className="offcanvas-body">
+              <OrderDetail order={selectedOrderDetail}/>
+            </div>
+          </div>
         </div>
         <div className={`my-3 ${styles["selected-products"]}`}>
           <button
@@ -388,7 +410,7 @@ function Orders() {
 
             </div>
           )}
-          
+
         </div>
       </div>
     </>
