@@ -1,26 +1,25 @@
 import React, { useEffect, useState } from 'react';
 
 type Customer = {
-  code: string,
-  username: string,
-  phone: string,
-  email: string,
-  address: string,
-  dob: string,
+  code: string;
+  username: string;
+  phone: string;
+  email: string;
+  address: string;
+  dob: string;
   gender: string;
-  status: string,
-  priority: number,
+  status: string;
+  priority: number;
 };
 
 function Customers() {
-
-  const [customer, setCustomer] = useState<Customer[]>([]);
+  const [customers, setCustomers] = useState<Customer[]>([]);
   const [filterCode, setFilterCode] = useState('');
   const [filterName, setFilterName] = useState('');
   const [filterStatus, setFilterStatus] = useState('');
 
   useEffect(() => {
-    const customers = [
+    const initialCustomers: Customer[] = [
       {
         code: 'KH001',
         username: 'John Doe',
@@ -30,7 +29,7 @@ function Customers() {
         dob: '23/09/2003',
         gender: 'Nam',
         status: 'Active',
-        priority: 1
+        priority: 1,
       },
       {
         code: 'KH002',
@@ -41,14 +40,14 @@ function Customers() {
         dob: '23/09/2003',
         gender: 'Nam',
         status: 'Inactive',
-        priority: 0
+        priority: 0,
       },
     ];
-    setCustomer(customers);
-  }, [])
-  const handleCodeFilterChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const selectedCode = event.target.value;
-    setFilterCode(selectedCode);
+    setCustomers(initialCustomers);
+  }, []);
+
+  const handleCodeFilterChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setFilterCode(event.target.value);
   };
 
   const handleStatusFilterChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -61,18 +60,20 @@ function Customers() {
   };
 
   const handlePriorityChange = (customerCode: string, newPriority: number) => {
-    const updatedCustomers = customer.map((c) => {
-      if (c.code === customerCode) {
-        return { ...c, priority: newPriority };
-      }
-      return c;
-    });
-    setCustomer(updatedCustomers);
+    const confirmed = window.confirm('Bạn có chắc chắn muốn thay đổi giá quyền của người dùng?');
+    if (confirmed) {
+      const updatedCustomers = customers.map((c) => {
+        if (c.code === customerCode) {
+          return { ...c, priority: newPriority };
+        }
+        return c;
+      });
+      setCustomers(updatedCustomers);
+    }
   };
 
-
-  const filteredCustomers = customer.filter((customer) => {
-    const isCodeMatch = filterCode === '' || customer.code === filterCode;
+  const filteredCustomers = customers.filter((customer) => {
+    const isCodeMatch = filterCode === '' || customer.code.includes(filterCode);
     const isNameMatch = filterName === '' || customer.username.includes(filterName);
     const isStatusMatch = filterStatus === '' || customer.status === filterStatus;
     return isCodeMatch && isNameMatch && isStatusMatch;
@@ -83,23 +84,18 @@ function Customers() {
       <div className="row mt-3">
         <div className="col-md-6">
           <div className="input-group mb-3">
-            <select
-              className="form-select"
-              aria-label="Filter by code"
-              value={filterCode}
-              onChange={handleCodeFilterChange}
-            >
-              <option value="">Mã khách hàng</option>
-              {customer.map((customer) => (
-                <option key={customer.code} value={customer.code}>
-                  {customer.code}
-                </option>
-              ))}
-            </select>
             <input
               type="text"
               className="form-control"
-              placeholder="Nhập từ khóa"
+              placeholder="Nhập mã người dùng"
+              aria-label="Filter by code"
+              value={filterCode}
+              onChange={handleCodeFilterChange}
+            />
+            <input
+              type="text"
+              className="form-control"
+              placeholder="Nhập tên người dùng"
               aria-label="Filter by name"
               value={filterName}
               onChange={handleNameFilterChange}
@@ -143,14 +139,18 @@ function Customers() {
                   <td>
                     <div className="dropdown">
                       <button
-                        style={{ width: "150px" }}
+                        style={{ width: '150px' }}
                         className="btn btn-secondary btn-sm dropdown-toggle"
                         type="button"
                         id="dropdownMenu2"
                         data-bs-toggle="dropdown"
                         aria-expanded="false"
                       >
-                        {customer.priority === 1 ? 'Admin' : customer.priority === 0 ? 'Customer' : 'Account lock'}
+                        {customer.priority === 1
+                          ? 'Admin'
+                          : customer.priority === 0
+                          ? 'Customer'
+                          : 'Account lock'}
                       </button>
                       <ul className="dropdown-menu" aria-labelledby="dropdownMenu2">
                         <li>
@@ -183,7 +183,6 @@ function Customers() {
                       </ul>
                     </div>
                   </td>
-
                 </tr>
               ))}
             </tbody>
