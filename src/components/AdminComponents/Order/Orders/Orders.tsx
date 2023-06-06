@@ -3,6 +3,8 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { addDays, parse, subDays } from "date-fns";
 import styles from "./order.module.css"
+import OrderDetail from "../OrderDetail/OrderDetail";
+
 type AllOrders = {
   orderCode: string;
   status: string;
@@ -25,7 +27,7 @@ function Orders() {
   const [filteredOrders, setFilteredOrders] = useState<AllOrders[]>([]);
   const [filterClicked, setFilterClicked] = useState(false);
   const [filterCleared, setFilterCleared] = useState(false);
-  const [selectedRows, setSelectedRows] = useState<string[]>([]);
+  const [selectedOrderDetail, setSelectedOrderDetail] = useState<AllOrders | null>(null);
 
 
 
@@ -57,6 +59,70 @@ function Orders() {
       },
       {
         orderCode: "ORD004",
+        status: "Chờ xác nhận",
+        quantity: 3,
+        totalAmount: 150,
+        datecreated: "03/06/2023",
+        deadline: "03/06/2023",
+      },
+      {
+        orderCode: "ORD005",
+        status: "Chờ xác nhận",
+        quantity: 3,
+        totalAmount: 150,
+        datecreated: "03/06/2023",
+        deadline: "03/06/2023",
+      },
+      {
+        orderCode: "ORD006",
+        status: "Chờ xác nhận",
+        quantity: 3,
+        totalAmount: 150,
+        datecreated: "03/06/2023",
+        deadline: "03/06/2023",
+      },
+      {
+        orderCode: "ORD007",
+        status: "Chờ xác nhận",
+        quantity: 3,
+        totalAmount: 150,
+        datecreated: "03/06/2023",
+        deadline: "03/06/2023",
+      },
+      {
+        orderCode: "ORD008",
+        status: "Chờ xác nhận",
+        quantity: 3,
+        totalAmount: 150,
+        datecreated: "03/06/2023",
+        deadline: "03/06/2023",
+      },
+      {
+        orderCode: "ORD009",
+        status: "Chờ xác nhận",
+        quantity: 3,
+        totalAmount: 150,
+        datecreated: "03/06/2023",
+        deadline: "03/06/2023",
+      },
+      {
+        orderCode: "ORD0010",
+        status: "Chờ xác nhận",
+        quantity: 3,
+        totalAmount: 150,
+        datecreated: "03/06/2023",
+        deadline: "03/06/2023",
+      },
+      {
+        orderCode: "ORD0011",
+        status: "Chờ xác nhận",
+        quantity: 3,
+        totalAmount: 150,
+        datecreated: "03/06/2023",
+        deadline: "03/06/2023",
+      },
+      {
+        orderCode: "ORD0012",
         status: "Chờ xác nhận",
         quantity: 3,
         totalAmount: 150,
@@ -151,103 +217,101 @@ function Orders() {
     }
   };
 
-
   const handleBatchConfirmation = () => {
     console.log("Đơn hàng được chọn:", selectedOrders);
   };
 
+  const handleOrderDetail = (order: AllOrders) => {
+    setSelectedOrderDetail(order);
+  };
 
   return (
     <>
-      <div className="container">
-        <div className={`${styles["header-order"]}`}>
-          <div className={`btn-group ${styles["btn-group"]}`}>
-            <button
-              type="button"
-              className={`btn btn-outline-secondary mt-3 mb-3 ${activeButton === 'all' ? styles.activeButton : ''}`}
-              onClick={() => handleClick('all')}
-            >
-              Tất cả
-            </button>
-            <button
-              type="button"
-              className={`btn btn-outline-secondary mt-3 mb-3 ${activeButton === 'Chờ xác nhận' ? styles.activeButton : ''}`}
-              onClick={() => handleClick('Chờ xác nhận')}
-            >
-              Chờ xác nhận
-            </button>
-            <button
-              type="button"
-              className={`btn btn-outline-secondary mt-3 mb-3 ${activeButton === 'Đang xử lí' ? styles.activeButton : ''}`}
-              onClick={() => handleClick('Đang xử lí')}
-            >
-              Đang xử lí
-            </button>
-            <button
-              type="button"
-              className={`btn btn-outline-secondary mt-3 mb-3 ${activeButton === 'Đang vận chuyển' ? styles.activeButton : ''}`}
-              onClick={() => handleClick('Đang vận chuyển')}
-            >
-              Đang vận chuyển
-            </button>
-            <button
-              type="button"
-              className={`btn btn-outline-secondary mt-3 mb-3 ${activeButton === 'Đã giao hàng' ? styles.activeButton : ''}`}
-              onClick={() => handleClick('Đã giao hàng')}
-            >
-              Đã giao hàng
-            </button>
-            <button
-              type="button"
-              className={`btn btn-outline-secondary mt-3 mb-3 ${activeButton === 'Đã huỷ' ? styles.activeButton : ''}`}
-              onClick={() => handleClick('Đã huỷ')}
-            >
-              Đã huỷ
-            </button>
-          </div>
+      <div className={`container ${styles["container-order"]}`}>
+        <div className={`btn-group ${styles["btn-group"]}`}>
+          <button
+            type="button"
+            className={`btn btn-outline-secondary mt-3 mb-3 col-md-2 ${activeButton === 'all' ? styles.activeButton : ''}`}
+            onClick={() => handleClick('all')}
+          >
+            Tất cả
+          </button>
+          <button
+            type="button"
+            className={`btn btn-outline-secondary mt-3 mb-3 col-md-2 ${activeButton === 'Chờ xác nhận' ? styles.activeButton : ''}`}
+            onClick={() => handleClick('Chờ xác nhận')}
+          >
+            Chờ xác nhận
+          </button>
+          <button
+            type="button"
+            className={`btn btn-outline-secondary mt-3 mb-3 col-md-2 ${activeButton === 'Đang xử lí' ? styles.activeButton : ''}`}
+            onClick={() => handleClick('Đang xử lí')}
+          >
+            Đang xử lí
+          </button>
+          <button
+            type="button"
+            className={`btn btn-outline-secondary mt-3 mb-3 col-md-2 ${activeButton === 'Đang vận chuyển' ? styles.activeButton : ''}`}
+            onClick={() => handleClick('Đang vận chuyển')}
+          >
+            Đang vận chuyển
+          </button>
+          <button
+            type="button"
+            className={`btn btn-outline-secondary mt-3 mb-3 col-md-2 ${activeButton === 'Đã giao hàng' ? styles.activeButton : ''}`}
+            onClick={() => handleClick('Đã giao hàng')}
+          >
+            Đã giao hàng
+          </button>
+          <button
+            type="button"
+            className={`btn btn-outline-secondary mt-3 mb-3 col-md-2 ${activeButton === 'Đã huỷ' ? styles.activeButton : ''}`}
+            onClick={() => handleClick('Đã huỷ')}
+          >
+            Đã huỷ
+          </button>
         </div>
 
-        <div className={`${styles["filter-order"]}`}>
-          <div className="row">
-            <div className="col-md-3">
-              <div className="form-group">
-                <select
-                  className="form-control"
-                  id="orderCode"
-                  value={selectedOrderCode}
-                  onChange={handleOrderCodeChange}
-                >
-                  <option value="">Code orders</option>
-                  {allOrders.map((order) => (
-                    <option key={order.orderCode} value={order.orderCode}>
-                      {order.orderCode}
-                    </option>
-                  ))}
-                </select>
-              </div>
+        <div className={`row ${styles["filter-order"]}`}>
+          {/* <div className="col-md-3">
+            <div className="form-group">
+              <select
+                className="form-control"
+                id="orderCode"
+                value={selectedOrderCode}
+                onChange={handleOrderCodeChange}
+              >
+                <option value="">Code orders</option>
+                {filteredOrders.map((order) => (
+                  <option key={order.orderCode} value={order.orderCode}>
+                    {order.orderCode}
+                  </option>
+                ))}
+              </select>
             </div>
-            <div className="col-md-3">
-              <div className="form-group">
-                <input
-                  type="text"
-                  className="form-control"
-                  id="searchOrder"
-                  value={searchOrder}
-                  onChange={handleSearchOrderChange}
-                  placeholder="Nhập thông tin đơn hàng"
-                />
-              </div>
+          </div> */}
+          <div className="col-md-3">
+            <div className="form-group">
+              <input
+                type="text"
+                className="form-control"
+                id="searchOrder"
+                value={searchOrder}
+                onChange={handleSearchOrderChange}
+                placeholder="Nhập mã đơn hàng"
+              />
             </div>
-            <div className="col-md-3">
-              <div className="form-group">
-                <DatePicker
-                  className="form-control"
-                  selected={selectedDate}
-                  onChange={handleDateChange}
-                  dateFormat="dd/MM/yyyy"
-                  placeholderText="Ngày đặt hàng"
-                />
-              </div>
+          </div>
+          <div className="col-md-3">
+            <div className="form-group">
+              <DatePicker
+                className="form-control"
+                selected={selectedDate}
+                onChange={handleDateChange}
+                dateFormat="dd/MM/yyyy"
+                placeholderText="Ngày đặt hàng"
+              />
             </div>
           </div>
           <div className="row mt-3">
@@ -266,12 +330,12 @@ function Orders() {
               </div>
             </div>
           </div>
-          <button type="button" className="btn btn-secondary btn-sm mt-2 px-3" onClick={handleClearFilter}>Huỷ lọc</button>
-          <button type="button" className="btn btn-primary btn-sm mt-2 px-3 mx-3" onClick={handleFilterClick}>Lọc</button>
         </div>
-        <div className={`mt-3 ${styles["order-table"]}`}>
-          <table className="table">
-            <thead>
+        <button type="button" className="btn btn-secondary btn-sm mt-2 px-3 col-md-2" onClick={handleClearFilter}>Huỷ lọc</button>
+        <button type="button" className="btn btn-primary btn-sm mt-2 px-3 mx-3 col-md-2" onClick={handleFilterClick}>Lọc</button>
+        <div className={`mt-3 ${styles["order-table"]}`} style={{ overflow: "auto" }}>
+          <table className="table" style={{ minWidth: "900px" }}>
+            <thead className="table-dark">
               <tr>
                 <th>
                   <input
@@ -290,7 +354,7 @@ function Orders() {
             </thead>
             <tbody>
               {filteredOrders.map((order) => (
-                <tr
+                <tr 
                   key={order.orderCode}
                   className={selectedOrders.includes(order.orderCode) ? styles.selectedRow : ""}
                 >
@@ -301,34 +365,53 @@ function Orders() {
                       onChange={() => handleOrderSelection(order.orderCode)}
                     />
                   </td>
-                  <td>{order.orderCode}</td>
+                  <td >{order.orderCode}</td>
                   <td>{order.status}</td>
                   <td>{order.quantity}</td>
                   <td>{order.totalAmount}</td>
                   <td>{order.deadline}</td>
-                  <td><a href="#!">Xem chi tiết</a></td>
+                  <td>
+                    <a
+                      data-bs-toggle="offcanvas"
+                      href="#offcanvasExample"
+                      role="button"
+                      aria-controls="offcanvasExample"
+                      onClick={() => handleOrderDetail(order)}
+                    >Xem chi tiết
+                    </a>
+                  </td>
                 </tr>
               ))}
             </tbody>
           </table>
-        </div>
-
-        {selectedOrders.length > 0 && (
-          <div className={`${styles["selected-products"]}`}>
-            <h5>Đơn hàng được chọn:</h5>
-            <ul>
-              {selectedOrders.map((orderCode) => (
-                <li key={orderCode}>{orderCode}</li>
-              ))}
-            </ul>
-            <button
-              className={`btn btn-primary`}
-              onClick={handleBatchConfirmation}
-            >
-              Xác nhận hàng loạt
-            </button>
+          <div style={{width: "100%"}} className="offcanvas offcanvas-end" tabIndex={-1} id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
+            <div className="offcanvas-header">
+              <h2 className="offcanvas-title mx-4" id="offcanvasExampleLabel">Order Detail</h2>
+              <button type="button" className="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+            </div>
+            <div className="offcanvas-body">
+              <OrderDetail order={selectedOrderDetail}/>
+            </div>
           </div>
-        )}
+        </div>
+        <div className={`my-3 ${styles["selected-products"]}`}>
+          <button
+            className={`btn btn-primary mb-3`}
+            onClick={handleBatchConfirmation}
+          >
+            Xác nhận hàng loạt
+          </button>
+          {selectedOrders.length > 0 && (
+            <div>
+              <h5>Đơn hàng được chọn:</h5>
+              {selectedOrders.map((orderCode) => (
+                <span key={orderCode}>{orderCode + "  "}</span>
+              ))}
+
+            </div>
+          )}
+
+        </div>
       </div>
     </>
   );
