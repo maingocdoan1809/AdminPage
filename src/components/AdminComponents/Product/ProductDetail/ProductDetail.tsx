@@ -209,7 +209,9 @@ function ProductDetail() {
           </div>
         </div>
       </div>
-      {isShowingAddPanel && <AddProduct onClose={setIsShowingAddPanel} />}
+      {isShowingAddPanel && (
+        <AddProduct products={products} onClose={setIsShowingAddPanel} />
+      )}
     </>
   );
 }
