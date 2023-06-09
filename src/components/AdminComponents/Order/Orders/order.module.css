@@ -49,3 +49,6 @@
     padding-bottom: 50px;
 }
   
+.expiredDeadline {
+    color: red;
+}

@@ -1,15 +1,16 @@
 import { useEffect, useState } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { addDays, parse, subDays } from "date-fns";
+import {format, parseISO , addDays, parse, subDays } from "date-fns";
 import styles from "./order.module.css"
 import OrderDetail from "../OrderDetail/OrderDetail";
+import { BACKEND_URL } from "../../../../env";
 
 type AllOrders = {
-  orderCode: string;
-  status: string;
+  id: string;
+  state: string;
   quantity: number;
-  totalAmount: number;
+  totalamount: number;
   datecreated: string;
   deadline: string;
 };
@@ -29,125 +30,59 @@ function Orders() {
   const [filterCleared, setFilterCleared] = useState(false);
   const [selectedOrderDetail, setSelectedOrderDetail] = useState<AllOrders | null>(null);
 
-
-
+  function mapStateToStatus(state: number): string {
+    switch (state) {
+      case 0:
+        return 'Chờ xác nhận';
+      case 1:
+        return 'Đang xử lí';
+      case 2:
+        return 'Đang vận chuyển';
+      case 3:
+        return 'Đã giao hàng';
+      case 4:
+        return 'Đã huỷ';
+      default:
+        return 'Trạng thái không xác định';
+    }
+  }
   useEffect(() => {
-    const Orders = [
-      {
-        orderCode: "ORD001",
-        status: "Chờ xác nhận",
-        quantity: 2,
-        totalAmount: 100,
-        datecreated: "03/06/2021",
-        deadline: "03/06/2023",
-      },
-      {
-        orderCode: "ORD002",
-        status: "Đang xử lí",
-        quantity: 3,
-        totalAmount: 150,
-        datecreated: "03/06/2023",
-        deadline: "03/06/2023",
-      },
-      {
-        orderCode: "ORD003",
-        status: "Đang xử lí",
-        quantity: 3,
-        totalAmount: 150,
-        datecreated: "03/06/2023",
-        deadline: "03/06/2023",
-      },
-      {
-        orderCode: "ORD004",
-        status: "Chờ xác nhận",
-        quantity: 3,
-        totalAmount: 150,
-        datecreated: "03/06/2023",
-        deadline: "03/06/2023",
-      },
-      {
-        orderCode: "ORD005",
-        status: "Chờ xác nhận",
-        quantity: 3,
-        totalAmount: 150,
-        datecreated: "03/06/2023",
-        deadline: "03/06/2023",
-      },
-      {
-        orderCode: "ORD006",
-        status: "Chờ xác nhận",
-        quantity: 3,
-        totalAmount: 150,
-        datecreated: "03/06/2023",
-        deadline: "03/06/2023",
-      },
-      {
-        orderCode: "ORD007",
-        status: "Chờ xác nhận",
-        quantity: 3,
-        totalAmount: 150,
-        datecreated: "03/06/2023",
-        deadline: "03/06/2023",
-      },
-      {
-        orderCode: "ORD008",
-        status: "Chờ xác nhận",
-        quantity: 3,
-        totalAmount: 150,
-        datecreated: "03/06/2023",
-        deadline: "03/06/2023",
-      },
-      {
-        orderCode: "ORD009",
-        status: "Chờ xác nhận",
-        quantity: 3,
-        totalAmount: 150,
-        datecreated: "03/06/2023",
-        deadline: "03/06/2023",
-      },
-      {
-        orderCode: "ORD0010",
-        status: "Chờ xác nhận",
-        quantity: 3,
-        totalAmount: 150,
-        datecreated: "03/06/2023",
-        deadline: "03/06/2023",
-      },
-      {
-        orderCode: "ORD0011",
-        status: "Chờ xác nhận",
-        quantity: 3,
-        totalAmount: 150,
-        datecreated: "03/06/2023",
-        deadline: "03/06/2023",
-      },
-      {
-        orderCode: "ORD0012",
-        status: "Chờ xác nhận",
-        quantity: 3,
-        totalAmount: 150,
-        datecreated: "03/06/2023",
-        deadline: "03/06/2023",
-      },
-    ];
-    setAllOrders(Orders);
+    fetch(BACKEND_URL + '/checkout')
+      .then((response) => {
+        if (response.ok) {
+          return response.json();
+        } else {
+          throw new Error('Error: ' + response.status);
+        }
+      })
+      .then((data) => {
+        const updatedOrders = data.map((order: AllOrders) => {
+          const deadline = format(addDays(parseISO(order.datecreated), 1), 'dd/MM/yyyy');
+          const state = mapStateToStatus(Number(order.state));
+          return { ...order, deadline, state };
+        });
+        setAllOrders(updatedOrders);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
   }, []);
 
   useEffect(() => {
     let filtered = allOrders;
     if (activeButton !== "all") {
-      filtered = filtered.filter((order) => order.status === activeButton);
+      filtered = filtered.filter((order) => order.state === activeButton);
     }
     if (filterClicked) {
       if (selectedOrderCode !== "") {
-        filtered = filtered.filter((order) => order.orderCode === selectedOrderCode);
+        filtered = filtered.filter((order) => order.id === selectedOrderCode);
       }
       if (searchOrder !== "") {
         filtered = filtered.filter((order) => {
           const searchOrderLowerCase = searchOrder.toLowerCase();
           return (
-            order.orderCode.toLowerCase().includes(searchOrderLowerCase) ||
-            order.status.toLowerCase().includes(searchOrderLowerCase) ||
+            order.id.toLowerCase().includes(searchOrderLowerCase) ||
+            order.state.toLowerCase().includes(searchOrderLowerCase) ||
             order.datecreated.includes(searchOrderLowerCase) ||
             order.deadline.includes(searchOrderLowerCase)
           );
@@ -194,13 +129,11 @@ function Orders() {
     setFilterCleared(true);
   };
 
-  const handleOrderSelection = (orderCode: string) => {
-    if (selectedOrders.includes(orderCode)) {
-      // Nếu đơn hàng đã được chọn, hủy bỏ chọn
-      setSelectedOrders(selectedOrders.filter((id) => id !== orderCode));
+  const handleOrderSelection = (id: string) => {
+    if (selectedOrders.includes(id)) {
+      setSelectedOrders(selectedOrders.filter((id) => id !== id));
     } else {
-      // Nếu đơn hàng chưa được chọn, thêm vào danh sách các đơn hàng được chọn
-      setSelectedOrders([...selectedOrders, orderCode]);
+      setSelectedOrders([...selectedOrders, id]);
     }
   };
 
@@ -208,11 +141,9 @@ function Orders() {
   const handleSelectAll = () => {
     setSelectAll(!selectAll);
     if (!selectAll) {
-      // Nếu checkbox "Chọn tất cả" chưa được chọn, thêm tất cả các orderId vào danh sách selectedOrders
-      const selectAllOrder = filteredOrders.map((order) => order.orderCode);
+      const selectAllOrder = filteredOrders.map((order) => order.id);
       setSelectedOrders(selectAllOrder);
     } else {
-      // Nếu checkbox "Chọn tất cả" đã được chọn, xóa tất cả các orderId khỏi danh sách selectedOrders
       setSelectedOrders([]);
     }
   };
@@ -224,6 +155,15 @@ function Orders() {
   const handleOrderDetail = (order: AllOrders) => {
     setSelectedOrderDetail(order);
   };
+
+  function isDeadlinePassed(deadline: any) {
+    const currentDateTime = new Date();
+    const deadlineDateTime = parse(deadline, 'dd/MM/yyyy', new Date());
+    // console.log('a', currentDateTime);
+    // console.log('b', deadlineDateTime);
+    return deadlineDateTime < currentDateTime;
+  }
+  
 
   return (
     <>
@@ -274,23 +214,6 @@ function Orders() {
         </div>
 
         <div className={`row ${styles["filter-order"]}`}>
-          {/* <div className="col-md-3">
-            <div className="form-group">
-              <select
-                className="form-control"
-                id="orderCode"
-                value={selectedOrderCode}
-                onChange={handleOrderCodeChange}
-              >
-                <option value="">Code orders</option>
-                {filteredOrders.map((order) => (
-                  <option key={order.orderCode} value={order.orderCode}>
-                    {order.orderCode}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div> */}
           <div className="col-md-3">
             <div className="form-group">
               <input
@@ -345,7 +268,7 @@ function Orders() {
                   />
                 </th>
                 <th>Code orders</th>
-                <th>Status</th>
+                <th>State</th>
                 <th>Quantity</th>
                 <th>Total amount</th>
                 <th>Confirmation deadline</th>
@@ -354,22 +277,22 @@ function Orders() {
             </thead>
             <tbody>
               {filteredOrders.map((order) => (
-                <tr 
-                  key={order.orderCode}
-                  className={selectedOrders.includes(order.orderCode) ? styles.selectedRow : ""}
+                <tr
+                  key={order.id}
+                  className={selectedOrders.includes(order.id) ? styles.selectedRow : ""}
                 >
                   <td>
                     <input
                       type="checkbox"
-                      checked={selectedOrders.includes(order.orderCode)}
-                      onChange={() => handleOrderSelection(order.orderCode)}
+                      checked={selectedOrders.includes(order.id)}
+                      onChange={() => handleOrderSelection(order.id)}
                     />
                   </td>
-                  <td >{order.orderCode}</td>
-                  <td>{order.status}</td>
+                  <td >{order.id}</td>
+                  <td>{order.state}</td>
                   <td>{order.quantity}</td>
-                  <td>{order.totalAmount}</td>
-                  <td>{order.deadline}</td>
+                  <td>{order.totalamount}</td>
+                  <td className={isDeadlinePassed(order.deadline) ? styles.expiredDeadline : ""}>{order.deadline}</td>
                   <td>
                     <a
                       data-bs-toggle="offcanvas"
@@ -384,13 +307,13 @@ function Orders() {
               ))}
             </tbody>
           </table>
-          <div style={{width: "100%"}} className="offcanvas offcanvas-end" tabIndex={-1} id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
+          <div style={{ width: "100%" }} className="offcanvas offcanvas-end" tabIndex={-1} id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
             <div className="offcanvas-header">
               <h2 className="offcanvas-title mx-4" id="offcanvasExampleLabel">Order Detail</h2>
               <button type="button" className="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
             </div>
             <div className="offcanvas-body">
-              <OrderDetail order={selectedOrderDetail}/>
+              {/* <OrderDetail id={selectedOrderDetail} /> */}
             </div>
           </div>
         </div>
@@ -404,10 +327,12 @@ function Orders() {
           {selectedOrders.length > 0 && (
             <div>
               <h5>Đơn hàng được chọn:</h5>
-              {selectedOrders.map((orderCode) => (
-                <span key={orderCode}>{orderCode + "  "}</span>
+              {selectedOrders.map((id, index) => (
+                <span key={id}>
+                  {id}
+                  {index !== selectedOrders.length - 1 ? ' - ' : ' '}
+                </span>
               ))}
-
             </div>
           )}
 
