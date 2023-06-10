@@ -158,22 +158,24 @@ function Orders() {
     const updatedOrders = allOrders.map((order) => {
       if (selectedOrders.includes(order.id)) {
         if (selectedValue === '1') {
-            return { ...order, state: 'Đang xử lí' };
+          return { ...order, state: 'Đang xử lí' };
         } else if (selectedValue === '2') {
-            return { ...order, state: 'Đang vận chuyển' };
+          return { ...order, state: 'Đang vận chuyển' };
+        } else if (selectedValue === '3') {
+          return { ...order, state: 'Đã giao hàng' };
         } else if (selectedValue === '4') {
           return { ...order, state: 'Đã huỷ' };
-      }
+        }
       }
       return order;
     });
-  
+
     setAllOrders(updatedOrders);
     setSelectedOrders([]);
     console.log("Đơn hàng được chọn:", selectedOrders);
   };
-  
-  
+
+
 
   const handleOrderDetail = (order: AllOrders) => {
     setSelectedOrderDetail(order);
@@ -373,6 +375,13 @@ function Orders() {
             value={2}
           >
             Vân chuyển
+          </button>
+          <button
+            className={`btn btn-primary m-3`}
+            onClick={handleBatchConfirmation}
+            value={3}
+          >
+            Đã giao hàng
           </button>
           <button
             className={`btn btn-primary m-3`}

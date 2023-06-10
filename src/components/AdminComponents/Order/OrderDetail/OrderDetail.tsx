@@ -42,7 +42,6 @@ function OrderDetail({ order }: OrderDetailProps) {
       })
       .then((data) => {
         setProductinbill(data);
-        console.log(productinbill);
       })
       .catch((error) => {
         console.error(error);
