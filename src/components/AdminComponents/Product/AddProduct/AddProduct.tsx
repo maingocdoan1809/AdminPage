@@ -7,19 +7,21 @@ type Props = {
   onClose: (b: boolean) => void;
   products: Product[];
 };
-
+export type SizeOption = {
+  size: string;
+  quantity: number;
+  productId: string;
+};
+export type ColorUtil = {
+  colorname: string;
+  colorcode: string;
+  imgUrl: string;
+  imgFile?: File;
+  sizes: SizeOption[];
+};
 export type ProductUtil = {
   idInfo: string;
-  imgUrl: string;
-  colors: {
-    colorname: string;
-    colorcode: string;
-    sizes: {
-      size: string;
-      quantity: number;
-      productId: string;
-    }[];
-  }[];
+  colors: ColorUtil[];
 };
 
 function AddProduct({ onClose, products }: Props) {
@@ -27,14 +29,14 @@ function AddProduct({ onClose, products }: Props) {
     const temp = [];
     const map = new Map<string, ProductUtil>();
     products.forEach((product) => {
-      if (!map.has(product.infoid)) {
-        map.set(product.infoid, {
+      if (!map.has(product.colorcode)) {
+        map.set(product.colorcode, {
           idInfo: product.infoid,
-          imgUrl: product.imageurl,
           colors: [
             {
               colorcode: product.colorcode,
               colorname: product.colorname,
+              imgUrl: product.imageurl,
               sizes: [
                 {
                   productId: product.id,
@@ -46,7 +48,7 @@ function AddProduct({ onClose, products }: Props) {
           ],
         } as ProductUtil);
       } else {
-        const p = map.get(product.infoid);
+        const p = map.get(product.colorcode);
         const pwithcolor = p?.colors.find(
           (f) => f.colorcode == product.colorcode
         );
@@ -54,6 +56,7 @@ function AddProduct({ onClose, products }: Props) {
           p?.colors.push({
             colorcode: product.colorcode,
             colorname: product.colorname,
+            imgUrl: product.imageurl,
             sizes: [
               {
                 productId: product.id,
@@ -74,7 +77,9 @@ function AddProduct({ onClose, products }: Props) {
     console.log(map);
 
     for (let product of map.keys()) {
-      temp.push(<AddProductCard product={map.get(product)} />);
+      temp.push(
+        <AddProductCard infoId={products[0].infoid} p={map.get(product)} />
+      );
     }
     return temp;
   });
@@ -110,7 +115,10 @@ function AddProduct({ onClose, products }: Props) {
             <div
               className={`${style["btn-add"]}`}
               onClick={(e) => {
-                setCards([...cards, <AddProductCard />]);
+                setCards([
+                  ...cards,
+                  <AddProductCard infoId={products[0].infoid} />,
+                ]);
               }}
             >
               <svg
