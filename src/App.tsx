@@ -67,7 +67,6 @@ function App() {
                   element={<AdminPage children={<ProductDetail />} />}
                   path=":id"
                 />
-                R R
               </Route>
               <Route path="categories">
                 <Route

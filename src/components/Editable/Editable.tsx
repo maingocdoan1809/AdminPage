@@ -1,16 +1,26 @@
 import { useEffect, useRef, useState } from "react";
 import style from "./editable.module.css";
 import ValidInput from "../ValidInput/ValidInput";
+import { SelectBoxProps } from "../SelectBox/SelectBox";
+import { SelectOptionProps } from "../../utilities/utils";
 
 type EditableProps = {
   onChange?: (e: string) => void;
   type: string;
   value?: string;
+  values?: SelectOptionProps[];
   canEdit: boolean;
   name?: string;
 };
 
-function Editable({ onChange, type, value, name, canEdit }: EditableProps) {
+function Editable({
+  onChange,
+  type,
+  value,
+  name,
+  canEdit,
+  values,
+}: EditableProps) {
   const [txtvalue, setTxtValue] = useState(value || "");
   const [disableText, setDisableText] = useState(true);
   return (
@@ -22,6 +32,7 @@ function Editable({ onChange, type, value, name, canEdit }: EditableProps) {
               onChange(e);
             }
           }}
+          values={values}
           initialValue={value}
           onBlur={(e) => {
             setDisableText(true);

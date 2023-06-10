@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useDebounce } from "../../utilities/debounce";
 import React from "react";
+import { SelectOptionProps } from "../../utilities/utils";
 
 export type ValidInputProps = {
   style?: {};
@@ -12,8 +13,9 @@ export type ValidInputProps = {
   placeholder?: string;
   delay?: number;
   textIfInvalid?: string;
-  onBlur?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onBlur?: (e: React.ChangeEvent<HTMLInputElement> | any) => void;
   initialValue?: string;
+  values?: SelectOptionProps[];
   disabled?: boolean;
 };
 
@@ -25,30 +27,67 @@ function ValidInput(props: ValidInputProps) {
 
   return (
     <>
-      <input
-        disabled={props.disabled || false}
-        value={state}
-        onChange={(e) => {
-          debounce(e.target.value);
-          setState(e.target.value);
-        }}
-        id={props.identifier ?? ""}
-        name={props.identifier ?? ""}
-        placeholder={props.placeholder ?? ""}
-        type={props.type || "text"}
-        className={`form-control ${props.className?.join(" ")} ${
-          props.isValid == undefined
-            ? ""
-            : props.isValid == true
-            ? "is-valid"
-            : "is-invalid"
-        }`}
-        onBlur={(e) => {
-          if (props.onBlur) {
-            props.onBlur(e);
-          }
-        }}
-      />
+      {props.values ? (
+        <select
+          disabled={props.disabled || false}
+          value={state}
+          onChange={(e) => {
+            debounce(e.target.value);
+            setState(e.target.value);
+          }}
+          id={props.identifier ?? ""}
+          name={props.identifier ?? ""}
+          placeholder={props.placeholder ?? ""}
+          className={`form-select ${props.className?.join(" ")} ${
+            props.isValid == undefined
+              ? ""
+              : props.isValid == true
+              ? "is-valid"
+              : "is-invalid"
+          }`}
+          defaultValue={props.initialValue}
+          onBlur={(e) => {
+            if (props.onBlur) {
+              props.onBlur(e);
+            }
+          }}
+        >
+          {props.values.map((v, index) => (
+            <option
+              key={index}
+              selected={v.key == props.initialValue}
+              value={v.key}
+            >
+              {v.text}
+            </option>
+          ))}
+        </select>
+      ) : (
+        <input
+          disabled={props.disabled || false}
+          value={state}
+          onChange={(e) => {
+            debounce(e.target.value);
+            setState(e.target.value);
+          }}
+          id={props.identifier ?? ""}
+          name={props.identifier ?? ""}
+          placeholder={props.placeholder ?? ""}
+          type={props.type || "text"}
+          className={`form-control ${props.className?.join(" ")} ${
+            props.isValid == undefined
+              ? ""
+              : props.isValid == true
+              ? "is-valid"
+              : "is-invalid"
+          }`}
+          onBlur={(e) => {
+            if (props.onBlur) {
+              props.onBlur(e);
+            }
+          }}
+        />
+      )}
       {props.isValid == false && props.textIfInvalid && (
         <>
           <small className="text-danger">{props.textIfInvalid}</small>

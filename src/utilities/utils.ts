@@ -22,6 +22,10 @@ export type Province = {
   name: string;
   districts: District[];
 };
+export interface SelectOptionProps {
+  key: string;
+  text: string;
+}
 export interface Product {
   uniqueKey?: string;
   id: string;
@@ -129,4 +133,9 @@ function matchUnicode(strToMatch: string, searchStr: string) {
   let regex = "";
   for (let x in searchStr.split("")) {
   }
+}
+
+function checkHexColor(color: string) {
+  const pattern = new RegExp("(^#[a-f0-9]{6}$)|(^#[a-f0-9]{4}$)");
+  return pattern.test(color);
 }
