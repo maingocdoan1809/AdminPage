@@ -1,13 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import styles from "./OrderDetail.module.css"
+import { BACKEND_URL } from '../../../../env';
 
 type AllOrders = {
-  orderCode: string;
-  status: string;
+  id: string;
+  state: string;
   quantity: number;
-  totalAmount: number;
+  totalamount: number;
   datecreated: string;
   deadline: string;
+  username: string;
+  receiveaddress: string;
+  receivephonenumber: string;
+  receivename: string;
 };
 
 type OrderDetailProps = {
@@ -15,99 +20,82 @@ type OrderDetailProps = {
 };
 
 type ProductInBill = {
-  ordercode: string;
+  id: string;
+  name: string;
   idproduct: string;
   quantity: number;
   price: number;
-  imgurl: string;
-  productname: string;
+  imageurl: string;
   colorname: string;
 };
 
 function OrderDetail({ order }: OrderDetailProps) {
   const [productinbill, setProductinbill] = useState<ProductInBill[]>([]);
   useEffect(() => {
-    const productInBill = [
-      {
-        ordercode: "ORD001",
-        idproduct: "P001",
-        quantity: 2,
-        price: 10,
-        imgurl: "https://tamson-media.s3.ap-southeast-1.amazonaws.com/media/catalog/product/cache/a72dd292f5ebc7f905c5028ee744eec1/S/a/Sandro_SHPPA00571-23_V_1_1_2.webp",
-        productname: "Product 1",
-        colorname: "màu xanh dương"
-      },
-      {
-        ordercode: "ORD001",
-        idproduct: "P002",
-        quantity: 1,
-        price: 20,
-        imgurl: "https://tamson-media.s3.ap-southeast-1.amazonaws.com/media/catalog/product/cache/a72dd292f5ebc7f905c5028ee744eec1/S/a/Sandro_SHPPA00571-23_V_1_1_2.webp",
-        productname: "Product 2",
-        colorname: "màu xanh dương"
-      },
-      {
-        ordercode: "ORD001",
-        idproduct: "P003",
-        quantity: 1,
-        price: 20,
-        imgurl: "https://tamson-media.s3.ap-southeast-1.amazonaws.com/media/catalog/product/cache/a72dd292f5ebc7f905c5028ee744eec1/S/a/Sandro_SHPPA00571-23_V_1_1_2.webp",
-        productname: "Product 3",
-        colorname: "màu xanh dương"
-      },
-      {
-        ordercode: "ORD001",
-        idproduct: "P004",
-        quantity: 1,
-        price: 20,
-        imgurl: "https://tamson-media.s3.ap-southeast-1.amazonaws.com/media/catalog/product/cache/a72dd292f5ebc7f905c5028ee744eec1/S/a/Sandro_SHPPA00571-23_V_1_1_2.webp",
-        productname: "Product 4",
-        colorname: "màu xanh dương"
-      },
-      {
-        ordercode: "ORD002",
-        idproduct: "P005",
-        quantity: 3,
-        price: 15,
-        imgurl: "https://tamson-media.s3.ap-southeast-1.amazonaws.com/media/catalog/product/cache/a72dd292f5ebc7f905c5028ee744eec1/S/a/Sandro_SHPMB00036-D258_V_1_1_3.webp",
-        productname: "Product 5",
-        colorname: "màu xanh dương"
-      },
-    ];
-    setProductinbill(productInBill.filter((product) => product.ordercode === order?.orderCode));
-  }, [order?.orderCode])
+    fetch(BACKEND_URL + `/checkout/${order?.id}/products`)
+      .then((response) => {
+        if (response.ok) {
+          return response.json();
+        } else {
+          throw new Error('Error: ' + response.status);
+        }
+      })
+      .then((data) => {
+        setProductinbill(data);
+        console.log(productinbill);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }, [order?.id]);
+
+  const formatDate = (dateString: string): string => {
+    const dateObject = new Date(dateString);
+    const year = dateObject.getFullYear();
+    const month = (dateObject.getMonth() + 1).toString().padStart(2, '0');
+    const day = dateObject.getDate().toString().padStart(2, '0');
+    const hours = dateObject.getHours().toString().padStart(2, '0');
+    const minute = dateObject.getMinutes().toString().padStart(2, '0');    
+    return `${day}/${month}/${year} - ${hours}:${minute}`;
+  };
+
+  function removeDiacritics(str: string) {
+    return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  }
+  
   return (
     <>
-      <div className='container' style={{ borderTop: "1px solid #000" }}>
-        <div className="row mt-3">
-          <div className="d-flex col">
-            <h5># {order?.orderCode} </h5>
-            <span className='mx-3'>{order?.status}</span>
+      <div className={`container ${styles["container"]}`} style={{ borderTop: "1px solid #000" }}>
+        <div className="mt-3">
+          <div className="d-flex">
+            <h5># {order?.id} </h5>
+            <span className={`mx-3 ${order?.state && styles[removeDiacritics(order?.state.toLowerCase().replace(/\s/g, '-')) || '']}`}>{order?.state}</span>
           </div>
-          <div className="d-flex col">
-            <span>Date Created: {order?.datecreated}</span>
-            <span className='mx-3'>Confirmation deadline: {order?.deadline}</span>
+          <div className="d-flex">
+            <span>Date Created: {order && formatDate(order.datecreated)}</span>
+            <span className='mx-3'>Deadline: {order?.deadline}</span>
           </div>
         </div>
-        <div className="d-flex">
-          <span>Quantity: {order?.quantity}</span>
-          <span className='mx-3'>Total Amount: {order?.totalAmount}</span>
+        <div className="info-customer mt-3">
+          <h6>Người nhận: {order?.receivename}</h6>
+          <h6>Địa chỉ: {order?.receiveaddress}</h6>
+          <h6>Số điện thoại: {order?.receivephonenumber}</h6>
         </div>
-        <h5 className='mt-2'>Product</h5>
-        <span>Có {productinbill.length} sản phẩm</span>
-        <div className={`${styles["cart-product"]}`}>
-          {productinbill.map((product) => (
-            <div className={`mx-3 ${styles["cart"]}`} key={product.idproduct}>
-              <img src={product.imgurl} className="card-img-top" alt={product.productname} />
-              <div className={`${styles["information"]}`}>
-                <h5>{product.productname}</h5>
-                <p>Color: {product.colorname}</p>
-                <p>Quantity: {product.quantity}</p>
-                <p>Price: {product.price}</p>
+          <div className={`${styles["cart-product"]}`}>
+            <h5>Product</h5>
+            <span>Có {productinbill.length} loại sản phẩm</span>
+            {productinbill.map((product) => (
+              <div className={`${styles["cart"]}`} key={product.idproduct}>
+                <img src={product.imageurl} className="card-img-top" alt={product.name} />
+                <div className={`${styles["information"]}`}>
+                  <h5>{product.name}</h5>
+                  <p>Color: {product.colorname}</p>
+                  <p>Quantity: {product.quantity}</p>
+                  <p>Price: {product.price}</p>
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div> 
         <div className={`${styles["operation"]}`}>
           <button type="button" className="btn btn-primary">Primary</button>
         </div>
