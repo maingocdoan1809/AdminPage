@@ -7,16 +7,81 @@ type Props = {
   onClose: (b: boolean) => void;
   products: Product[];
 };
+
+export type ProductUtil = {
+  idInfo: string;
+  imgUrl: string;
+  colors: {
+    colorname: string;
+    colorcode: string;
+    sizes: {
+      size: string;
+      quantity: number;
+      productId: string;
+    }[];
+  }[];
+};
+
 function AddProduct({ onClose, products }: Props) {
   const [cards, setCards] = useState(() => {
     const temp = [];
-    for (let product of products) {
-      temp.push(<AddProductCard product={product} />);
+    const map = new Map<string, ProductUtil>();
+    products.forEach((product) => {
+      if (!map.has(product.infoid)) {
+        map.set(product.infoid, {
+          idInfo: product.infoid,
+          imgUrl: product.imageurl,
+          colors: [
+            {
+              colorcode: product.colorcode,
+              colorname: product.colorname,
+              sizes: [
+                {
+                  productId: product.id,
+                  quantity: product.quantity,
+                  size: product.size,
+                },
+              ],
+            },
+          ],
+        } as ProductUtil);
+      } else {
+        const p = map.get(product.infoid);
+        const pwithcolor = p?.colors.find(
+          (f) => f.colorcode == product.colorcode
+        );
+        if (pwithcolor == undefined) {
+          p?.colors.push({
+            colorcode: product.colorcode,
+            colorname: product.colorname,
+            sizes: [
+              {
+                productId: product.id,
+                quantity: product.quantity,
+                size: product.size,
+              },
+            ],
+          });
+        } else {
+          pwithcolor.sizes.push({
+            productId: product.id,
+            quantity: product.quantity,
+            size: product.size,
+          });
+        }
+      }
+    });
+    console.log(map);
+
+    for (let product of map.keys()) {
+      temp.push(<AddProductCard product={map.get(product)} />);
     }
     return temp;
   });
   return (
     <>
+      <div className={style.wrapper}></div>
+
       <div className={`${style.container}`}>
         <div
           className={`${style["btn-close"]}`}
