@@ -51,13 +51,6 @@ function Orders() {
         return 'Trạng thái không xác định';
     }
   }
-  const stateColors = {
-    0: 'blue',
-    1: 'green',
-    2: 'orange',
-    3: 'purple',
-    4: 'red',
-  };
 
   useEffect(() => {
     fetch(BACKEND_URL + '/checkout')
@@ -150,8 +143,6 @@ function Orders() {
     }
   };
 
-
-
   const handleSelectAll = () => {
     setSelectAll(!selectAll);
     if (!selectAll) {
@@ -162,9 +153,27 @@ function Orders() {
     }
   };
 
-  const handleBatchConfirmation = () => {
+  const handleBatchConfirmation = (event: any) => {
+    const selectedValue = event.target.value;
+    const updatedOrders = allOrders.map((order) => {
+      if (selectedOrders.includes(order.id)) {
+        if (selectedValue === '1') {
+            return { ...order, state: 'Đang xử lí' };
+        } else if (selectedValue === '2') {
+            return { ...order, state: 'Đang vận chuyển' };
+        } else if (selectedValue === '4') {
+          return { ...order, state: 'Đã huỷ' };
+      }
+      }
+      return order;
+    });
+  
+    setAllOrders(updatedOrders);
+    setSelectedOrders([]);
     console.log("Đơn hàng được chọn:", selectedOrders);
   };
+  
+  
 
   const handleOrderDetail = (order: AllOrders) => {
     setSelectedOrderDetail(order);
@@ -173,16 +182,21 @@ function Orders() {
   function isDeadlinePassed(deadline: any) {
     const currentDateTime = new Date();
     const deadlineDateTime = parse(deadline, 'dd/MM/yyyy', new Date());
-    // console.log('a', currentDateTime);
-    // console.log('b', deadlineDateTime);
     return deadlineDateTime < currentDateTime;
   }
 
-  function removeDiacritics(str: string) {
-    return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  function removeDiacritics(str: string | undefined) {
+    if (str) {
+      const diacriticsMap: { [key: string]: string } = {
+        'Đ': 'D',
+      };
+      return str
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/[^\u0000-\u007E]/g, (char) => diacriticsMap[char] || char);
+    }
+    return '';
   }
-  
-
   return (
     <>
       <div className={`container ${styles["container-order"]}`} style={{ overflowY: "auto" }}>
@@ -306,7 +320,7 @@ function Orders() {
                     />
                   </td>
                   <td >{order.id}</td>
-                  <td className={`${styles[removeDiacritics(order.state.toLowerCase().replace(/\s/g, '-'))]}`}>{order.state}</td>
+                  <td className={`${styles[removeDiacritics(order.state.replace(/\s/g, '-')).toLowerCase()]}`}>{order.state}</td>
                   <td>{order.quantity}</td>
                   <td>{order.totalamount}</td>
                   <td className={isDeadlinePassed(order.deadline) ? styles.expiredDeadline : ""}>{order.deadline}</td>
@@ -322,8 +336,6 @@ function Orders() {
                   </td>
                 </tr>
               ))}
-
-
             </tbody>
           </table>
           <div style={{ width: "100%" }} className="offcanvas offcanvas-end" tabIndex={-1} id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
@@ -349,10 +361,25 @@ function Orders() {
             </div>
           )}
           <button
-            className={`btn btn-primary mt-3`}
+            className={`btn btn-primary m-3`}
             onClick={handleBatchConfirmation}
+            value={1}
           >
-            Xác nhận hàng loạt
+            Xác nhận
+          </button>
+          <button
+            className={`btn btn-primary m-3`}
+            onClick={handleBatchConfirmation}
+            value={2}
+          >
+            Vân chuyển
+          </button>
+          <button
+            className={`btn btn-primary m-3`}
+            onClick={handleBatchConfirmation}
+            value={4}
+          >
+            Huỷ đơn hàng
           </button>
         </div>
       </div>
