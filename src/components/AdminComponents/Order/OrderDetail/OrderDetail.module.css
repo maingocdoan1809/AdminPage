@@ -1,13 +1,13 @@
+.container {
+}
+
 .cart-product {
     margin-top: 10px;
     overflow-x: auto;
-    display: flex;
-    flex-wrap: nowrap;
-    height: auto;
 }
 
 .cart {
-    min-width: 300px;
+    max-width: 300px;
     border: 1px solid #919191;
     border-radius: 10px;
 }
@@ -26,8 +26,32 @@
     border-bottom-left-radius: 10px;
 }
 
+.cart-product .information p,
+.cart-product .information h5 {
+    margin-bottom: 3px;
+}
+
 .operation {
     margin-top: 30px;
-    min-height: 200px;
-    padding-bottom: 40px;
+    min-height: 400px;
+}
+
+.cho-xac-nhan {
+    color: #ffd700;
+}
+
+.dang-xu-li {
+    color: #ff8c00;
+}
+
+.dang-van-chuyen {
+    color: #0000cd;
+}
+
+.da-giao-hang {
+    color: #008000;
+}
+
+.da-huy {
+    color: #ff0000;
 }

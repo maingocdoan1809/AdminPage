@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import {format, parseISO , addDays, parse, subDays } from "date-fns";
+import { format, parseISO, addDays, parse, subDays } from "date-fns";
 import styles from "./order.module.css"
 import OrderDetail from "../OrderDetail/OrderDetail";
 import { BACKEND_URL } from "../../../../env";
@@ -13,7 +13,12 @@ type AllOrders = {
   totalamount: number;
   datecreated: string;
   deadline: string;
+  username: string;
+  receiveaddress: string;
+  receivephonenumber: string;
+  receivename: string;
 };
+
 function Orders() {
 
   const [activeButton, setActiveButton] = useState('all');
@@ -46,6 +51,14 @@ function Orders() {
         return 'Trạng thái không xác định';
     }
   }
+  const stateColors = {
+    0: 'blue',
+    1: 'green',
+    2: 'orange',
+    3: 'purple',
+    4: 'red',
+  };
+
   useEffect(() => {
     fetch(BACKEND_URL + '/checkout')
       .then((response) => {
@@ -57,7 +70,7 @@ function Orders() {
       })
       .then((data) => {
         const updatedOrders = data.map((order: AllOrders) => {
-          const deadline = format(addDays(parseISO(order.datecreated), 1), 'dd/MM/yyyy');
+          const deadline = format(addDays(parseISO(order.datecreated), 1), 'dd/MM/yyyy - HH:mm');
           const state = mapStateToStatus(Number(order.state));
           return { ...order, deadline, state };
         });
@@ -131,11 +144,12 @@ function Orders() {
 
   const handleOrderSelection = (id: string) => {
     if (selectedOrders.includes(id)) {
-      setSelectedOrders(selectedOrders.filter((id) => id !== id));
+      setSelectedOrders(selectedOrders.filter((orderId) => orderId !== id));
     } else {
       setSelectedOrders([...selectedOrders, id]);
     }
   };
+
 
 
   const handleSelectAll = () => {
@@ -163,56 +177,59 @@ function Orders() {
     // console.log('b', deadlineDateTime);
     return deadlineDateTime < currentDateTime;
   }
+
+  function removeDiacritics(str: string) {
+    return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  }
   
 
   return (
     <>
-      <div className={`container ${styles["container-order"]}`}>
+      <div className={`container ${styles["container-order"]}`} style={{ overflowY: "auto" }}>
         <div className={`btn-group ${styles["btn-group"]}`}>
           <button
             type="button"
-            className={`btn btn-outline-secondary mt-3 mb-3 col-md-2 ${activeButton === 'all' ? styles.activeButton : ''}`}
+            className={`btn btn-outline-secondary mt-3 mb-3  ${activeButton === 'all' ? styles.activeButton : ''}`}
             onClick={() => handleClick('all')}
           >
             Tất cả
           </button>
           <button
             type="button"
-            className={`btn btn-outline-secondary mt-3 mb-3 col-md-2 ${activeButton === 'Chờ xác nhận' ? styles.activeButton : ''}`}
+            className={`btn btn-outline-secondary mt-3 mb-3  ${activeButton === 'Chờ xác nhận' ? styles.activeButton : ''}`}
             onClick={() => handleClick('Chờ xác nhận')}
           >
             Chờ xác nhận
           </button>
           <button
             type="button"
-            className={`btn btn-outline-secondary mt-3 mb-3 col-md-2 ${activeButton === 'Đang xử lí' ? styles.activeButton : ''}`}
+            className={`btn btn-outline-secondary mt-3 mb-3  ${activeButton === 'Đang xử lí' ? styles.activeButton : ''}`}
             onClick={() => handleClick('Đang xử lí')}
           >
             Đang xử lí
           </button>
           <button
             type="button"
-            className={`btn btn-outline-secondary mt-3 mb-3 col-md-2 ${activeButton === 'Đang vận chuyển' ? styles.activeButton : ''}`}
+            className={`btn btn-outline-secondary mt-3 mb-3  ${activeButton === 'Đang vận chuyển' ? styles.activeButton : ''}`}
             onClick={() => handleClick('Đang vận chuyển')}
           >
             Đang vận chuyển
           </button>
           <button
             type="button"
-            className={`btn btn-outline-secondary mt-3 mb-3 col-md-2 ${activeButton === 'Đã giao hàng' ? styles.activeButton : ''}`}
+            className={`btn btn-outline-secondary mt-3 mb-3  ${activeButton === 'Đã giao hàng' ? styles.activeButton : ''}`}
             onClick={() => handleClick('Đã giao hàng')}
           >
             Đã giao hàng
           </button>
           <button
             type="button"
-            className={`btn btn-outline-secondary mt-3 mb-3 col-md-2 ${activeButton === 'Đã huỷ' ? styles.activeButton : ''}`}
+            className={`btn btn-outline-secondary mt-3 mb-3  ${activeButton === 'Đã huỷ' ? styles.activeButton : ''}`}
             onClick={() => handleClick('Đã huỷ')}
           >
             Đã huỷ
           </button>
         </div>
-
         <div className={`row ${styles["filter-order"]}`}>
           <div className="col-md-3">
             <div className="form-group">
@@ -279,7 +296,7 @@ function Orders() {
               {filteredOrders.map((order) => (
                 <tr
                   key={order.id}
-                  className={selectedOrders.includes(order.id) ? styles.selectedRow : ""}
+                  className={`${selectedOrders.includes(order.id) ? styles.selectedRow : ""}`}
                 >
                   <td>
                     <input
@@ -289,7 +306,7 @@ function Orders() {
                     />
                   </td>
                   <td >{order.id}</td>
-                  <td>{order.state}</td>
+                  <td className={`${styles[removeDiacritics(order.state.toLowerCase().replace(/\s/g, '-'))]}`}>{order.state}</td>
                   <td>{order.quantity}</td>
                   <td>{order.totalamount}</td>
                   <td className={isDeadlinePassed(order.deadline) ? styles.expiredDeadline : ""}>{order.deadline}</td>
@@ -305,6 +322,8 @@ function Orders() {
                   </td>
                 </tr>
               ))}
+
+
             </tbody>
           </table>
           <div style={{ width: "100%" }} className="offcanvas offcanvas-end" tabIndex={-1} id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
@@ -313,17 +332,11 @@ function Orders() {
               <button type="button" className="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
             </div>
             <div className="offcanvas-body">
-              {/* <OrderDetail id={selectedOrderDetail} /> */}
+              <OrderDetail order={selectedOrderDetail} />
             </div>
           </div>
         </div>
-        <div className={`my-3 ${styles["selected-products"]}`}>
-          <button
-            className={`btn btn-primary mb-3`}
-            onClick={handleBatchConfirmation}
-          >
-            Xác nhận hàng loạt
-          </button>
+        <div className={`${styles["selected-products"]}`}>
           {selectedOrders.length > 0 && (
             <div>
               <h5>Đơn hàng được chọn:</h5>
@@ -335,12 +348,16 @@ function Orders() {
               ))}
             </div>
           )}
-
+          <button
+            className={`btn btn-primary mt-3`}
+            onClick={handleBatchConfirmation}
+          >
+            Xác nhận hàng loạt
+          </button>
         </div>
       </div>
     </>
   );
-
 }
 
 export default Orders;
