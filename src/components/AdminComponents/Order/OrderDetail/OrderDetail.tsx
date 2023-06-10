@@ -42,7 +42,6 @@ function OrderDetail({ order }: OrderDetailProps) {
       })
       .then((data) => {
         setProductinbill(data);
-        console.log(productinbill);
       })
       .catch((error) => {
         console.error(error);
@@ -59,8 +58,17 @@ function OrderDetail({ order }: OrderDetailProps) {
     return `${day}/${month}/${year} - ${hours}:${minute}`;
   };
 
-  function removeDiacritics(str: string) {
-    return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  function removeDiacritics(str: string | undefined) {
+    if (str) {
+      const diacriticsMap: { [key: string]: string } = {
+        'Đ': 'D',
+      };
+      return str
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/[^\u0000-\u007E]/g, (char) => diacriticsMap[char] || char);
+    }
+    return '';
   }
   
   return (
@@ -69,7 +77,7 @@ function OrderDetail({ order }: OrderDetailProps) {
         <div className="mt-3">
           <div className="d-flex">
             <h5># {order?.id} </h5>
-            <span className={`mx-3 ${order?.state && styles[removeDiacritics(order?.state.toLowerCase().replace(/\s/g, '-')) || '']}`}>{order?.state}</span>
+            <span className={`mx-3 ${order?.state && styles[removeDiacritics(order.state.replace(/\s/g, '-')).toLowerCase() || '']}`}>{order?.state}</span>
           </div>
           <div className="d-flex">
             <span>Date Created: {order && formatDate(order.datecreated)}</span>
@@ -85,7 +93,7 @@ function OrderDetail({ order }: OrderDetailProps) {
             <h5>Product</h5>
             <span>Có {productinbill.length} loại sản phẩm</span>
             {productinbill.map((product) => (
-              <div className={`${styles["cart"]}`} key={product.idproduct}>
+              <div className={`${styles["cart"]}`} key={product.id}>
                 <img src={product.imageurl} className="card-img-top" alt={product.name} />
                 <div className={`${styles["information"]}`}>
                   <h5>{product.name}</h5>
@@ -96,9 +104,6 @@ function OrderDetail({ order }: OrderDetailProps) {
               </div>
             ))}
           </div> 
-        <div className={`${styles["operation"]}`}>
-          <button type="button" className="btn btn-primary">Primary</button>
-        </div>
       </div>
     </>
   );

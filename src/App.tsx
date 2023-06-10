@@ -21,6 +21,7 @@ import Categories from "./components/AdminComponents/Category/Categories/Categor
 import Orders from "./components/AdminComponents/Order/Orders/Orders";
 import ProductDetail from "./components/AdminComponents/Product/ProductDetail/ProductDetail";
 import ClientProductDetail from "./components/ProductDetail/ProductDetail";
+import Customers from "./components/AdminComponents/Customers/Customers";
 function App() {
   return (
     <UserContext>
@@ -76,6 +77,9 @@ function App() {
               </Route>
               <Route path="orders">
                 <Route path="" element={<AdminPage children={<Orders />} />} />
+              </Route>
+              <Route path="customers">
+                <Route path="" element={<AdminPage children={<Customers />} />} />
               </Route>
               <Route
                 path="profile"
