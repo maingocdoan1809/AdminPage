@@ -170,9 +170,24 @@ function Orders() {
       return order;
     });
 
+    fetch(BACKEND_URL + '/products/done',{
+      method: 'post',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ selectedOrders : selectedOrders})
+    })
+    .then(response => response.json())
+    .then( data => {
+      console.log(data);
+    })
+    .catch((error) => {
+        console.log(error)
+    });
+
     setAllOrders(updatedOrders);
     setSelectedOrders([]);
-    console.log("Đơn hàng được chọn:", selectedOrders);
+    console.log("Đơn hàng được chọn:", selectedOrders);    
   };
 
 
