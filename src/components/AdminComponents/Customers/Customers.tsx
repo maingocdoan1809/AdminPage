@@ -1,14 +1,16 @@
+
+
 import React, { useEffect, useState } from 'react';
 
 type Customer = {
-  code: string;
   username: string;
-  phone: string;
+  fullname: string;
+  phonenumber: string;
   email: string;
   address: string;
   dob: string;
   gender: string;
-  status: string;
+  state: string;
   priority: number;
 };
 
@@ -19,31 +21,20 @@ function Customers() {
   const [filterStatus, setFilterStatus] = useState('');
 
   useEffect(() => {
-    const initialCustomers: Customer[] = [
-      {
-        code: 'KH001',
-        username: 'John Doe',
-        phone: '123456789',
-        email: 'johndoe@example.com',
-        address: '123 Main St, City',
-        dob: '23/09/2003',
-        gender: 'Nam',
-        status: 'Active',
-        priority: 1,
-      },
-      {
-        code: 'KH002',
-        username: 'Jane Smith',
-        phone: '987654321',
-        email: 'janesmith@example.com',
-        address: '456 Elm St, City',
-        dob: '23/09/2003',
-        gender: 'Nam',
-        status: 'Inactive',
-        priority: 0,
-      },
-    ];
-    setCustomers(initialCustomers);
+    const fetchCustomers = async () => {
+      try {
+        const response = await fetch('http://localhost:3000/customer');
+        if (response.ok) {
+          const data = await response.json();
+          setCustomers(data);
+        } else {
+          console.error('Error fetching customers:', response.status);
+        }
+      } catch (error) {
+        console.error('Error fetching customers:', error);
+      }
+    };
+    fetchCustomers();
   }, []);
 
   const handleCodeFilterChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -63,7 +54,7 @@ function Customers() {
     const confirmed = window.confirm('Bạn có chắc chắn muốn thay đổi giá quyền của người dùng?');
     if (confirmed) {
       const updatedCustomers = customers.map((c) => {
-        if (c.code === customerCode) {
+        if (c.username === customerCode) {
           return { ...c, priority: newPriority };
         }
         return c;
@@ -73,9 +64,9 @@ function Customers() {
   };
 
   const filteredCustomers = customers.filter((customer) => {
-    const isCodeMatch = filterCode === '' || customer.code.includes(filterCode);
-    const isNameMatch = filterName === '' || customer.username.includes(filterName);
-    const isStatusMatch = filterStatus === '' || customer.status === filterStatus;
+    const isCodeMatch = filterCode === '' || customer.username.includes(filterCode);
+    const isNameMatch = filterName === '' || customer.fullname.includes(filterName);
+    const isStatusMatch = filterStatus === '' || customer.state === filterStatus;
     return isCodeMatch && isNameMatch && isStatusMatch;
   });
 
@@ -118,8 +109,8 @@ function Customers() {
           <table className="table">
             <thead>
               <tr>
-                <th>ID</th>
                 <th>Username</th>
+                <th>Fullname</th>
                 <th>Phone Number</th>
                 <th>Email</th>
                 <th>Address</th>
@@ -129,13 +120,13 @@ function Customers() {
             </thead>
             <tbody>
               {filteredCustomers.map((customer) => (
-                <tr key={customer.code}>
-                  <td>{customer.code}</td>
+                <tr key={customer.username}>                
                   <td>{customer.username}</td>
-                  <td>{customer.phone}</td>
+                  <td>{customer.fullname}</td>
+                  <td>{customer.phonenumber}</td>
                   <td>{customer.email}</td>
                   <td>{customer.address}</td>
-                  <td>{customer.status}</td>
+                  <td>{customer.state}</td>
                   <td>
                     <div className="dropdown">
                       <button
@@ -157,7 +148,7 @@ function Customers() {
                           <button
                             className="dropdown-item"
                             value={1}
-                            onClick={() => handlePriorityChange(customer.code, 1)}
+                            onClick={() => handlePriorityChange(customer.username, 1)}
                           >
                             Admin
                           </button>
@@ -166,7 +157,7 @@ function Customers() {
                           <button
                             className="dropdown-item"
                             value={0}
-                            onClick={() => handlePriorityChange(customer.code, 0)}
+                            onClick={() => handlePriorityChange(customer.username, 0)}
                           >
                             Customer
                           </button>
@@ -175,7 +166,7 @@ function Customers() {
                           <button
                             className="dropdown-item"
                             value={-1}
-                            onClick={() => handlePriorityChange(customer.code, -1)}
+                            onClick={() => handlePriorityChange(customer.username, -1)}
                           >
                             Account lock
                           </button>
