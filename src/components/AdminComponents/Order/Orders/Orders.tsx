@@ -66,7 +66,6 @@ function Orders() {
 
   useEffect(() => {
     const apiUrl = `${BACKEND_URL}/checkout/?page=${currentPage}&state=${activeState}`;
-    console.log(apiUrl);
     fetch(apiUrl)
       .then((response) => {
         if (response.ok) {
@@ -399,10 +398,9 @@ function Orders() {
                   <td className={isDeadlinePassed(order.deadline) ? styles.expiredDeadline : ""}>{order.deadline}</td>
                   <td>
                     <a
-                      data-bs-toggle="offcanvas"
-                      href="#offcanvasExample"
-                      role="button"
-                      aria-controls="offcanvasExample"
+                      className="link-primary"
+                      data-bs-toggle="modal"
+                      data-bs-target="#staticBackdrop"
                       onClick={() => handleOrderDetail(order)}
                     >Xem chi tiết
                     </a>
@@ -411,13 +409,17 @@ function Orders() {
               ))}
             </tbody>
           </table>
-          <div style={{ width: "100%" }} className="offcanvas offcanvas-end" tabIndex={-1} id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
-            <div className="offcanvas-header">
-              <h2 className="offcanvas-title mx-4" id="offcanvasExampleLabel">Order Detail</h2>
-              <button type="button" className="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-            </div>
-            <div className="offcanvas-body">
-              <OrderDetail order={selectedOrderDetail} />
+        </div>
+        <div className="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabIndex={-1} aria-labelledby="staticBackdropLabel" aria-hidden="true">
+          <div className="modal-dialog modal-dialog-scrollable modal-lg">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title" id="staticBackdropLabel">Order Detail</h5>
+                <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div className="modal-body">
+                <OrderDetail order={selectedOrderDetail} />
+              </div>
             </div>
           </div>
         </div>
