@@ -170,23 +170,87 @@ function Orders() {
       return order;
     });
 
-    fetch(BACKEND_URL + '/products/done',{
-      method: 'post',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ selectedOrders : selectedOrders})
-    })
-    .then(response => response.json())
-    .then( data => {
-      console.log(data);
-    })
-    .catch((error) => {
-        console.log(error)
-    });
+    if(selectedValue == 1) 
+    {
+      fetch(BACKEND_URL + '/products/confirm',{
+        method: 'post',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ selectedOrders : selectedOrders})
+      })
+      .then(response => response.json())
+      .then( data => {
+        console.log(data);
+      })
+      .catch((error) => {
+          console.log(error)
+      });
+  
+      setAllOrders(updatedOrders);
+      setSelectedOrders([]);
+    }   
+    if(selectedValue == 2)
+    {
+      fetch(BACKEND_URL + '/products/transport',{
+        method: 'post',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ selectedOrders : selectedOrders})
+      })
+      .then(response => response.json())
+      .then( data => {
+        console.log(data);
+      })
+      .catch((error) => {
+          console.log(error)
+      });
+  
+      setAllOrders(updatedOrders);
+      setSelectedOrders([]);
+    }
+    if(selectedValue == 3)
+    {
+      fetch(BACKEND_URL + '/products/done',{
+        method: 'post',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ selectedOrders : selectedOrders})
+      })
+      .then(response => response.json())
+      .then( data => {
+        console.log(data);
+      })
+      .catch((error) => {
+          console.log(error)
+      });
+  
+      setAllOrders(updatedOrders);
+      setSelectedOrders([]);
+    }
+    if(selectedValue == 4)
+    {
+      fetch(BACKEND_URL + '/products/cancel',{
+        method: 'post',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ selectedOrders : selectedOrders})
+      })
+      .then(response => response.json())
+      .then( data => {
+        console.log(data);
+      })
+      .catch((error) => {
+          console.log(error)
+      });
+  
+      setAllOrders(updatedOrders);
+      setSelectedOrders([]);
+    }
 
-    setAllOrders(updatedOrders);
-    setSelectedOrders([]);
     console.log("Đơn hàng được chọn:", selectedOrders);    
   };
 
