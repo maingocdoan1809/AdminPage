@@ -92,7 +92,6 @@ function OrderDetail({ order }: OrderDetailProps) {
 
     products.push(product);
   }
-  console.log(products);
 
   return (
     <>

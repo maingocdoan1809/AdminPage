@@ -9,11 +9,6 @@
     flex-wrap: wrap;
 }
 
-.btn-group {
-    width: 100%;
-    flex-wrap: wrap;
-}
-
 .activeButton {
     box-shadow: 0px 5px 5px #6c757d;
 }
@@ -31,6 +26,16 @@
 
 .selectedRow {
     box-shadow: 0px 2px 2px #6c757d;
+}
+
+.order-table th {
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.order-table td {
+    white-space: nowrap;
+    overflow: hidden;
 }
 
 ::-webkit-scrollbar {
