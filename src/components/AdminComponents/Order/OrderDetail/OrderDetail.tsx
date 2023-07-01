@@ -10,9 +10,7 @@ type AllOrders = {
   datecreated: string;
   deadline: string;
   username: string;
-  receiveaddress: string;
-  receivephonenumber: string;
-  receivename: string;
+
 };
 
 type OrderDetailProps = {
@@ -27,6 +25,10 @@ type ProductInBill = {
   price: number;
   imageurl: string;
   colorname: string;
+  receiveaddress: string;
+  receivephonenumber: string;
+  receivename: string;
+  fullname: string;
 };
 
 function OrderDetail({ order }: OrderDetailProps) {
@@ -82,6 +84,10 @@ function OrderDetail({ order }: OrderDetailProps) {
       price: i * 10,
       imageurl: `https://suno.vn/blog/wp-content/uploads/2015/11/27.jpg`,
       colorname: `Color ${i}`,
+      receiveaddress: 'Vũ',
+      receivephonenumber: '048754546',
+      receivename: 'Vũ',
+      fullname:'Vũ',
     };
 
     products.push(product);
@@ -90,7 +96,7 @@ function OrderDetail({ order }: OrderDetailProps) {
 
   return (
     <>
-      <div className={`container ${styles["container"]}`} style={{ borderTop: "1px solid #000" }}>
+      <div className={`container ${styles["container"]}`}>
         <div className="row gx-5">
           <div className="col">
             <div className="mt-3">
@@ -104,9 +110,14 @@ function OrderDetail({ order }: OrderDetailProps) {
               </div>
             </div>
             <div className="info-customer">
-              <h6>Người nhận: {order?.receivename}</h6>
-              <h6>Địa chỉ: {order?.receiveaddress}</h6>
-              <h6>Số điện thoại: {order?.receivephonenumber}</h6>
+              {productinbill.map((product) => (
+                <span>
+                  <h6>Người đặt: {product.fullname}</h6>
+                  <h6>Người nhận: {product.receivename}</h6>
+                  <h6>Địa chỉ: {product.receiveaddress}</h6>
+                  <h6>Số điện thoại: {product.receivephonenumber}</h6>
+                </span>
+              ))}
             </div>
           </div>
           <div className="col">
