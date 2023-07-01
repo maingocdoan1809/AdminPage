@@ -1,0 +1,42 @@
+.container-customer {
+    background-color: #fff;
+    max-width: 100vw;
+    min-height: 100vh;
+}
+
+.customer-table {
+    overflow: auto;
+    max-height: 600px;
+}
+
+.max-5-characters {
+    max-width: 5ch;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  
+::-webkit-scrollbar {
+    border-radius: 0;
+    width: 6px;
+}
+
+::-webkit-scrollbar-thumb {
+    border-radius: 4px;
+    background-color: rgba(22, 24, 35, 0.2);
+}
+
+::-webkit-scrollbar-track {
+    border-radius: 0;
+    background-color: rgba(0, 0, 0, 0);
+}
+
+.customer-table th {
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.customer-table td:not(:last-child) {
+    white-space: nowrap;
+    overflow: hidden;
+}

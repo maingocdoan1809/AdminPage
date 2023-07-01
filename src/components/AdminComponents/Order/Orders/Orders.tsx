@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { format, parseISO, addDays, parse, subDays } from "date-fns";
+import { format, parseISO, addDays, parse, subDays, subHours } from "date-fns";
 import styles from "./order.module.css"
 import OrderDetail from "../OrderDetail/OrderDetail";
 import { BACKEND_URL } from "../../../../env";
@@ -21,7 +21,8 @@ type AllOrders = {
 
 function Orders() {
 
-  const [activeButton, setActiveButton] = useState('all');
+  const [activeState, setActiveState] = useState('');
+  const [activeButton, setActiveButton] = useState('');
   const [selectedOrderCode, setSelectedOrderCode] = useState('');
   const [searchOrder, setSearchOrder] = useState('');
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
@@ -34,6 +35,8 @@ function Orders() {
   const [filterClicked, setFilterClicked] = useState(false);
   const [filterCleared, setFilterCleared] = useState(false);
   const [selectedOrderDetail, setSelectedOrderDetail] = useState<AllOrders | null>(null);
+  const [currentPage, setCurrentPage] = useState(0);
+
 
   function mapStateToStatus(state: number): string {
     switch (state) {
@@ -52,8 +55,18 @@ function Orders() {
     }
   }
 
+  const handleClick = (state: string) => {
+    if (state !== activeState) {
+      setActiveState(state);
+      setCurrentPage(0);
+    }
+  };
+
+
+
   useEffect(() => {
-    fetch(BACKEND_URL + '/checkout')
+    const apiUrl = `${BACKEND_URL}/checkout/?page=${currentPage}&state=${activeState}`;
+    fetch(apiUrl)
       .then((response) => {
         if (response.ok) {
           return response.json();
@@ -63,51 +76,17 @@ function Orders() {
       })
       .then((data) => {
         const updatedOrders = data.map((order: AllOrders) => {
-          const deadline = format(addDays(parseISO(order.datecreated), 1), 'dd/MM/yyyy - HH:mm');
+          const deadline = format(addDays(parseISO(order.datecreated), 7), 'dd/MM/yyyy - HH:mm');
           const state = mapStateToStatus(Number(order.state));
           return { ...order, deadline, state };
         });
-        setAllOrders(updatedOrders);
+        setFilteredOrders(updatedOrders);
       })
       .catch((error) => {
         console.error(error);
       });
-  }, []);
+  }, [currentPage, activeState]);
 
-  useEffect(() => {
-    let filtered = allOrders;
-    if (activeButton !== "all") {
-      filtered = filtered.filter((order) => order.state === activeButton);
-    }
-    if (filterClicked) {
-      if (selectedOrderCode !== "") {
-        filtered = filtered.filter((order) => order.id === selectedOrderCode);
-      }
-      if (searchOrder !== "") {
-        filtered = filtered.filter((order) => {
-          const searchOrderLowerCase = searchOrder.toLowerCase();
-          return (
-            order.id.toLowerCase().includes(searchOrderLowerCase) ||
-            order.state.toLowerCase().includes(searchOrderLowerCase) ||
-            order.datecreated.includes(searchOrderLowerCase) ||
-            order.deadline.includes(searchOrderLowerCase)
-          );
-        });
-      }
-      if (selectedDate) {
-        const thirtyDaysAgo = subDays(new Date(), 30);
-        filtered = filtered.filter((order) => {
-          const orderDate = parse(order.datecreated, 'dd/MM/yyyy', new Date());
-          return orderDate >= thirtyDaysAgo && orderDate <= new Date();
-        });
-      }
-    }
-    setFilteredOrders(filtered);
-    setFilterCleared(false);
-  }, [activeButton, selectedOrderCode, searchOrder, selectedDate, allOrders, filterClicked]);
-  const handleClick = (buttonName: any) => {
-    setActiveButton(buttonName);
-  };
 
   const handleOrderCodeChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedOrderCode(event.target.value);
@@ -126,7 +105,100 @@ function Orders() {
   const handleFilterClick = () => {
     setFilterClicked(true);
     setFilterCleared(false);
+
+    if (searchOrder.trim() !== "" && selectedDate === null) {
+      const apiUrl = `${BACKEND_URL}/checkout/${searchOrder}`;
+      fetch(apiUrl)
+        .then((response) => {
+          if (response.ok) {
+            return response.json();
+          } else {
+            throw new Error("Error: " + response.status);
+          }
+        })
+        .then((data) => {
+          console.log(data);
+          const updatedOrders = data.map((order: AllOrders) => {
+            const deadline = format(addDays(parseISO(order.datecreated), 7), "dd/MM/yyyy - HH:mm");
+            const state = mapStateToStatus(Number(order.state));
+            return { ...order, deadline, state };
+          });
+          setFilteredOrders(updatedOrders);
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    } else if (searchOrder.trim() === "" && selectedDate !== null) {
+      const formattedDate = format(selectedDate, "yyyy-MM-dd");
+      const apiUrl = `${BACKEND_URL}/checkout/?datecreated=${formattedDate}&state=${activeState}`;
+      fetch(apiUrl)
+        .then((response) => {
+          if (response.ok) {
+            return response.json();
+          } else {
+            throw new Error("Error: " + response.status);
+          }
+        })
+        .then((data) => {
+          console.log(data);
+          const updatedOrders = data.map((order: AllOrders) => {
+            const deadline = format(addDays(parseISO(order.datecreated), 7), "dd/MM/yyyy - HH:mm");
+            const state = mapStateToStatus(Number(order.state));
+            return { ...order, deadline, state };
+          });
+          setFilteredOrders(updatedOrders);
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    } else if (searchOrder.trim() !== "" && selectedDate !== null) {
+      const formattedDate = format(selectedDate, "yyyy-MM-dd");
+      const apiUrl = `${BACKEND_URL}/checkout/${searchOrder}`;
+      fetch(apiUrl)
+        .then((response) => {
+          if (response.ok) {
+            return response.json();
+          } else {
+            throw new Error("Error: " + response.status);
+          }
+        })
+        .then((data) => {
+          console.log(data);
+          const updatedOrders = data.map((order: AllOrders) => {
+            const deadline = format(addDays(parseISO(order.datecreated), 7), "dd/MM/yyyy - HH:mm");
+            const state = mapStateToStatus(Number(order.state));
+            return { ...order, deadline, state };
+          });
+          setFilteredOrders(updatedOrders);
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    } else {
+      const apiUrl = `${BACKEND_URL}/checkout/?page=0&state=${activeState}`;
+      fetch(apiUrl)
+        .then((response) => {
+          if (response.ok) {
+            return response.json();
+          } else {
+            throw new Error("Error: " + response.status);
+          }
+        })
+        .then((data) => {
+          console.log(data);
+          const updatedOrders = data.map((order: AllOrders) => {
+            const deadline = format(addDays(parseISO(order.datecreated), 7), "dd/MM/yyyy - HH:mm");
+            const state = mapStateToStatus(Number(order.state));
+            return { ...order, deadline, state };
+          });
+          setFilteredOrders(updatedOrders);
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    }
   };
+
 
   const handleClearFilter = () => {
     setSelectedOrderCode('');
@@ -171,6 +243,11 @@ function Orders() {
       }
       return order;
     });
+
+    setAllOrders(updatedOrders);
+    setSelectedOrders([]);
+    console.log("Đơn hàng được chọn:", selectedOrders);
+
 
     if(selectedValue == 1) 
     {
@@ -254,9 +331,8 @@ function Orders() {
     }
 
     console.log("Đơn hàng được chọn:", selectedOrders);    
+
   };
-
-
 
   const handleOrderDetail = (order: AllOrders) => {
     setSelectedOrderDetail(order);
@@ -286,43 +362,43 @@ function Orders() {
         <div className={`btn-group ${styles["btn-group"]}`}>
           <button
             type="button"
-            className={`btn btn-outline-secondary mt-3 mb-3  ${activeButton === 'all' ? styles.activeButton : ''}`}
-            onClick={() => handleClick('all')}
+            className={`btn btn-outline-secondary mt-3 mb-3  ${activeState === '' ? styles.activeButton : ''}`}
+            onClick={() => handleClick('')}
           >
             Tất cả
           </button>
           <button
             type="button"
-            className={`btn btn-outline-secondary mt-3 mb-3  ${activeButton === 'Chờ xác nhận' ? styles.activeButton : ''}`}
-            onClick={() => handleClick('Chờ xác nhận')}
+            className={`btn btn-outline-secondary mt-3 mb-3  ${activeState === '0' ? styles.activeButton : ''}`}
+            onClick={() => handleClick('0')}
           >
             Chờ xác nhận
           </button>
           <button
             type="button"
-            className={`btn btn-outline-secondary mt-3 mb-3  ${activeButton === 'Đang xử lí' ? styles.activeButton : ''}`}
-            onClick={() => handleClick('Đang xử lí')}
+            className={`btn btn-outline-secondary mt-3 mb-3  ${activeState === '1' ? styles.activeButton : ''}`}
+            onClick={() => handleClick('1')}
           >
             Đang xử lí
           </button>
           <button
             type="button"
-            className={`btn btn-outline-secondary mt-3 mb-3  ${activeButton === 'Đang vận chuyển' ? styles.activeButton : ''}`}
-            onClick={() => handleClick('Đang vận chuyển')}
+            className={`btn btn-outline-secondary mt-3 mb-3  ${activeState === '2' ? styles.activeButton : ''}`}
+            onClick={() => handleClick('2')}
           >
             Đang vận chuyển
           </button>
           <button
             type="button"
-            className={`btn btn-outline-secondary mt-3 mb-3  ${activeButton === 'Đã giao hàng' ? styles.activeButton : ''}`}
-            onClick={() => handleClick('Đã giao hàng')}
+            className={`btn btn-outline-secondary mt-3 mb-3  ${activeState === '3' ? styles.activeButton : ''}`}
+            onClick={() => handleClick('3')}
           >
             Đã giao hàng
           </button>
           <button
             type="button"
-            className={`btn btn-outline-secondary mt-3 mb-3  ${activeButton === 'Đã huỷ' ? styles.activeButton : ''}`}
-            onClick={() => handleClick('Đã huỷ')}
+            className={`btn btn-outline-secondary mt-3 mb-3  ${activeState === '4' ? styles.activeButton : ''}`}
+            onClick={() => handleClick('4')}
           >
             Đã huỷ
           </button>
@@ -353,13 +429,12 @@ function Orders() {
           </div>
           <div className="row mt-3">
             <div className="d-flex col-md-12">
-              <h5>Đang lọc:</h5>
+              <h5>Đang lọc:&nbsp;</h5>
               {selectedOrderCode && <span>{selectedOrderCode} | </span>}
               {searchOrder && <span>{searchOrder} | </span>}
               {selectedDate && (
                 <span>
-                  ngày đặt: {new Date(formattedThirtyDaysAgo).toLocaleDateString("vi-VN")} đến{" "}
-                  {selectedDate.toLocaleDateString("vi-VN")}
+                  ngày đặt: {selectedDate.toLocaleDateString("vi-VN")}
                 </span>
               )}
               <div className="d-flex justify-content-end">
@@ -385,7 +460,8 @@ function Orders() {
                 <th>State</th>
                 <th>Quantity</th>
                 <th>Total amount</th>
-                <th>Confirmation deadline</th>
+                <th>Date created</th>
+                <th>Delivery time</th>
                 <th>Operation</th>
               </tr>
             </thead>
@@ -406,13 +482,13 @@ function Orders() {
                   <td className={`${styles[removeDiacritics(order.state.replace(/\s/g, '-')).toLowerCase()]}`}>{order.state}</td>
                   <td>{order.quantity}</td>
                   <td>{order.totalamount}</td>
+                  <td>{format(subHours(parseISO(order.datecreated), 7), "dd/MM/yyyy - HH:mm")}</td>
                   <td className={isDeadlinePassed(order.deadline) ? styles.expiredDeadline : ""}>{order.deadline}</td>
                   <td>
                     <a
-                      data-bs-toggle="offcanvas"
-                      href="#offcanvasExample"
-                      role="button"
-                      aria-controls="offcanvasExample"
+                      className="link-primary"
+                      data-bs-toggle="modal"
+                      data-bs-target="#staticBackdrop"
                       onClick={() => handleOrderDetail(order)}
                     >Xem chi tiết
                     </a>
@@ -421,16 +497,37 @@ function Orders() {
               ))}
             </tbody>
           </table>
-          <div style={{ width: "100%" }} className="offcanvas offcanvas-end" tabIndex={-1} id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
-            <div className="offcanvas-header">
-              <h2 className="offcanvas-title mx-4" id="offcanvasExampleLabel">Order Detail</h2>
-              <button type="button" className="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-            </div>
-            <div className="offcanvas-body">
-              <OrderDetail order={selectedOrderDetail} />
+        </div>
+        <div className="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabIndex={-1} aria-labelledby="staticBackdropLabel" aria-hidden="true">
+          <div className="modal-dialog modal-dialog-scrollable modal-lg">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title" id="staticBackdropLabel">Order Detail</h5>
+                <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div className="modal-body">
+                <OrderDetail order={selectedOrderDetail} />
+              </div>
             </div>
           </div>
         </div>
+        {filteredOrders.length > 0 && (
+          <nav aria-label="Page navigation example">
+            <ul className="pagination d-flex justify-content-around">
+              <li className={`btn btn-outline-primary ${currentPage === 0 ? 'disabled' : ''}`} style={{ width: "100px" }} onClick={() => setCurrentPage(currentPage - 1)}>
+                <a style={{ color: "#000" }} href="#">
+                  Trước
+                </a>
+              </li>
+              <li className={`btn btn-outline-primary ${(8 > filteredOrders.length) ? 'disabled' : ''}`} style={{ width: "100px" }} onClick={() => setCurrentPage(currentPage + 1)}>
+                <a style={{ color: "#000" }} href="#">
+                  Sau
+                </a>
+              </li>
+            </ul>
+          </nav>
+        )}
+
         <div className={`${styles["selected-products"]}`}>
           {selectedOrders.length > 0 && (
             <div>

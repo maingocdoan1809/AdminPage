@@ -1,14 +1,18 @@
 .container {
+    display: flex;
 }
 
 .cart-product {
     margin-top: 10px;
-    overflow-x: auto;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
 }
 
 .cart {
     margin-right: 10px;
-    max-width: 300px;
+    margin-bottom: 10px;
+    width: 400px;
     border: 1px solid #919191;
     border-radius: 10px;
 }

@@ -15,73 +15,108 @@ const SearchResult: React.FC = () => {
   const [showFilter, setShowFilter] = useState<boolean>(false);
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
-  const searchName = searchParams.get("name");
-  // const pageRef = useRef(0);
+  const searchName = searchParams.get("name") ?? "";
   const [products, setProducts] = useState<Product[]>([]);
   const [productDetails, setProductDetails] = useState<Product[]>([]);
   const [filteredProductsUpdate, setFilteredProductsUpdate] = useState<Product[]>([]);
   const [showNoResults, setShowNoResults] = useState(false);
+  const [page, setPage] = useState(0);
+  const [hasMoreProducts, setHasMoreProducts] = useState(true);
+  const [isLoadmore, setIsLoadmore] = useState(false);
 
-  // Gọi API và so sánh tên tìm kiếm
+
   useEffect(() => {
     const searchParams = new URLSearchParams(location.search);
-    const searchName = searchParams.get("name");
-    const keywords = searchName?.toLowerCase().split(" ") ?? [];
+    const keywords = searchName.toLowerCase().split(" ");
     // set default value
     setSelectedColor("All");
     setSelectedSize("All size");
     setMinValue(0);
     setMaxValue(1000000);
+    console.log(searchName);
 
     const fetchAllProducts = async () => {
-      let page = 0;
-      let allProducts: Product[] = [];
-
-      while (true) {
-        const response = await fetch(BACKEND_URL + `/products/?page=${page}`);
-        const productsJson = await response.json();
-        if (productsJson.length === 0) {
-          break;
-        }
-        allProducts = allProducts.concat(productsJson);
-        page++;
-      }
-      const filteredProducts = allProducts.filter((product) => {
-        const productName = product.name.toLowerCase();
-        const keywordMatch = keywords.every((keyword) => {
-          return productName.includes(keyword);
-        });
-        return keywordMatch;
-      });
-      setFilteredProductsList(filteredProducts);
-      setProducts(allProducts);
+      const response = await fetch(
+        BACKEND_URL +
+        `/search?page=${page}&searchName=${(searchName)}`
+      );
+      const productsJson = await response.json();
+      return productsJson;
     };
-    fetchAllProducts().catch((error) => {
-      console.error(error);
-    });
-    
+
     let timeoutId: any;
+
+    if (page === 0) {
+      fetchAllProducts()
+        .then((productsJson) => {
+
+          setFilteredProductsList(productsJson);
+          console.log(filteredProductsList);
+          setProducts(productsJson);
+          setHasMoreProducts(productsJson.length > 0);
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    } else {
+      fetchAllProducts()
+        .then((productsJson) => {
+          setProducts((prevProducts) => {
+            const updatedProducts = prevProducts.concat(productsJson);
+            setFilteredProductsList(updatedProducts);
+            console.log(filteredProductsList);
+            setHasMoreProducts(productsJson.length > 0);
+            return updatedProducts;
+          });
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    }
+
     fetchAllProducts()
-      .then(() => {
-        if (filteredProductsList.length === 0) {
+      .then((productsJson) => {
+        if (productsJson.length === 0 && filteredProductsList.length === 0) {
           timeoutId = setTimeout(() => {
             setShowNoResults(true);
-          }, 7000);
+            setHasMoreProducts(false);
+          }, 1000);
         }
       })
       .catch((error) => {
         console.error(error);
       });
+
     return () => {
       clearTimeout(timeoutId);
     };
-  }, [location.search]);
+  }, [location.search, page]);
 
 
 
-  const colors = [
-    ...new Set(productDetails.flatMap((product) => product.colorcode)),
-  ];
+
+  const handleLoadMore = () => {
+    setPage((prevPage) => prevPage + 1);
+    setIsLoadmore(true);
+    console.log(isLoadmore);
+
+    setTimeout(() => {
+      setIsLoadmore(false);
+    }, 1000);
+  };
+
+
+  const colorsMap = new Map();
+  productDetails.forEach((product) => {
+    colorsMap.set(product.colorcode, product.colorname);
+  });
+
+  const colors = Array.from(colorsMap).map(([colorcode, colorname]) => ({
+    colorcode,
+    colorname
+  }));
+
+
   const sizes = [...new Set(productDetails.flatMap((product) => product.size))];
 
   useEffect(() => {
@@ -109,7 +144,6 @@ const SearchResult: React.FC = () => {
   const handleMinChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseInt(e.target.value);
     setMinValue(value);
-    // Kiểm tra nếu giá trị của maxInput nhỏ hơn giá trị của minInput thì cập nhật lại giá trị của maxInput
     if (value > maxValue) {
       setMaxValue(value);
     }
@@ -118,7 +152,6 @@ const SearchResult: React.FC = () => {
   const handleMaxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseInt(e.target.value);
     setMaxValue(value);
-    // Kiểm tra nếu giá trị của minInput lớn hơn giá trị của maxInput thì cập nhật lại giá trị của minInput
     if (value < minValue) {
       setMinValue(value);
     }
@@ -144,6 +177,7 @@ const SearchResult: React.FC = () => {
   function handleFilterToggle() {
     setShowFilter(!showFilter);
   }
+
   const [isLoading, setIsLoading] = useState(true);
   useEffect(() => {
     setIsLoading(true);
@@ -159,7 +193,7 @@ const SearchResult: React.FC = () => {
     }
   }, [filteredProductsList]);
 
-  const [selectedColors, setSelectedColors] = useState<string[]>([]);
+  const [selectedColors, setSelectedColors] = useState<{ colorcode: string, colorname: string }[]>([]);
   const [selectedSizes, setSelectedSizes] = useState<string[]>([]);
 
   const handleSizeChange = (size: string) => {
@@ -178,35 +212,62 @@ const SearchResult: React.FC = () => {
   };
 
   const handleColorChange = (color: string) => {
-    if (selectedColors.includes(color)) {
-      setSelectedColors(
-        selectedColors.filter((selectedColor) => selectedColor !== color)
-      );
+    const existingColor = selectedColors.find((selectedColor) => selectedColor.colorcode === color);
+
+    if (existingColor) {
+      setSelectedColors(selectedColors.filter((selectedColor) => selectedColor.colorcode !== color));
     } else {
-      setSelectedColors([...selectedColors, color]);
+      const colorname = productDetails.find((product) => product.colorcode === color)?.colorname || "";
+      setSelectedColors([...selectedColors, { colorcode: color, colorname }]);
     }
   };
 
-  const isColorSelected = (color: string) => {
-    return selectedColors.includes(color);
+
+  const isColorSelected = (color: { colorcode: string; colorname: string; }) => {
+    return selectedColors.some((selectedColor) => selectedColor.colorcode === color.colorcode);
   };
+
+  const convertToVietnameseWithoutAccent = (str: string) => {
+    const diacriticMap: any = {
+      'à': 'a', 'á': 'a', 'ạ': 'a', 'ả': 'a', 'ã': 'a', 'â': 'a', 'ầ': 'a', 'ấ': 'a', 'ậ': 'a', 'ẩ': 'a', 'ẫ': 'a', 'ă': 'a', 'ằ': 'a', 'ắ': 'a', 'ặ': 'a', 'ẳ': 'a', 'ẵ': 'a',
+      'è': 'e', 'é': 'e', 'ẹ': 'e', 'ẻ': 'e', 'ẽ': 'e', 'ê': 'e', 'ề': 'e', 'ế': 'e', 'ệ': 'e', 'ể': 'e', 'ễ': 'e',
+      'ì': 'i', 'í': 'i', 'ị': 'i', 'ỉ': 'i', 'ĩ': 'i',
+      'ò': 'o', 'ó': 'o', 'ọ': 'o', 'ỏ': 'o', 'õ': 'o', 'ô': 'o', 'ồ': 'o', 'ố': 'o', 'ộ': 'o', 'ổ': 'o', 'ỗ': 'o', 'ơ': 'o', 'ờ': 'o', 'ớ': 'o', 'ợ': 'o', 'ở': 'o', 'ỡ': 'o',
+      'ù': 'u', 'ú': 'u', 'ụ': 'u', 'ủ': 'u', 'ũ': 'u', 'ư': 'u', 'ừ': 'u', 'ứ': 'u', 'ự': 'u', 'ử': 'u', 'ữ': 'u',
+      'ỳ': 'y', 'ý': 'y', 'ỵ': 'y', 'ỷ': 'y', 'ỹ': 'y',
+      'đ': 'd',
+      'À': 'A', 'Á': 'A', 'Ạ': 'A', 'Ả': 'A', 'Ã': 'A', 'Â': 'A', 'Ầ': 'A', 'Ấ': 'A', 'Ậ': 'A', 'Ẩ': 'A', 'Ẫ': 'A', 'Ă': 'A', 'Ằ': 'A', 'Ắ': 'A', 'Ặ': 'A', 'Ẳ': 'A', 'Ẵ': 'A',
+      'È': 'E', 'É': 'E', 'Ẹ': 'E', 'Ẻ': 'E', 'Ẽ': 'E', 'Ê': 'E', 'Ề': 'E', 'Ế': 'E', 'Ệ': 'E', 'Ể': 'E', 'Ễ': 'E',
+      'Ì': 'I', 'Í': 'I', 'Ị': 'I', 'Ỉ': 'I', 'Ĩ': 'I',
+      'Ò': 'O', 'Ó': 'O', 'Ọ': 'O', 'Ỏ': 'O', 'Õ': 'O', 'Ô': 'O', 'Ồ': 'O', 'Ố': 'O', 'Ộ': 'O', 'Ổ': 'O', 'Ỗ': 'O', 'Ơ': 'O', 'Ờ': 'O', 'Ớ': 'O', 'Ợ': 'O', 'Ở': 'O', 'Ỡ': 'O',
+      'Ù': 'U', 'Ú': 'U', 'Ụ': 'U', 'Ủ': 'U', 'Ũ': 'U', 'Ư': 'U', 'Ừ': 'U', 'Ứ': 'U', 'Ự': 'U', 'Ử': 'U', 'Ữ': 'U',
+      'Ỳ': 'Y', 'Ý': 'Y', 'Ỵ': 'Y', 'Ỷ': 'Y', 'Ỹ': 'Y',
+      'Đ': 'D'
+    };
+
+    return str.replace(/[^A-Za-z0-9]/g, (x) => diacriticMap[x] || x);
+  };
+
 
   const handleFilterSubmit = () => {
     if (productDetails.length > 0) {
       const searchName = searchParams.get("name");
       const filteredProducts = productDetails.filter((product) => {
-        // Áp dụng các điều kiện lọc tại đây
-        const productName = product.name.toLowerCase();
+        const productName = convertToVietnameseWithoutAccent(product.name.toLowerCase());
         const productPrice = product.price;
         const productColor = product.colorcode;
         const productSize = product.size;
 
-        const nameMatch = searchName
-          ? productName.includes(searchName.toLowerCase())
-          : true;
+        const lowerCaseSearchName = searchName ? convertToVietnameseWithoutAccent(searchName.toLowerCase()) : '';
+
+        const nameMatch =
+          !lowerCaseSearchName || productName.toLowerCase().includes(lowerCaseSearchName);
+
+
         const priceMatch = productPrice >= minValue && productPrice <= maxValue;
         const colorMatch =
-          selectedColors.length === 0 || selectedColors.includes(productColor);
+          selectedColors.length === 0 || selectedColors.some((selectedColor) => selectedColor.colorcode === productColor);
+
         const sizeMatch =
           selectedSizes.length === 0 || selectedSizes.includes(productSize);
 
@@ -216,15 +277,15 @@ const SearchResult: React.FC = () => {
       const uniqueNames = [
         ...new Set(filteredProducts.map((product) => product.name)),
       ];
-      const updatedFilteredProductsList = products.filter((product) =>
-        uniqueNames.includes(product.name)
-      );
-
-      setFilteredProductsUpdate(filteredProducts);
-      setFilteredProductsList(updatedFilteredProductsList);
-      console.log("Pd: ", productDetails);
+      const updatedFilteredProductsList = uniqueNames.map((name) => {
+        // Lấy sản phẩm duy nhất cho mỗi tên
+        return filteredProducts.find((product) => product.name === name);
+      }).filter((product) => product !== undefined); // Loại bỏ các giá trị undefined
+  
+      setFilteredProductsList(updatedFilteredProductsList as Product[]);
     }
     handleFilterToggle();
+    setHasMoreProducts(false);
   };
 
   return (
@@ -262,7 +323,7 @@ const SearchResult: React.FC = () => {
                           <label
                             key={index}
                             style={{
-                              backgroundColor: color,
+                              backgroundColor: color.colorcode,
                               position: "relative",
                               opacity: 0.8,
                             }}
@@ -270,9 +331,9 @@ const SearchResult: React.FC = () => {
                           >
                             <input
                               type="checkbox"
-                              value={color}
-                              checked={isColorSelected(color)}
-                              onChange={() => handleColorChange(color)}
+                              value={color.colorcode}
+                              checked={isColorSelected(color.colorcode)}
+                              onChange={() => handleColorChange(color.colorcode)}
                               style={{ opacity: 0 }}
                             />
                             {isColorSelected(color) && (
@@ -385,15 +446,42 @@ const SearchResult: React.FC = () => {
         </div>
         <hr />
         <div className={`${styles["render-product"]}`}>
-          <br />
-          <h2>Kết quả tìm kiếm cho: {searchName}</h2>
+          <div>
+            <h2>Kết quả tìm kiếm cho: {searchName} </h2>
+            {selectedColors.length > 0 && (
+              <div style={{ display: "flex" }}>
+                <h5>Selected Colors:</h5>
+                <ul className="d-flex" style={{ listStyle: "none", whiteSpace: "pre-wrap" }}>
+                  {selectedColors.map((color, index) => (
+                    <li key={color.colorcode}>
+                      {color.colorname}
+                      {index < selectedColors.length - 1 && ", "}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            {selectedSizes.length > 0 && (
+              <div style={{ display: "flex" }}>
+                <h5>Selected Sizes:</h5>
+                <ul className="d-flex" style={{ listStyle: "none", whiteSpace: "pre-wrap" }}>
+                  {selectedSizes.map((size, index) => (
+                    <li key={size}>
+                      {size}
+                      {index < selectedSizes.length - 1 && ", "}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
           <hr />
           {isLoading ? (
             <LoadingView />
           ) : (
-            <div className={`${styles.content}`}>
+            <div> <div className={`${styles.content}`}>
               {filteredProductsList.length > 0 ? (
-                filteredProductsList.map((product: Product) => (
+                filteredProductsList.map((product: Product) => (                 
                   <ProductShow
                     key={product.id}
                     id={product.id}
@@ -402,14 +490,46 @@ const SearchResult: React.FC = () => {
                     imgUrl={product.imageurl}
                   />
                 ))
-              )  : (
+                
+              ) : (
                 showNoResults ? (
-                  <p>Không tìm thấy kết quả nào.</p>
+                  <p style={{fontSize:"1.3rem", fontWeight:"500"}}>Không tìm thấy kết quả nào.</p>
                 ) : null
-              )}
-            </div>
+              )}</div>
+            </div>    
           )}
         </div>
+        {isLoadmore && <LoadingView />}
+        {filteredProductsList.length > 0 && hasMoreProducts && (
+          <div className={`mt-3 ${styles["btn-load"]}`}>
+            <button
+              type="button"
+              className="btn btn-secondary"
+              onClick={handleLoadMore}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                fill="currentColor"
+                className="bi bi-chevron-compact-down"
+                viewBox="0 0 16 16"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M1.553 6.776a.5.5 0 0 1 .67-.223L8 9.44l5.776-2.888a.5.5 0 1 1 .448.894l-6 3a.5.5 0 0 1-.448 0l-6-3a.5.5 0 0 1-.223-.67z"
+                ></path>
+              </svg>
+            </button>
+          </div>
+        )}
+
+        {filteredProductsList.length > 0 && !hasMoreProducts && (
+          <div className="d-flex justify-content-center">
+            <strong>There are no products left to show.</strong>
+          </div>
+        )}
+
       </div>
     </div>
   );
