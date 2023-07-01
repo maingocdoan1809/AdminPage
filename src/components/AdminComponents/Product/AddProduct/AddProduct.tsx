@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { ReactNode, useEffect, useRef, useState } from "react";
 import style from "./addproduct.module.css";
 import AddProductCard from "./AddProductCard";
 import { useParams } from "react-router";
@@ -7,16 +7,91 @@ type Props = {
   onClose: (b: boolean) => void;
   products: Product[];
 };
+export type SizeOption = {
+  size: string;
+  quantity: number;
+  productId: string;
+};
+export type ColorUtil = {
+  colorname: string;
+  colorcode: string;
+  imgUrl: string;
+  price?: number | string;
+  imgFile?: File;
+  sizes: SizeOption[];
+  newSizes?: SizeOption[];
+};
+export type ProductUtil = {
+  idInfo: string;
+  colors: ColorUtil[];
+};
+
 function AddProduct({ onClose, products }: Props) {
+  const newCardRef = useRef<ReactNode>(null!);
+
   const [cards, setCards] = useState(() => {
     const temp = [];
-    for (let product of products) {
-      temp.push(<AddProductCard product={product} />);
+    const map = new Map<string, ProductUtil>();
+
+    products.forEach((product) => {
+      if (!map.has(product.colorcode)) {
+        map.set(product.colorcode, {
+          idInfo: product.infoid,
+          colors: [
+            {
+              colorcode: product.colorcode,
+              colorname: product.colorname,
+              imgUrl: product.imageurl,
+              price: product.price,
+              sizes: [
+                {
+                  productId: product.id,
+                  quantity: product.quantity,
+                  size: product.size,
+                },
+              ],
+            },
+          ],
+        } as ProductUtil);
+      } else {
+        const p = map.get(product.colorcode);
+        const pwithcolor = p?.colors.find(
+          (f) => f.colorcode == product.colorcode
+        );
+        if (pwithcolor == undefined) {
+          p?.colors.push({
+            colorcode: product.colorcode,
+            colorname: product.colorname,
+            imgUrl: product.imageurl,
+            sizes: [
+              {
+                productId: product.id,
+                quantity: product.quantity,
+                size: product.size,
+              },
+            ],
+          });
+        } else {
+          pwithcolor.sizes.push({
+            productId: product.id,
+            quantity: product.quantity,
+            size: product.size,
+          });
+        }
+      }
+    });
+
+    for (let product of map.keys()) {
+      temp.push(
+        <AddProductCard infoId={products[0].infoid} p={map.get(product)} />
+      );
     }
     return temp;
   });
   return (
     <>
+      <div className={style.wrapper}></div>
+
       <div className={`${style.container}`}>
         <div
           className={`${style["btn-close"]}`}
@@ -36,16 +111,19 @@ function AddProduct({ onClose, products }: Props) {
           </svg>
         </div>
         <div className="mt-5 p-3">
-          {cards.map((card, index) => (
-            <div key={index}>
-              {card} <hr />
-            </div>
-          ))}
+          <div>
+            {cards.map((card, index) => (
+              <div key={index}>{card}</div>
+            ))}
+          </div>
           <div className="d-flex justify-content-end gap-3">
             <div
               className={`${style["btn-add"]}`}
               onClick={(e) => {
-                setCards([...cards, <AddProductCard />]);
+                setCards([
+                  ...cards,
+                  <AddProductCard infoId={products[0].infoid} />,
+                ]);
               }}
             >
               <svg

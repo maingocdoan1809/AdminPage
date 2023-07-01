@@ -284,7 +284,6 @@ const changeBasicInfor = function (
   whenUpdated?: () => void
 ) {
   const formData = new FormData();
-  console.log(userInfo);
 
   for (let key in userInfo) {
     formData.append(key, (userInfo as any)[key]);
