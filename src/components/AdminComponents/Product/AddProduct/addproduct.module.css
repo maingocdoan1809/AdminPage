@@ -73,8 +73,26 @@
   align-self: flex-end;
 }
 
+.btn-add-size {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  box-shadow: 0 0 5px 1px rgb(206, 206, 206);
+}
+
+.btn-add-size:hover {
+  background-color: rgb(212, 211, 211);
+}
+
 .flex-end>span {
   display: none;
+}
+
+@media screen and (max-width: 700) {
+  .img {
+    width: 100% !important;
+  }
 }
 
 @media screen and (max-width: 900px) {
