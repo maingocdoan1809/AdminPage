@@ -224,11 +224,11 @@ function Orders() {
 
   const handleOrderSelection = (id: string) => {
     const order = filteredOrders.find((order) => order.id === id);
-  
+
     if (!order) {
       return;
     }
-  
+
     if (selectedOrders.includes(id)) {
       setSelectedOrders(selectedOrders.filter((orderId) => orderId !== id));
     } else {
@@ -240,7 +240,7 @@ function Orders() {
           return selectedOrder && selectedOrder.state === order.state;
         }
       );
-  
+
       if (selectedOrdersWithSameState.length === selectedOrders.length) {
         setSelectedOrders([...selectedOrders, id]);
       } else {
@@ -248,7 +248,7 @@ function Orders() {
       }
     }
   };
-  
+
 
   useEffect(() => {
     console.log(selectedOrders);
@@ -264,7 +264,7 @@ function Orders() {
       const isAllSameState = filteredOrders.every(
         (order) => order.state === firstOrderState
       );
-  
+
       if (isAllSameState) {
         const selectAllOrder = filteredOrders.map((order) => order.id);
         setSelectedOrders(selectAllOrder);
@@ -274,7 +274,7 @@ function Orders() {
       }
     }
   };
-  
+
 
   const handleBatchConfirmation = (event: any) => {
     const selectedValue = event.target.value;
@@ -590,13 +590,21 @@ function Orders() {
             <>
               <nav aria-label="Page navigation example">
                 <ul className="pagination mt-3 d-flex justify-content-end">
-                  <li className={`page-item ${currentPage === 0 ? 'disabled' : ''}`} onClick={() => setCurrentPage(currentPage - 1)}>
+                  <li className={`page-item ${currentPage === 0 ? 'disabled' : ''}`} onClick={() => {
+                    if (currentPage !== 0) {
+                      setCurrentPage(currentPage - 1);
+                    }
+                  }}>
                     <a className="page-link" href="#" aria-label="Previous">
                       <span aria-hidden="true">&laquo;</span>
                     </a>
                   </li>
-                  <li className="page-item"><a className="page-link" href="#">{currentPage + 1}</a></li>
-                  <li className={`page-item ${(8 > filteredOrders.length) ? 'disabled' : ''}`} onClick={() => setCurrentPage(currentPage + 1)}>
+                  <li className="page-item"><a className="page-link disable" href="#">{currentPage + 1}</a></li>
+                  <li className={`page-item ${(8 > filteredOrders.length) ? 'disabled' : ''}`} onClick={() => {
+                    if (8 <= filteredOrders.length) {
+                      setCurrentPage(currentPage + 1);
+                    }
+                  }}>
                     <a className="page-link" href="#" aria-label="Next">
                       <span aria-hidden="true">&raquo;</span>
                     </a>
@@ -604,64 +612,64 @@ function Orders() {
                 </ul>
               </nav>
               <div>
-                  <>
-                    <button
-                      className={`btn btn-primary m-3`}
-                      onClick={handleBatchConfirmation}
-                      value={1}
-                      disabled={selectedOrders.some((id) => {
-                        const order = filteredOrders.find((order) => order.id === id);
-                        return order?.state === "Đang xử lí" || order?.state === "Đang vận chuyển" || order?.state === "Đã giao hàng" || order?.state === "Đã huỷ";
-                      })}
-                      
-                    >
-                      Xác nhận
-                    </button>
-                    <button
-                      className={`btn btn-primary m-3`}
-                      onClick={handleBatchConfirmation}
-                      value={2}
-                      disabled={selectedOrders.some((id) => {
-                        const order = filteredOrders.find((order) => order.id === id);
-                        return order?.state === "Đang vận chuyển" || order?.state === "Đã giao hàng" || order?.state === "Đã huỷ";
-                      })}
-                    >
-                      Vận chuyển
-                    </button>
-                    <button
-                      className={`btn btn-primary m-3`}
-                      onClick={handleBatchConfirmation}
-                      value={3}
-                      disabled={selectedOrders.some((id) => {
-                        const order = filteredOrders.find((order) => order.id === id);
-                        return order?.state === "Chờ xác nhận" || order?.state === "Đã huỷ" || order?.state === "Đang xử lí";
-                      })}
-                    >
-                      Đã giao hàng
-                    </button>
-                    <button
-                      className={`btn btn-primary m-3`}
-                      onClick={handleBatchConfirmation}
-                      value={4}
-                      disabled={selectedOrders.some((id) => {
-                        const order = filteredOrders.find((order) => order.id === id);
-                        return order?.state === "Đang vận chuyển" || order?.state === "Đã huỷ" || order?.state === "Đã giao hàng";
-                      })}
-                    >
-                      Huỷ đơn hàng
-                    </button>
-                    <button
-                      className={`btn btn-primary m-3`}
-                      onClick={handleBatchConfirmation}
-                      value={0}
-                      disabled={selectedOrders.some((id) => {
-                        const order = filteredOrders.find((order) => order.id === id);
-                        return order?.state === "Chờ xác nhận" || order?.state === "Đang xử lí" || order?.state === "Đang vận chuyển" || order?.state === "Đã giao hàng";
-                      })}
-                    >
-                      Khôi phục đơn hàng
-                    </button>
-                  </>
+                <>
+                  <button
+                    className={`btn btn-primary m-3`}
+                    onClick={handleBatchConfirmation}
+                    value={1}
+                    disabled={selectedOrders.some((id) => {
+                      const order = filteredOrders.find((order) => order.id === id);
+                      return order?.state === "Đang xử lí" || order?.state === "Đang vận chuyển" || order?.state === "Đã giao hàng" || order?.state === "Đã huỷ";
+                    })}
+
+                  >
+                    Xác nhận
+                  </button>
+                  <button
+                    className={`btn btn-primary m-3`}
+                    onClick={handleBatchConfirmation}
+                    value={2}
+                    disabled={selectedOrders.some((id) => {
+                      const order = filteredOrders.find((order) => order.id === id);
+                      return order?.state === "Đang vận chuyển" || order?.state === "Đã giao hàng" || order?.state === "Đã huỷ";
+                    })}
+                  >
+                    Vận chuyển
+                  </button>
+                  <button
+                    className={`btn btn-primary m-3`}
+                    onClick={handleBatchConfirmation}
+                    value={3}
+                    disabled={selectedOrders.some((id) => {
+                      const order = filteredOrders.find((order) => order.id === id);
+                      return order?.state === "Chờ xác nhận" || order?.state === "Đã huỷ" || order?.state === "Đang xử lí";
+                    })}
+                  >
+                    Đã giao hàng
+                  </button>
+                  <button
+                    className={`btn btn-primary m-3`}
+                    onClick={handleBatchConfirmation}
+                    value={4}
+                    disabled={selectedOrders.some((id) => {
+                      const order = filteredOrders.find((order) => order.id === id);
+                      return order?.state === "Đang vận chuyển" || order?.state === "Đã huỷ" || order?.state === "Đã giao hàng";
+                    })}
+                  >
+                    Huỷ đơn hàng
+                  </button>
+                  <button
+                    className={`btn btn-primary m-3`}
+                    onClick={handleBatchConfirmation}
+                    value={0}
+                    disabled={selectedOrders.some((id) => {
+                      const order = filteredOrders.find((order) => order.id === id);
+                      return order?.state === "Chờ xác nhận" || order?.state === "Đang xử lí" || order?.state === "Đang vận chuyển" || order?.state === "Đã giao hàng";
+                    })}
+                  >
+                    Khôi phục đơn hàng
+                  </button>
+                </>
               </div>
             </>
           )}
