@@ -85,6 +85,7 @@ function ToggleLoginBtn({ className, isAdmin }: ToggleLoginBtnProps) {
                   Profile
                 </div>
               </li>
+
               {user?.priority == 1 && (
                 <li>
                   <div
@@ -112,6 +113,13 @@ function ToggleLoginBtn({ className, isAdmin }: ToggleLoginBtnProps) {
                 >
                   Logout
                 </div>
+              </li>
+              <li
+                onClick={(e) => {
+                  redirect("/orders");
+                }}
+              >
+                <div className="dropdown-item">Đơn hàng của tôi</div>
               </li>
               <li>
                 <hr className="dropdown-divider" />

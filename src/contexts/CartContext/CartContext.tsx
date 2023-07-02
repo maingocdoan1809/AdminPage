@@ -11,7 +11,7 @@ type CartContextProps = {
 function CartContext({ children }: CartContextProps) {
   const [cart, setCart] = useState<CartItem[]>([]);
   useEffect(() => {
-    const itemsInCart = JSON.parse(localStorage.getItem("cart") || "[]");
+    const itemsInCart = JSON.parse(localStorage.getItem(CART_KEY) || "[]");
     setCart(itemsInCart as CartItem[]);
   }, []);
   useEffect(() => {
