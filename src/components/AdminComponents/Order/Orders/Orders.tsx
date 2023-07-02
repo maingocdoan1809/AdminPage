@@ -33,9 +33,9 @@ function Orders() {
   const [filteredOrders, setFilteredOrders] = useState<AllOrders[]>([]);
   const [filterClicked, setFilterClicked] = useState(false);
   const [filterCleared, setFilterCleared] = useState(false);
-  const [selectedOrderDetail, setSelectedOrderDetail] =
-    useState<AllOrders | null>(null);
+  const [selectedOrderDetail, setSelectedOrderDetail] = useState<AllOrders | null>(null);
   const [currentPage, setCurrentPage] = useState(0);
+
 
   function mapStateToStatus(state: number): string {
     switch (state) {
@@ -81,6 +81,7 @@ function Orders() {
           return { ...order, deadline, state };
         });
         setFilteredOrders(updatedOrders);
+        console.log(filteredOrders);
       })
       .catch((error) => {
         console.error(error);
@@ -222,22 +223,58 @@ function Orders() {
   };
 
   const handleOrderSelection = (id: string) => {
+    const order = filteredOrders.find((order) => order.id === id);
+  
+    if (!order) {
+      return;
+    }
+  
     if (selectedOrders.includes(id)) {
       setSelectedOrders(selectedOrders.filter((orderId) => orderId !== id));
     } else {
-      setSelectedOrders([...selectedOrders, id]);
+      const selectedOrdersWithSameState = selectedOrders.filter(
+        (orderId) => {
+          const selectedOrder = filteredOrders.find(
+            (order) => order.id === orderId
+          );
+          return selectedOrder && selectedOrder.state === order.state;
+        }
+      );
+  
+      if (selectedOrdersWithSameState.length === selectedOrders.length) {
+        setSelectedOrders([...selectedOrders, id]);
+      } else {
+        alert("Không được chọn nhiều order có trạng thái khác nhau");
+      }
     }
   };
+  
+
+  useEffect(() => {
+    console.log(selectedOrders);
+  }, [selectedOrders]);
+
 
   const handleSelectAll = () => {
-    setSelectAll(!selectAll);
-    if (!selectAll) {
-      const selectAllOrder = filteredOrders.map((order) => order.id);
-      setSelectedOrders(selectAllOrder);
-    } else {
+    if (selectedOrders.length === filteredOrders.length) {
       setSelectedOrders([]);
+      setSelectAll(false);
+    } else {
+      const firstOrderState = filteredOrders[0]?.state;
+      const isAllSameState = filteredOrders.every(
+        (order) => order.state === firstOrderState
+      );
+  
+      if (isAllSameState) {
+        const selectAllOrder = filteredOrders.map((order) => order.id);
+        setSelectedOrders(selectAllOrder);
+        setSelectAll(true);
+      } else {
+        alert("Không được chọn nhiều order có trạng thái khác nhau");
+      }
     }
   };
+  
 
   const handleBatchConfirmation = (event: any) => {
     const selectedValue = event.target.value;
@@ -362,6 +399,8 @@ function Orders() {
     }
     return "";
   }
+
+
   return (
     <>
       <div
@@ -371,54 +410,48 @@ function Orders() {
         <div className={`btn-group ${styles["btn-group"]}`}>
           <button
             type="button"
-            className={`btn btn-outline-secondary mt-3 mb-3  ${
-              activeState === "" ? styles.activeButton : ""
-            }`}
+            className={`btn btn-outline-secondary mt-3 mb-3  ${activeState === "" ? styles.activeButton : ""
+              }`}
             onClick={() => handleClick("")}
           >
             Tất cả
           </button>
           <button
             type="button"
-            className={`btn btn-outline-secondary mt-3 mb-3  ${
-              activeState === "0" ? styles.activeButton : ""
-            }`}
+            className={`btn btn-outline-secondary mt-3 mb-3  ${activeState === "0" ? styles.activeButton : ""
+              }`}
             onClick={() => handleClick("0")}
           >
             Chờ xác nhận
           </button>
           <button
             type="button"
-            className={`btn btn-outline-secondary mt-3 mb-3  ${
-              activeState === "1" ? styles.activeButton : ""
-            }`}
+            className={`btn btn-outline-secondary mt-3 mb-3  ${activeState === "1" ? styles.activeButton : ""
+              }`}
             onClick={() => handleClick("1")}
           >
             Đang xử lí
           </button>
           <button
             type="button"
-            className={`btn btn-outline-secondary mt-3 mb-3  ${
-              activeState === "2" ? styles.activeButton : ""
-            }`}
+            className={`btn btn-outline-secondary mt-3 mb-3  ${activeState === "2" ? styles.activeButton : ""
+              }`}
             onClick={() => handleClick("2")}
           >
             Đang vận chuyển
           </button>
           <button
             type="button"
-            className={`btn btn-outline-secondary mt-3 mb-3  ${
-              activeState === "3" ? styles.activeButton : ""
-            }`}
+            className={`btn btn-outline-secondary mt-3 mb-3  ${activeState === "3" ? styles.activeButton : ""
+              }`}
             onClick={() => handleClick("3")}
           >
             Đã giao hàng
           </button>
           <button
             type="button"
-            className={`btn btn-outline-secondary mt-3 mb-3  ${
-              activeState === "4" ? styles.activeButton : ""
-            }`}
+            className={`btn btn-outline-secondary mt-3 mb-3  ${activeState === "4" ? styles.activeButton : ""
+              }`}
             onClick={() => handleClick("4")}
           >
             Đã huỷ
@@ -471,9 +504,8 @@ function Orders() {
               {filteredOrders.map((order) => (
                 <tr
                   key={order.id}
-                  className={`${
-                    selectedOrders.includes(order.id) ? styles.selectedRow : ""
-                  }`}
+                  className={`${selectedOrders.includes(order.id) ? styles.selectedRow : ""
+                    }`}
                 >
                   <td>
                     <input
@@ -484,13 +516,12 @@ function Orders() {
                   </td>
                   <td>{order.id}</td>
                   <td
-                    className={`${
-                      styles[
-                        removeDiacritics(
-                          order.state.replace(/\s/g, "-")
-                        ).toLowerCase()
-                      ]
-                    }`}
+                    className={`${styles[
+                      removeDiacritics(
+                        order.state.replace(/\s/g, "-")
+                      ).toLowerCase()
+                    ]
+                      }`}
                   >
                     {order.state}
                   </td>
@@ -573,34 +604,64 @@ function Orders() {
                 </ul>
               </nav>
               <div>
-                <button
-                  className={`btn btn-primary m-3`}
-                  onClick={handleBatchConfirmation}
-                  value={1}
-                >
-                  Xác nhận
-                </button>
-                <button
-                  className={`btn btn-primary m-3`}
-                  onClick={handleBatchConfirmation}
-                  value={2}
-                >
-                  Vân chuyển
-                </button>
-                <button
-                  className={`btn btn-primary m-3`}
-                  onClick={handleBatchConfirmation}
-                  value={3}
-                >
-                  Đã giao hàng
-                </button>
-                <button
-                  className={`btn btn-primary m-3`}
-                  onClick={handleBatchConfirmation}
-                  value={4}
-                >
-                  Huỷ đơn hàng
-                </button>
+                  <>
+                    <button
+                      className={`btn btn-primary m-3`}
+                      onClick={handleBatchConfirmation}
+                      value={1}
+                      disabled={selectedOrders.some((id) => {
+                        const order = filteredOrders.find((order) => order.id === id);
+                        return order?.state === "Đang xử lí" || order?.state === "Đang vận chuyển" || order?.state === "Đã giao hàng" || order?.state === "Đã huỷ";
+                      })}
+                      
+                    >
+                      Xác nhận
+                    </button>
+                    <button
+                      className={`btn btn-primary m-3`}
+                      onClick={handleBatchConfirmation}
+                      value={2}
+                      disabled={selectedOrders.some((id) => {
+                        const order = filteredOrders.find((order) => order.id === id);
+                        return order?.state === "Đang vận chuyển" || order?.state === "Đã giao hàng" || order?.state === "Đã huỷ";
+                      })}
+                    >
+                      Vận chuyển
+                    </button>
+                    <button
+                      className={`btn btn-primary m-3`}
+                      onClick={handleBatchConfirmation}
+                      value={3}
+                      disabled={selectedOrders.some((id) => {
+                        const order = filteredOrders.find((order) => order.id === id);
+                        return order?.state === "Chờ xác nhận" || order?.state === "Đã huỷ" || order?.state === "Đang xử lí";
+                      })}
+                    >
+                      Đã giao hàng
+                    </button>
+                    <button
+                      className={`btn btn-primary m-3`}
+                      onClick={handleBatchConfirmation}
+                      value={4}
+                      disabled={selectedOrders.some((id) => {
+                        const order = filteredOrders.find((order) => order.id === id);
+                        return order?.state === "Đang vận chuyển" || order?.state === "Đã huỷ" || order?.state === "Đã giao hàng";
+                      })}
+                    >
+                      Huỷ đơn hàng
+                    </button>
+                    <button
+                      className={`btn btn-primary m-3`}
+                      onClick={handleBatchConfirmation}
+                      value={0}
+                      disabled={selectedOrders.some((id) => {
+                        const order = filteredOrders.find((order) => order.id === id);
+                        return order?.state === "Chờ xác nhận" || order?.state === "Đang xử lí" || order?.state === "Đang vận chuyển" || order?.state === "Đã giao hàng";
+                      })}
+                    >
+                      Khôi phục đơn hàng
+                    </button>
+                  </>
               </div>
             </>
           )}
