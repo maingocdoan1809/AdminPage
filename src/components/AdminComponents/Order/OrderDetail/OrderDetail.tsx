@@ -96,7 +96,7 @@ function OrderDetail({ order }: OrderDetailProps) {
   return (
     <>
       <div className={`container ${styles["container"]}`}>
-        <div className="row gx-5">
+        <div className={`row gx-5 ${styles["info-receive"]}`}>
           <div className="col">
             <div className="mt-3">
               <div className="d-flex flex-wrap">
