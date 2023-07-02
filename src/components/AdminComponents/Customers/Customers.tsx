@@ -103,6 +103,110 @@ function Customers() {
   });
 
   return (
+    <>
+      <div className={`container ${styles["container-customer"]} d-flex flex-column flex-grow-1`}>
+        <div className={`${styles["form-container"]} mt-3 d-flex`}>
+          <input
+            type="text"
+            className="form-control mb-3"
+            placeholder="Nhập mã người dùng"
+            aria-label="Filter by code"
+            value={filterCode}
+            onChange={handleCodeFilterChange}
+          />
+          <input
+            type="text"
+            className="form-control mb-3"
+            placeholder="Nhập tên người dùng"
+            aria-label="Filter by name"
+            value={filterName}
+            onChange={handleNameFilterChange}
+          />
+          <select
+            className="form-select mb-3"
+            aria-label="Filter by status"
+            value={filterStatus}
+            onChange={handleStatusFilterChange}
+          >
+            <option value="">All</option>
+            <option value={1}>Active</option>
+            <option value={0}>Inactive</option>
+          </select>
+        </div>
+        <div className={`mt-3 ${styles["customer-table"]}`}>
+          <table className="table">
+            <thead className='table-dark'>
+              <tr>
+                <th>Username</th>
+                <th>Fullname</th>
+                <th>Phone Number</th>
+                <th>Email</th>
+                <th>Address</th>
+                <th>State</th>
+                <th>Priority</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredCustomers.map((customer) => (
+                <tr key={customer.username}>
+                  <td className={`${styles["username"]} ${styles["max-5-characters"]}`}>{customer.username}</td>
+                  <td>{customer.fullname}</td>
+                  <td>{customer.phonenumber}</td>
+                  <td>{customer.email}</td>
+                  <td>{customer.address}</td>
+                  <td>{customer.state}</td>
+                  <td>
+                    <div className="dropdown">
+                      <button
+                        style={{ width: '150px' }}
+                        className="btn btn-secondary btn-sm dropdown-toggle"
+                        type="button"
+                        id="dropdownMenu2"
+                        data-bs-toggle="dropdown"
+                        aria-expanded="false"
+                      >
+                        {customer.priority === 1
+                          ? 'Admin'
+                          : customer.priority === 0
+                            ? 'Customer'
+                            : 'Account lock'}
+                      </button>
+                      <ul className="dropdown-menu" aria-labelledby="dropdownMenu2">
+                        <li>
+                          <button
+                            className="dropdown-item"
+                            value={1}
+                            onClick={() => handlePriorityChange(customer.username, 1)}
+                          >
+                            Admin
+                          </button>
+                        </li>
+                        <li>
+                          <button
+                            className="dropdown-item"
+                            value={0}
+                            onClick={() => handlePriorityChange(customer.username, 0)}
+                          >
+                            Customer
+                          </button>
+                        </li>
+                        <li>
+                          <button
+                            className="dropdown-item"
+                            value={-1}
+                            onClick={() => handlePriorityChange(customer.username, -1)}
+                          >
+                            Account lock
+                          </button>
+                        </li>
+                      </ul>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
     <div
       className={`container flex-1 d-flex flex-column gap-3 mt-3  ${styles["container"]}`}
     >
