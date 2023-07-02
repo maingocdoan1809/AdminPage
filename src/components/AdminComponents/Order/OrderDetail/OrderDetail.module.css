@@ -1,5 +1,6 @@
 .container {
     display: flex;
+    width: 100% !important;
 }
 
 .cart-product {
@@ -59,4 +60,14 @@
 
 .da-huy {
     color: #ff0000;
+}
+
+
+@media screen and (max-width: 478px) {
+    .cart {
+        width: 100%;
+    }
+    .info-receive {
+        display: block !important;
+    }
 }
