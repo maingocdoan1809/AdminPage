@@ -5,6 +5,7 @@ import { format, parseISO, addDays, parse, subDays, subHours } from "date-fns";
 import styles from "./order.module.css";
 import OrderDetail from "../OrderDetail/OrderDetail";
 import { BACKEND_URL } from "../../../../env";
+import { mapStateToStatus } from "../../../../utilities/utils";
 
 type AllOrders = {
   id: string;
@@ -36,23 +37,6 @@ function Orders() {
   const [selectedOrderDetail, setSelectedOrderDetail] =
     useState<AllOrders | null>(null);
   const [currentPage, setCurrentPage] = useState(0);
-
-  function mapStateToStatus(state: number): string {
-    switch (state) {
-      case 0:
-        return "Chờ xác nhận";
-      case 1:
-        return "Đang xử lí";
-      case 2:
-        return "Đang vận chuyển";
-      case 3:
-        return "Đã giao hàng";
-      case 4:
-        return "Đã huỷ";
-      default:
-        return "Trạng thái không xác định";
-    }
-  }
 
   const handleClick = (state: string) => {
     if (state !== activeState) {
@@ -126,7 +110,7 @@ function Orders() {
               addDays(parseISO(order.datecreated), 7),
               "dd/MM/yyyy - HH:mm"
             );
-            const state = mapStateToStatus(Number(order.state));
+            const state = mapStateToStatus(Number(order.state)).text;
             return { ...order, deadline, state };
           });
           setFilteredOrders(updatedOrders);
@@ -152,7 +136,7 @@ function Orders() {
               addDays(parseISO(order.datecreated), 7),
               "dd/MM/yyyy - HH:mm"
             );
-            const state = mapStateToStatus(Number(order.state));
+            const state = mapStateToStatus(Number(order.state)).text;
             return { ...order, deadline, state };
           });
           setFilteredOrders(updatedOrders);
@@ -178,7 +162,7 @@ function Orders() {
               addDays(parseISO(order.datecreated), 7),
               "dd/MM/yyyy - HH:mm"
             );
-            const state = mapStateToStatus(Number(order.state));
+            const state = mapStateToStatus(Number(order.state)).text;
             return { ...order, deadline, state };
           });
           setFilteredOrders(updatedOrders);
@@ -203,7 +187,7 @@ function Orders() {
               addDays(parseISO(order.datecreated), 7),
               "dd/MM/yyyy - HH:mm"
             );
-            const state = mapStateToStatus(Number(order.state));
+            const state = mapStateToStatus(Number(order.state)).text;
             return { ...order, deadline, state };
           });
           setFilteredOrders(updatedOrders);

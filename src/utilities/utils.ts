@@ -74,6 +74,66 @@ export type Cart = {
   items: CartItem[];
 };
 
+export type ProductInBill = {
+  id: string;
+  name: string;
+  price: number;
+  quantity: number;
+  image: string;
+  colorname: string;
+  colorcode: string;
+};
+export type BillDetail = {
+  id: string;
+  total: number;
+  state: number;
+  date: string;
+
+  products: ProductInBill[];
+};
+export type CustomerOrder = {
+  username: string;
+  info: {
+    address: string;
+    phone: string;
+    name: string;
+  };
+  orders: BillDetail[];
+};
+export function mapStateToStatus(state: number) {
+  switch (state) {
+    case 0:
+      return {
+        text: "Chờ xác nhận",
+        color: "#ffd700",
+      };
+    case 1:
+      return {
+        text: "Đang xử lí",
+        color: "#ff8c00",
+      };
+    case 2:
+      return {
+        text: "Đang vận chuyển",
+        color: "#0000cd",
+      };
+    case 3:
+      return {
+        text: "Đã giao hàng",
+        color: "#008000",
+      };
+    case 4:
+      return {
+        text: "Đã huỷ",
+        color: "#ff0000",
+      };
+    default:
+      return {
+        text: "Trạng thái không xác định",
+        color: "#000000",
+      };
+  }
+}
 export function checkPassword(password: string) {
   const numberPtn = new RegExp("[0-9]");
   const charPtn = new RegExp("[A-Za-z]");
