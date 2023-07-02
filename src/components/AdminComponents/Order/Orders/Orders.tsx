@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { format, parseISO, addDays, parse, subDays, subHours } from "date-fns";
-import styles from "./order.module.css"
+import styles from "./order.module.css";
 import OrderDetail from "../OrderDetail/OrderDetail";
 import { BACKEND_URL } from "../../../../env";
 
@@ -20,11 +20,10 @@ type AllOrders = {
 };
 
 function Orders() {
-
-  const [activeState, setActiveState] = useState('');
-  const [activeButton, setActiveButton] = useState('');
-  const [selectedOrderCode, setSelectedOrderCode] = useState('');
-  const [searchOrder, setSearchOrder] = useState('');
+  const [activeState, setActiveState] = useState("");
+  const [activeButton, setActiveButton] = useState("");
+  const [selectedOrderCode, setSelectedOrderCode] = useState("");
+  const [searchOrder, setSearchOrder] = useState("");
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [thirtyDaysAgo, setThirtyDaysAgo] = useState(subDays(new Date(), 30));
   const formattedThirtyDaysAgo = thirtyDaysAgo.toLocaleDateString();
@@ -34,24 +33,24 @@ function Orders() {
   const [filteredOrders, setFilteredOrders] = useState<AllOrders[]>([]);
   const [filterClicked, setFilterClicked] = useState(false);
   const [filterCleared, setFilterCleared] = useState(false);
-  const [selectedOrderDetail, setSelectedOrderDetail] = useState<AllOrders | null>(null);
+  const [selectedOrderDetail, setSelectedOrderDetail] =
+    useState<AllOrders | null>(null);
   const [currentPage, setCurrentPage] = useState(0);
-
 
   function mapStateToStatus(state: number): string {
     switch (state) {
       case 0:
-        return 'Chờ xác nhận';
+        return "Chờ xác nhận";
       case 1:
-        return 'Đang xử lí';
+        return "Đang xử lí";
       case 2:
-        return 'Đang vận chuyển';
+        return "Đang vận chuyển";
       case 3:
-        return 'Đã giao hàng';
+        return "Đã giao hàng";
       case 4:
-        return 'Đã huỷ';
+        return "Đã huỷ";
       default:
-        return 'Trạng thái không xác định';
+        return "Trạng thái không xác định";
     }
   }
 
@@ -62,8 +61,6 @@ function Orders() {
     }
   };
 
-
-
   useEffect(() => {
     const apiUrl = `${BACKEND_URL}/checkout/?page=${currentPage}&state=${activeState}`;
     fetch(apiUrl)
@@ -71,12 +68,15 @@ function Orders() {
         if (response.ok) {
           return response.json();
         } else {
-          throw new Error('Error: ' + response.status);
+          throw new Error("Error: " + response.status);
         }
       })
       .then((data) => {
         const updatedOrders = data.map((order: AllOrders) => {
-          const deadline = format(addDays(parseISO(order.datecreated), 7), 'dd/MM/yyyy - HH:mm');
+          const deadline = format(
+            addDays(parseISO(order.datecreated), 7),
+            "dd/MM/yyyy - HH:mm"
+          );
           const state = mapStateToStatus(Number(order.state));
           return { ...order, deadline, state };
         });
@@ -87,12 +87,15 @@ function Orders() {
       });
   }, [currentPage, activeState]);
 
-
-  const handleOrderCodeChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+  const handleOrderCodeChange = (
+    event: React.ChangeEvent<HTMLSelectElement>
+  ) => {
     setSelectedOrderCode(event.target.value);
   };
 
-  const handleSearchOrderChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleSearchOrderChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     setSearchOrder(event.target.value);
   };
 
@@ -119,7 +122,10 @@ function Orders() {
         .then((data) => {
           console.log(data);
           const updatedOrders = data.map((order: AllOrders) => {
-            const deadline = format(addDays(parseISO(order.datecreated), 7), "dd/MM/yyyy - HH:mm");
+            const deadline = format(
+              addDays(parseISO(order.datecreated), 7),
+              "dd/MM/yyyy - HH:mm"
+            );
             const state = mapStateToStatus(Number(order.state));
             return { ...order, deadline, state };
           });
@@ -142,7 +148,10 @@ function Orders() {
         .then((data) => {
           console.log(data);
           const updatedOrders = data.map((order: AllOrders) => {
-            const deadline = format(addDays(parseISO(order.datecreated), 7), "dd/MM/yyyy - HH:mm");
+            const deadline = format(
+              addDays(parseISO(order.datecreated), 7),
+              "dd/MM/yyyy - HH:mm"
+            );
             const state = mapStateToStatus(Number(order.state));
             return { ...order, deadline, state };
           });
@@ -165,7 +174,10 @@ function Orders() {
         .then((data) => {
           console.log(data);
           const updatedOrders = data.map((order: AllOrders) => {
-            const deadline = format(addDays(parseISO(order.datecreated), 7), "dd/MM/yyyy - HH:mm");
+            const deadline = format(
+              addDays(parseISO(order.datecreated), 7),
+              "dd/MM/yyyy - HH:mm"
+            );
             const state = mapStateToStatus(Number(order.state));
             return { ...order, deadline, state };
           });
@@ -187,7 +199,10 @@ function Orders() {
         .then((data) => {
           console.log(data);
           const updatedOrders = data.map((order: AllOrders) => {
-            const deadline = format(addDays(parseISO(order.datecreated), 7), "dd/MM/yyyy - HH:mm");
+            const deadline = format(
+              addDays(parseISO(order.datecreated), 7),
+              "dd/MM/yyyy - HH:mm"
+            );
             const state = mapStateToStatus(Number(order.state));
             return { ...order, deadline, state };
           });
@@ -199,10 +214,9 @@ function Orders() {
     }
   };
 
-
   const handleClearFilter = () => {
-    setSelectedOrderCode('');
-    setSearchOrder('');
+    setSelectedOrderCode("");
+    setSearchOrder("");
     setSelectedDate(null);
     setFilterCleared(true);
   };
@@ -229,16 +243,16 @@ function Orders() {
     const selectedValue = event.target.value;
     const updatedOrders = allOrders.map((order) => {
       if (selectedOrders.includes(order.id)) {
-        if (selectedValue === '1') {
-          return { ...order, state: 'Đang xử lí' };
-        } else if (selectedValue === '2') {
-          return { ...order, state: 'Đang vận chuyển' };
-        } else if (selectedValue === '3') {
-          console.log('123');
+        if (selectedValue === "1") {
+          return { ...order, state: "Đang xử lí" };
+        } else if (selectedValue === "2") {
+          return { ...order, state: "Đang vận chuyển" };
+        } else if (selectedValue === "3") {
+          console.log("123");
 
-          return { ...order, state: 'Đã giao hàng' };
-        } else if (selectedValue === '4') {
-          return { ...order, state: 'Đã huỷ' };
+          return { ...order, state: "Đã giao hàng" };
+        } else if (selectedValue === "4") {
+          return { ...order, state: "Đã huỷ" };
         }
       }
       return order;
@@ -248,90 +262,84 @@ function Orders() {
     setSelectedOrders([]);
     console.log("Đơn hàng được chọn:", selectedOrders);
 
+    if (selectedValue == 1) {
+      fetch(BACKEND_URL + "/products/confirm", {
+        method: "post",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ selectedOrders: selectedOrders }),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          console.log(data);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
 
-    if(selectedValue == 1) 
-    {
-      fetch(BACKEND_URL + '/products/confirm',{
-        method: 'post',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ selectedOrders : selectedOrders})
-      })
-      .then(response => response.json())
-      .then( data => {
-        console.log(data);
-      })
-      .catch((error) => {
-          console.log(error)
-      });
-  
-      setAllOrders(updatedOrders);
-      setSelectedOrders([]);
-    }   
-    if(selectedValue == 2)
-    {
-      fetch(BACKEND_URL + '/products/transport',{
-        method: 'post',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ selectedOrders : selectedOrders})
-      })
-      .then(response => response.json())
-      .then( data => {
-        console.log(data);
-      })
-      .catch((error) => {
-          console.log(error)
-      });
-  
       setAllOrders(updatedOrders);
       setSelectedOrders([]);
     }
-    if(selectedValue == 3)
-    {
-      fetch(BACKEND_URL + '/products/done',{
-        method: 'post',
+    if (selectedValue == 2) {
+      fetch(BACKEND_URL + "/products/transport", {
+        method: "post",
         headers: {
-          'Content-Type': 'application/json'
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify({ selectedOrders : selectedOrders})
+        body: JSON.stringify({ selectedOrders: selectedOrders }),
       })
-      .then(response => response.json())
-      .then( data => {
-        console.log(data);
-      })
-      .catch((error) => {
-          console.log(error)
-      });
-  
+        .then((response) => response.json())
+        .then((data) => {
+          console.log(data);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+
       setAllOrders(updatedOrders);
       setSelectedOrders([]);
     }
-    if(selectedValue == 4)
-    {
-      fetch(BACKEND_URL + '/products/cancel',{
-        method: 'post',
+    if (selectedValue == 3) {
+      fetch(BACKEND_URL + "/products/done", {
+        method: "post",
         headers: {
-          'Content-Type': 'application/json'
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify({ selectedOrders : selectedOrders})
+        body: JSON.stringify({ selectedOrders: selectedOrders }),
       })
-      .then(response => response.json())
-      .then( data => {
-        console.log(data);
+        .then((response) => response.json())
+        .then((data) => {
+          console.log(data);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+
+      setAllOrders(updatedOrders);
+      setSelectedOrders([]);
+    }
+    if (selectedValue == 4) {
+      fetch(BACKEND_URL + "/products/cancel", {
+        method: "post",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ selectedOrders: selectedOrders }),
       })
-      .catch((error) => {
-          console.log(error)
-      });
-  
+        .then((response) => response.json())
+        .then((data) => {
+          console.log(data);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+
       setAllOrders(updatedOrders);
       setSelectedOrders([]);
     }
 
-    console.log("Đơn hàng được chọn:", selectedOrders);    
-
+    console.log("Đơn hàng được chọn:", selectedOrders);
   };
 
   const handleOrderDetail = (order: AllOrders) => {
@@ -340,65 +348,80 @@ function Orders() {
 
   function isDeadlinePassed(deadline: any) {
     const currentDateTime = new Date();
-    const deadlineDateTime = parse(deadline, 'dd/MM/yyyy', new Date());
+    const deadlineDateTime = parse(deadline, "dd/MM/yyyy", new Date());
     return deadlineDateTime < currentDateTime;
   }
 
   function removeDiacritics(str: string | undefined) {
     if (str) {
       const diacriticsMap: { [key: string]: string } = {
-        'Đ': 'D',
+        Đ: "D",
       };
       return str
-        .normalize('NFD')
-        .replace(/[\u0300-\u036f]/g, '')
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
         .replace(/[^\u0000-\u007E]/g, (char) => diacriticsMap[char] || char);
     }
-    return '';
+    return "";
   }
   return (
     <>
-      <div className={`container ${styles["container-order"]}`} style={{ overflowY: "auto" }}>
+      <div
+        className={`container ${styles["container-order"]}`}
+        style={{ overflowY: "auto" }}
+      >
         <div className={`btn-group ${styles["btn-group"]}`}>
           <button
             type="button"
-            className={`btn btn-outline-secondary mt-3 mb-3  ${activeState === '' ? styles.activeButton : ''}`}
-            onClick={() => handleClick('')}
+            className={`btn btn-outline-secondary mt-3 mb-3  ${
+              activeState === "" ? styles.activeButton : ""
+            }`}
+            onClick={() => handleClick("")}
           >
             Tất cả
           </button>
           <button
             type="button"
-            className={`btn btn-outline-secondary mt-3 mb-3  ${activeState === '0' ? styles.activeButton : ''}`}
-            onClick={() => handleClick('0')}
+            className={`btn btn-outline-secondary mt-3 mb-3  ${
+              activeState === "0" ? styles.activeButton : ""
+            }`}
+            onClick={() => handleClick("0")}
           >
             Chờ xác nhận
           </button>
           <button
             type="button"
-            className={`btn btn-outline-secondary mt-3 mb-3  ${activeState === '1' ? styles.activeButton : ''}`}
-            onClick={() => handleClick('1')}
+            className={`btn btn-outline-secondary mt-3 mb-3  ${
+              activeState === "1" ? styles.activeButton : ""
+            }`}
+            onClick={() => handleClick("1")}
           >
             Đang xử lí
           </button>
           <button
             type="button"
-            className={`btn btn-outline-secondary mt-3 mb-3  ${activeState === '2' ? styles.activeButton : ''}`}
-            onClick={() => handleClick('2')}
+            className={`btn btn-outline-secondary mt-3 mb-3  ${
+              activeState === "2" ? styles.activeButton : ""
+            }`}
+            onClick={() => handleClick("2")}
           >
             Đang vận chuyển
           </button>
           <button
             type="button"
-            className={`btn btn-outline-secondary mt-3 mb-3  ${activeState === '3' ? styles.activeButton : ''}`}
-            onClick={() => handleClick('3')}
+            className={`btn btn-outline-secondary mt-3 mb-3  ${
+              activeState === "3" ? styles.activeButton : ""
+            }`}
+            onClick={() => handleClick("3")}
           >
             Đã giao hàng
           </button>
           <button
             type="button"
-            className={`btn btn-outline-secondary mt-3 mb-3  ${activeState === '4' ? styles.activeButton : ''}`}
-            onClick={() => handleClick('4')}
+            className={`btn btn-outline-secondary mt-3 mb-3  ${
+              activeState === "4" ? styles.activeButton : ""
+            }`}
+            onClick={() => handleClick("4")}
           >
             Đã huỷ
           </button>
@@ -438,16 +461,35 @@ function Orders() {
                 </span>
               )}
               <div className="d-flex justify-content-end">
-                {filterCleared && <span className="px-3 text-danger">Không có trạng thái lọc</span>}
+                {filterCleared && (
+                  <span className="px-3 text-danger">
+                    Không có trạng thái lọc
+                  </span>
+                )}
               </div>
             </div>
           </div>
         </div>
-        <button type="button" className="btn btn-secondary btn-sm mt-2 px-3 col-md-2" onClick={handleClearFilter}>Huỷ lọc</button>
-        <button type="button" className="btn btn-primary btn-sm mt-2 px-3 mx-3 col-md-2" onClick={handleFilterClick}>Lọc</button>
-        <div className={`mt-3 ${styles["order-table"]}`} style={{ overflow: "auto" }}>
+        <button
+          type="button"
+          className="btn btn-secondary btn-sm mt-2 px-3 col-md-2"
+          onClick={handleClearFilter}
+        >
+          Huỷ lọc
+        </button>
+        <button
+          type="button"
+          className="btn btn-primary btn-sm mt-2 px-3 mx-3 col-md-2"
+          onClick={handleFilterClick}
+        >
+          Lọc
+        </button>
+        <div
+          className={`mt-3 ${styles["order-table"]}`}
+          style={{ overflow: "auto" }}
+        >
           <table className="table" style={{ minWidth: "900px" }}>
-            <thead className="table-dark">
+            <thead className="table-dark sticky-top">
               <tr>
                 <th>
                   <input
@@ -469,7 +511,9 @@ function Orders() {
               {filteredOrders.map((order) => (
                 <tr
                   key={order.id}
-                  className={`${selectedOrders.includes(order.id) ? styles.selectedRow : ""}`}
+                  className={`${
+                    selectedOrders.includes(order.id) ? styles.selectedRow : ""
+                  }`}
                 >
                   <td>
                     <input
@@ -478,19 +522,43 @@ function Orders() {
                       onChange={() => handleOrderSelection(order.id)}
                     />
                   </td>
-                  <td >{order.id}</td>
-                  <td className={`${styles[removeDiacritics(order.state.replace(/\s/g, '-')).toLowerCase()]}`}>{order.state}</td>
+                  <td>{order.id}</td>
+                  <td
+                    className={`${
+                      styles[
+                        removeDiacritics(
+                          order.state.replace(/\s/g, "-")
+                        ).toLowerCase()
+                      ]
+                    }`}
+                  >
+                    {order.state}
+                  </td>
                   <td>{order.quantity}</td>
                   <td>{order.totalamount}</td>
-                  <td>{format(subHours(parseISO(order.datecreated), 7), "dd/MM/yyyy - HH:mm")}</td>
-                  <td className={isDeadlinePassed(order.deadline) ? styles.expiredDeadline : ""}>{order.deadline}</td>
+                  <td>
+                    {format(
+                      subHours(parseISO(order.datecreated), 7),
+                      "dd/MM/yyyy - HH:mm"
+                    )}
+                  </td>
+                  <td
+                    className={
+                      isDeadlinePassed(order.deadline)
+                        ? styles.expiredDeadline
+                        : ""
+                    }
+                  >
+                    {order.deadline}
+                  </td>
                   <td>
                     <a
                       className="link-primary"
                       data-bs-toggle="modal"
                       data-bs-target="#staticBackdrop"
                       onClick={() => handleOrderDetail(order)}
-                    >Xem chi tiết
+                    >
+                      Xem chi tiết
                     </a>
                   </td>
                 </tr>
@@ -498,12 +566,27 @@ function Orders() {
             </tbody>
           </table>
         </div>
-        <div className="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabIndex={-1} aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div
+          className="modal fade"
+          id="staticBackdrop"
+          data-bs-backdrop="static"
+          data-bs-keyboard="false"
+          tabIndex={-1}
+          aria-labelledby="staticBackdropLabel"
+          aria-hidden="true"
+        >
           <div className="modal-dialog modal-dialog-scrollable modal-lg">
             <div className="modal-content">
               <div className="modal-header">
-                <h5 className="modal-title" id="staticBackdropLabel">Order Detail</h5>
-                <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <h5 className="modal-title" id="staticBackdropLabel">
+                  Order Detail
+                </h5>
+                <button
+                  type="button"
+                  className="btn-close"
+                  data-bs-dismiss="modal"
+                  aria-label="Close"
+                ></button>
               </div>
               <div className="modal-body">
                 <OrderDetail order={selectedOrderDetail} />
@@ -514,12 +597,24 @@ function Orders() {
         {filteredOrders.length > 0 && (
           <nav aria-label="Page navigation example">
             <ul className="pagination d-flex justify-content-around">
-              <li className={`btn btn-outline-primary ${currentPage === 0 ? 'disabled' : ''}`} style={{ width: "100px" }} onClick={() => setCurrentPage(currentPage - 1)}>
+              <li
+                className={`btn btn-outline-primary ${
+                  currentPage === 0 ? "disabled" : ""
+                }`}
+                style={{ width: "100px" }}
+                onClick={() => setCurrentPage(currentPage - 1)}
+              >
                 <a style={{ color: "#000" }} href="#">
                   Trước
                 </a>
               </li>
-              <li className={`btn btn-outline-primary ${(8 > filteredOrders.length) ? 'disabled' : ''}`} style={{ width: "100px" }} onClick={() => setCurrentPage(currentPage + 1)}>
+              <li
+                className={`btn btn-outline-primary ${
+                  8 > filteredOrders.length ? "disabled" : ""
+                }`}
+                style={{ width: "100px" }}
+                onClick={() => setCurrentPage(currentPage + 1)}
+              >
                 <a style={{ color: "#000" }} href="#">
                   Sau
                 </a>
@@ -535,7 +630,7 @@ function Orders() {
               {selectedOrders.map((id, index) => (
                 <span key={id}>
                   {id}
-                  {index !== selectedOrders.length - 1 ? ' - ' : ' '}
+                  {index !== selectedOrders.length - 1 ? " - " : " "}
                 </span>
               ))}
             </div>

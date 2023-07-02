@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
-import { BACKEND_URL } from '../../../env';
-import styles from "./customer.module.css"
+import React, { useEffect, useState } from "react";
+import { BACKEND_URL } from "../../../env";
+import styles from "./customer.module.css";
 
 type Customer = {
   username: string;
@@ -16,32 +16,35 @@ type Customer = {
 
 function Customers() {
   const [customers, setCustomers] = useState<Customer[]>([]);
-  const [filterCode, setFilterCode] = useState('');
-  const [filterName, setFilterName] = useState('');
-  const [filterStatus, setFilterStatus] = useState('');
-
-  useEffect(() => {
-    const fetchCustomers = async () => {
-      try {
-        const response = await fetch(BACKEND_URL + '/customer');
-        if (response.ok) {
-          const data = await response.json();
-          setCustomers(data);
-        } else {
-          console.error('Error fetching customers:', response.status);
-        }
-      } catch (error) {
-        console.error('Error fetching customers:', error);
+  const [filterCode, setFilterCode] = useState("");
+  const [filterName, setFilterName] = useState("");
+  const [filterStatus, setFilterStatus] = useState("");
+  const fetchCustomers = async () => {
+    try {
+      const response = await fetch(BACKEND_URL + "/customer");
+      if (response.ok) {
+        const data = await response.json();
+        setCustomers(data);
+      } else {
+        console.error("Error fetching customers:", response.status);
       }
-    };
+    } catch (error) {
+      console.error("Error fetching customers:", error);
+    }
+  };
+  useEffect(() => {
     fetchCustomers();
   }, []);
 
-  const handleCodeFilterChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleCodeFilterChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     setFilterCode(event.target.value);
   };
 
-  const handleStatusFilterChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+  const handleStatusFilterChange = (
+    event: React.ChangeEvent<HTMLSelectElement>
+  ) => {
     const selectedStatus = event.target.value;
     if (selectedStatus === "Trạng thái") {
       setFilterStatus("");
@@ -51,31 +54,53 @@ function Customers() {
     console.log(filterStatus);
   };
 
-
-  const handleNameFilterChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleNameFilterChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     setFilterName(event.target.value);
   };
 
   const handlePriorityChange = (customerCode: string, newPriority: number) => {
-    const confirmed = window.confirm('Bạn có chắc chắn muốn thay đổi giá quyền của người dùng?');
+    const confirmed = window.confirm(
+      "Bạn có chắc chắn muốn thay đổi quyền của người dùng?"
+    );
     if (confirmed) {
-      const updatedCustomers = customers.map((c) => {
-        if (c.username === customerCode) {
-          return { ...c, priority: newPriority };
-        }
-        return c;
-      });
-      setCustomers(updatedCustomers);
+      // call api:
+      fetch(BACKEND_URL + "/customer/" + customerCode, {
+        method: "PUT",
+        body: JSON.stringify({
+          priority: newPriority,
+        }),
+      })
+        .then((res) => {
+          if (res.status == 201 || res.status == 200) {
+            const updatedCustomers = customers.map((c) => {
+              if (c.username === customerCode) {
+                return { ...c, priority: newPriority };
+              }
+              return c;
+            });
+            fetchCustomers();
+          } else {
+            console.log(res.statusText);
+            alert(res.statusText);
+          }
+        })
+        .catch(() => {
+          alert("Có lỗi xảy ra, xin thử lại.");
+        });
     }
   };
 
   const filteredCustomers = customers.filter((customer) => {
-    const isCodeMatch = filterCode === "" || customer.username.includes(filterCode);
-    const isNameMatch = filterName === "" || customer.fullname.includes(filterName);
-    const isStatusMatch = filterStatus === "" || customer.state === parseInt(filterStatus);
+    const isCodeMatch =
+      filterCode === "" || customer.username.includes(filterCode);
+    const isNameMatch =
+      filterName === "" || customer.fullname.includes(filterName);
+    const isStatusMatch =
+      filterStatus === "" || customer.state === parseInt(filterStatus);
     return isCodeMatch && isNameMatch && isStatusMatch;
   });
-
 
   return (
     <>
@@ -182,8 +207,125 @@ function Customers() {
             </tbody>
           </table>
         </div>
+    <div
+      className={`container flex-1 d-flex flex-column gap-3 mt-3  ${styles["container"]}`}
+    >
+      <div className={`d-flex gap-3 w-100 ${styles["md"]}`}>
+        <input
+          type="text"
+          className="form-control"
+          placeholder="Nhập mã người dùng"
+          aria-label="Filter by code"
+          value={filterCode}
+          onChange={handleCodeFilterChange}
+        />
+        <input
+          type="text"
+          className="form-control"
+          placeholder="Nhập tên người dùng"
+          aria-label="Filter by name"
+          value={filterName}
+          onChange={handleNameFilterChange}
+        />
+        <select
+          className="form-select"
+          aria-label="Filter by status"
+          value={filterStatus}
+          onChange={handleStatusFilterChange}
+        >
+          <option value="">All</option>
+          <option value={1}>Active</option>
+          <option value={0}>Inactive</option>
+        </select>
       </div>
-    </>
+      <div className={`table-responsive ${styles["table-container"]}`}>
+        <table className={`table table-striped ${styles["table"]}`}>
+          <thead className="table-dark">
+            <tr>
+              <th>Username</th>
+              <th>Fullname</th>
+              <th>Phone Number</th>
+              <th>Email</th>
+              <th>Address</th>
+              <th>State</th>
+              <th>Priority</th>
+            </tr>
+          </thead>
+          <tbody>
+            {filteredCustomers.map((customer) => (
+              <tr key={customer.username}>
+                <td
+                  className={`${styles["username"]} ${styles["max-5-characters"]}`}
+                >
+                  {customer.username}
+                </td>
+                <td>{customer.fullname}</td>
+                <td>{customer.phonenumber}</td>
+                <td>{customer.email}</td>
+                <td>{customer.address}</td>
+                <td>{customer.state}</td>
+                <td>
+                  <div className="dropdown">
+                    <button
+                      style={{ width: "100%" }}
+                      className="btn btn-secondary btn-sm dropdown-toggle"
+                      type="button"
+                      id="dropdownMenu2"
+                      data-bs-toggle="dropdown"
+                      aria-expanded="false"
+                    >
+                      {customer.priority === 1
+                        ? "Admin"
+                        : customer.priority === 0
+                        ? "Customer"
+                        : "Account lock"}
+                    </button>
+                    <ul
+                      className="dropdown-menu"
+                      aria-labelledby="dropdownMenu2"
+                    >
+                      <li>
+                        <button
+                          className="dropdown-item"
+                          value={1}
+                          onClick={() =>
+                            handlePriorityChange(customer.username, 1)
+                          }
+                        >
+                          Admin
+                        </button>
+                      </li>
+                      <li>
+                        <button
+                          className="dropdown-item"
+                          value={0}
+                          onClick={() =>
+                            handlePriorityChange(customer.username, 0)
+                          }
+                        >
+                          Customer
+                        </button>
+                      </li>
+                      <li>
+                        <button
+                          className="dropdown-item"
+                          value={-1}
+                          onClick={() =>
+                            handlePriorityChange(customer.username, -1)
+                          }
+                        >
+                          Account lock
+                        </button>
+                      </li>
+                    </ul>
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
   );
 }
 

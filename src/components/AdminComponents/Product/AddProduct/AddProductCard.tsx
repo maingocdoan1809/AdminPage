@@ -46,7 +46,7 @@ function AddProductCard({ p, infoId }: AddProductCardProps) {
             className={` d-flex gap-2 ${style["sm-dflex-column"]}`}
             key={index}
           >
-            <div className="position-relative d-flex justify-content-center align-items-center">
+            <div className="position-relative d-flex justify-content-center align-items-center m-0 p-0">
               <label
                 htmlFor={`${id}`}
                 className="w-100 d-flex justify-content-center align-items-center  form-label position-relative"
