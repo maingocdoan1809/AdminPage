@@ -1,4 +1,3 @@
-
 .container-customer {
     background-color: #fff;
     max-width: 100vw;
@@ -14,14 +13,6 @@
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-}
-
-.container {
-    position: relative;
-}
-
-.table-container {
-    z-index: 0;
 }
 
 .customer-table th {
