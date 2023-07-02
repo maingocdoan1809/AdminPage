@@ -1,4 +1,9 @@
-import { BillDetail, CustomerOrder } from "../../utilities/utils";
+import {
+  BillDetail,
+  CustomerOrder,
+  mapStateToStatus,
+  toMoney,
+} from "../../utilities/utils";
 import styles from "./order.module.css";
 type Props = {
   order: BillDetail;
@@ -24,25 +29,76 @@ function OrderDetail({ order, close }: Props) {
           </svg>
         </div>
       </div>
-      <div>
+      <ul
+        className={`list-group bg-light ${styles["detail-container"]} p-3`}
+        style={{
+          overflowY: "scroll",
+        }}
+      >
+        <li className="list-group-item">
+          <div>
+            <div className="fs-4">
+              Bill id: <span>{order.id}</span>
+            </div>
+            <div
+              style={{
+                color: mapStateToStatus(order.state).color,
+              }}
+            >
+              State: <span> {mapStateToStatus(order.state).text} </span>
+            </div>
+            <div>
+              <span>Total: </span>
+              <span> {toMoney(order.total)} </span>
+            </div>
+          </div>
+        </li>
         {order.products.map((p) => {
           return (
-            <div className="d-flex gap-3">
+            <li
+              key={p.id}
+              className={`d-flex gap-3 p-3 list-group-item ${styles["card"]}`}
+            >
               <img
                 style={{
                   maxWidth: "280px",
                   maxHeight: "280px",
                 }}
+                className="rounded-3"
                 src={p.image}
                 alt=""
               />
-              <div className="flex-grow-1 text-white">
-                ăn cơm đã rồi làm tiếp
+              <div className="flex-grow-1 text-dark">
+                <div>
+                  <span className="fs-5"> Product name: </span>
+                  <p className="text-info">{p.name}</p>
+                </div>
+                <div>
+                  <div className="d-flex flex-column gap-2">
+                    <span className="fs-5">
+                      {p.colorname}
+                      <span
+                        className="d-inline-block rounded-circle p-1 ms-2"
+                        style={{
+                          backgroundColor: p.colorcode,
+                          border: "1px solid grey",
+                        }}
+                      ></span>{" "}
+                      - Size : {p.size}
+                    </span>
+                    <b>{toMoney(p.price)}</b>
+                  </div>
+                </div>
               </div>
-            </div>
+            </li>
           );
         })}
-      </div>
+        {order.products.length > 0 && order.state <= 1 && (
+          <li className="list-group-item text-end">
+            <button className="btn btn-danger">Huỷ đơn hàng</button>
+          </li>
+        )}
+      </ul>
     </div>
   );
 }

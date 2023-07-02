@@ -27,6 +27,11 @@
 
 }
 
+.detail-container {
+  width: 60%;
+  height: 60%;
+}
+
 @media screen and (max-width: 700px) {
   .input {
     width: 100px !important;
@@ -35,5 +40,16 @@
 
   .container {
     justify-content: center;
+  }
+
+  .detail-container {
+    width: 90% !important;
+    height: 80% !important;
+  }
+
+  .card {
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
   }
 }
