@@ -234,8 +234,6 @@ function Orders() {
         } else if (selectedValue === '2') {
           return { ...order, state: 'Đang vận chuyển' };
         } else if (selectedValue === '3') {
-          console.log('123');
-
           return { ...order, state: 'Đã giao hàng' };
         } else if (selectedValue === '4') {
           return { ...order, state: 'Đã huỷ' };
@@ -248,89 +246,84 @@ function Orders() {
     setSelectedOrders([]);
     console.log("Đơn hàng được chọn:", selectedOrders);
 
+    if (selectedValue == 1) {
+      fetch(BACKEND_URL + '/products/confirm', {
+        method: 'post',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ selectedOrders: selectedOrders })
+      })
+        .then(response => response.json())
+        .then(data => {
+          console.log(data);
+        })
+        .catch((error) => {
+          console.log(error)
+        });
 
-    if(selectedValue == 1) 
-    {
-      fetch(BACKEND_URL + '/products/confirm',{
-        method: 'post',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ selectedOrders : selectedOrders})
-      })
-      .then(response => response.json())
-      .then( data => {
-        console.log(data);
-      })
-      .catch((error) => {
-          console.log(error)
-      });
-  
-      setAllOrders(updatedOrders);
-      setSelectedOrders([]);
-    }   
-    if(selectedValue == 2)
-    {
-      fetch(BACKEND_URL + '/products/transport',{
-        method: 'post',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ selectedOrders : selectedOrders})
-      })
-      .then(response => response.json())
-      .then( data => {
-        console.log(data);
-      })
-      .catch((error) => {
-          console.log(error)
-      });
-  
       setAllOrders(updatedOrders);
       setSelectedOrders([]);
     }
-    if(selectedValue == 3)
-    {
-      fetch(BACKEND_URL + '/products/done',{
+    if (selectedValue == 2) {
+      fetch(BACKEND_URL + '/products/transport', {
         method: 'post',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ selectedOrders : selectedOrders})
+        body: JSON.stringify({ selectedOrders: selectedOrders })
       })
-      .then(response => response.json())
-      .then( data => {
-        console.log(data);
-      })
-      .catch((error) => {
+        .then(response => response.json())
+        .then(data => {
+          console.log(data);
+        })
+        .catch((error) => {
           console.log(error)
-      });
-  
+        });
+
       setAllOrders(updatedOrders);
       setSelectedOrders([]);
     }
-    if(selectedValue == 4)
-    {
-      fetch(BACKEND_URL + '/products/cancel',{
+    if (selectedValue == 3) {
+      fetch(BACKEND_URL + '/products/done', {
         method: 'post',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ selectedOrders : selectedOrders})
+        body: JSON.stringify({ selectedOrders: selectedOrders })
       })
-      .then(response => response.json())
-      .then( data => {
-        console.log(data);
-      })
-      .catch((error) => {
+        .then(response => response.json())
+        .then(data => {
+          console.log(data);
+        })
+        .catch((error) => {
           console.log(error)
-      });
-  
+        });
+
+      setAllOrders(updatedOrders);
+      setSelectedOrders([]);
+    }
+    if (selectedValue == 4) {
+      fetch(BACKEND_URL + '/products/cancel', {
+        method: 'post',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ selectedOrders: selectedOrders })
+      })
+        .then(response => response.json())
+        .then(data => {
+          console.log(data);
+        })
+        .catch((error) => {
+          console.log(error)
+        });
+
       setAllOrders(updatedOrders);
       setSelectedOrders([]);
     }
 
-    console.log("Đơn hàng được chọn:", selectedOrders);    
+    console.log("Đơn hàng được chọn:", selectedOrders);
 
   };
 
@@ -358,7 +351,7 @@ function Orders() {
   }
   return (
     <>
-      <div className={`container ${styles["container-order"]}`} style={{ overflowY: "auto" }}>
+      <div className={`container ${styles["container-order"]} d-flex flex-column flex-grow-1`}>
         <div className={`btn-group ${styles["btn-group"]}`}>
           <button
             type="button"
@@ -403,50 +396,32 @@ function Orders() {
             Đã huỷ
           </button>
         </div>
-        <div className={`row ${styles["filter-order"]}`}>
-          <div className="col-md-3">
-            <div className="form-group">
-              <input
-                type="text"
-                className="form-control"
-                id="searchOrder"
-                value={searchOrder}
-                onChange={handleSearchOrderChange}
-                placeholder="Nhập mã đơn hàng"
-              />
-            </div>
-          </div>
-          <div className="col-md-3">
-            <div className="form-group">
-              <DatePicker
-                className="form-control"
-                selected={selectedDate}
-                onChange={handleDateChange}
-                dateFormat="dd/MM/yyyy"
-                placeholderText="Ngày đặt hàng"
-              />
-            </div>
-          </div>
-          <div className="row mt-3">
-            <div className="d-flex col-md-12">
-              <h5>Đang lọc:&nbsp;</h5>
-              {selectedOrderCode && <span>{selectedOrderCode} | </span>}
-              {searchOrder && <span>{searchOrder} | </span>}
-              {selectedDate && (
-                <span>
-                  ngày đặt: {selectedDate.toLocaleDateString("vi-VN")}
-                </span>
-              )}
-              <div className="d-flex justify-content-end">
-                {filterCleared && <span className="px-3 text-danger">Không có trạng thái lọc</span>}
-              </div>
-            </div>
+        <div className={`${styles["form-container"]} d-flex`}>
+          <input
+            type="text"
+            className="form-control"
+            id="searchOrder"
+            value={searchOrder}
+            onChange={handleSearchOrderChange}
+            placeholder="Nhập mã đơn hàng"
+          />
+          <div className="form-group">
+            <DatePicker
+              className="form-control"
+              selected={selectedDate}
+              onChange={handleDateChange}
+              dateFormat="dd/MM/yyyy"
+              placeholderText="Ngày đặt hàng"
+            />
           </div>
         </div>
-        <button type="button" className="btn btn-secondary btn-sm mt-2 px-3 col-md-2" onClick={handleClearFilter}>Huỷ lọc</button>
-        <button type="button" className="btn btn-primary btn-sm mt-2 px-3 mx-3 col-md-2" onClick={handleFilterClick}>Lọc</button>
-        <div className={`mt-3 ${styles["order-table"]}`} style={{ overflow: "auto" }}>
-          <table className="table" style={{ minWidth: "900px" }}>
+
+        <div className="d-flex">
+          <button type="button" className="btn btn-secondary btn-sm mt-2 px-3 col-md-2" onClick={handleClearFilter}>Huỷ lọc</button>
+          <button type="button" className="btn btn-primary btn-sm mt-2 px-3 mx-3 col-md-2" onClick={handleFilterClick}>Lọc</button>
+        </div>
+        <div className={`mt-3 ${styles["order-table"]}`}>
+          <table className="table">
             <thead className="table-dark">
               <tr>
                 <th>
@@ -511,63 +486,56 @@ function Orders() {
             </div>
           </div>
         </div>
-        {filteredOrders.length > 0 && (
-          <nav aria-label="Page navigation example">
-            <ul className="pagination d-flex justify-content-around">
-              <li className={`btn btn-outline-primary ${currentPage === 0 ? 'disabled' : ''}`} style={{ width: "100px" }} onClick={() => setCurrentPage(currentPage - 1)}>
-                <a style={{ color: "#000" }} href="#">
-                  Trước
-                </a>
-              </li>
-              <li className={`btn btn-outline-primary ${(8 > filteredOrders.length) ? 'disabled' : ''}`} style={{ width: "100px" }} onClick={() => setCurrentPage(currentPage + 1)}>
-                <a style={{ color: "#000" }} href="#">
-                  Sau
-                </a>
-              </li>
-            </ul>
-          </nav>
-        )}
-
-        <div className={`${styles["selected-products"]}`}>
-          {selectedOrders.length > 0 && (
-            <div>
-              <h5>Đơn hàng được chọn:</h5>
-              {selectedOrders.map((id, index) => (
-                <span key={id}>
-                  {id}
-                  {index !== selectedOrders.length - 1 ? ' - ' : ' '}
-                </span>
-              ))}
-            </div>
+        <div>
+          {filteredOrders.length > 0 && (
+            <>
+              <nav aria-label="Page navigation example">
+                <ul className="pagination mt-3 d-flex justify-content-end">
+                  <li className={`page-item ${currentPage === 0 ? 'disabled' : ''}`} onClick={() => setCurrentPage(currentPage - 1)}>
+                    <a className="page-link" href="#" aria-label="Previous">
+                      <span aria-hidden="true">&laquo;</span>
+                    </a>
+                  </li>
+                  <li className="page-item"><a className="page-link" href="#">{currentPage + 1}</a></li>
+                  <li className={`page-item ${(8 > filteredOrders.length) ? 'disabled' : ''}`} onClick={() => setCurrentPage(currentPage + 1)}>
+                    <a className="page-link" href="#" aria-label="Next">
+                      <span aria-hidden="true">&raquo;</span>
+                    </a>
+                  </li>
+                </ul>
+              </nav>
+              <div>
+                <button
+                  className={`btn btn-primary m-3`}
+                  onClick={handleBatchConfirmation}
+                  value={1}
+                >
+                  Xác nhận
+                </button>
+                <button
+                  className={`btn btn-primary m-3`}
+                  onClick={handleBatchConfirmation}
+                  value={2}
+                >
+                  Vân chuyển
+                </button>
+                <button
+                  className={`btn btn-primary m-3`}
+                  onClick={handleBatchConfirmation}
+                  value={3}
+                >
+                  Đã giao hàng
+                </button>
+                <button
+                  className={`btn btn-primary m-3`}
+                  onClick={handleBatchConfirmation}
+                  value={4}
+                >
+                  Huỷ đơn hàng
+                </button>
+              </div>
+            </>
           )}
-          <button
-            className={`btn btn-primary m-3`}
-            onClick={handleBatchConfirmation}
-            value={1}
-          >
-            Xác nhận
-          </button>
-          <button
-            className={`btn btn-primary m-3`}
-            onClick={handleBatchConfirmation}
-            value={2}
-          >
-            Vân chuyển
-          </button>
-          <button
-            className={`btn btn-primary m-3`}
-            onClick={handleBatchConfirmation}
-            value={3}
-          >
-            Đã giao hàng
-          </button>
-          <button
-            className={`btn btn-primary m-3`}
-            onClick={handleBatchConfirmation}
-            value={4}
-          >
-            Huỷ đơn hàng
-          </button>
         </div>
       </div>
     </>
