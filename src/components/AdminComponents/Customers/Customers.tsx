@@ -79,29 +79,26 @@ function Customers() {
 
   return (
     <>
-      <div className={`container ${styles["container-customer"]}`} style={{ overflowY: "auto" }}>
-        <div className="my-3 d-flex flex-wrap">
+      <div className={`container ${styles["container-customer"]} d-flex flex-column flex-grow-1`}>
+        <div className={`${styles["form-container"]} mt-3 d-flex`}>
           <input
-            style={{ width: "33%" }}
             type="text"
-            className="form-control"
+            className="form-control mb-3"
             placeholder="Nhập mã người dùng"
             aria-label="Filter by code"
             value={filterCode}
             onChange={handleCodeFilterChange}
           />
           <input
-            style={{ width: "33%" }}
             type="text"
-            className="form-control"
+            className="form-control mb-3"
             placeholder="Nhập tên người dùng"
             aria-label="Filter by name"
             value={filterName}
             onChange={handleNameFilterChange}
           />
           <select
-            style={{ width: "33%" }}
-            className="form-select"
+            className="form-select mb-3"
             aria-label="Filter by status"
             value={filterStatus}
             onChange={handleStatusFilterChange}
@@ -111,8 +108,8 @@ function Customers() {
             <option value={0}>Inactive</option>
           </select>
         </div>
-        <div className={`mt-3 ${styles["customer-table"]}`} style={{ overflowX: "auto" }}>
-          <table className="table" style={{ minWidth: "900px" }}>
+        <div className={`mt-3 ${styles["customer-table"]}`}>
+          <table className="table">
             <thead className='table-dark'>
               <tr>
                 <th>Username</th>
@@ -185,7 +182,6 @@ function Customers() {
             </tbody>
           </table>
         </div>
-
       </div>
     </>
   );
