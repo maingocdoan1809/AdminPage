@@ -22,6 +22,7 @@ import Orders from "./components/AdminComponents/Order/Orders/Orders";
 import ProductDetail from "./components/AdminComponents/Product/ProductDetail/ProductDetail";
 import ClientProductDetail from "./components/ProductDetail/ProductDetail";
 import Customers from "./components/AdminComponents/Customers/Customers";
+import Order from "./components/Order/Order";
 function App() {
   return (
     <UserContext>
@@ -48,6 +49,14 @@ function App() {
               element={
                 <Layout>
                   <Profile />
+                </Layout>
+              }
+            />
+            <Route
+              path="/orders"
+              element={
+                <Layout>
+                  <Order />
                 </Layout>
               }
             />
@@ -79,7 +88,10 @@ function App() {
                 <Route path="" element={<AdminPage children={<Orders />} />} />
               </Route>
               <Route path="customers">
-                <Route path="" element={<AdminPage children={<Customers />} />} />
+                <Route
+                  path=""
+                  element={<AdminPage children={<Customers />} />}
+                />
               </Route>
               <Route
                 path="profile"

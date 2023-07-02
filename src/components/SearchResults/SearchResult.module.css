@@ -196,3 +196,12 @@
     /* border: 0.5px solid #75757500; */
     background-color: antiquewhite;
 }
+
+
+/*  */
+
+.btn-load {
+    max-width: 100vw;
+    display: flex;
+    justify-content: center;
+}

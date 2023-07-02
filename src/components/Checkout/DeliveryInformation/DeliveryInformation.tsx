@@ -48,6 +48,7 @@ function DeliveryInformation() {
     setCart({ ...cart, items: cartItems });
   }, [cartItems]);
   const [isSubmiting, setIsSubmiting] = useState(false);
+  const [isAllValid, setIsAllValid] = useState<boolean | undefined>(undefined);
   const [provinces, setProvinces] = useState<Province[]>(PROVINCES);
   const [districts, setDistricts] = useState<District[]>([]);
   const [wards, setWards] = useState<Ward[]>([]);
@@ -112,7 +113,7 @@ function DeliveryInformation() {
             <input
               type="text"
               className={`${
-                isSubmiting && cart.information.receiveName == ""
+                isAllValid == false && cart.information.receiveName == ""
                   ? "is-invalid"
                   : ""
               } form-control`}
@@ -124,7 +125,7 @@ function DeliveryInformation() {
                 reducer(ChangeType.RECEIVENAME, e.target.value);
               }}
             />
-            {isSubmiting && cart.information.receiveName == "" && (
+            {isAllValid == false && cart.information.receiveName == "" && (
               <small className="text-danger">Username is required</small>
             )}
           </div>
@@ -135,7 +136,7 @@ function DeliveryInformation() {
             <input
               type="tel"
               className={`${
-                isSubmiting && cart.information.phonenumber == ""
+                isAllValid == false && cart.information.phonenumber == ""
                   ? "is-invalid"
                   : ""
               } form-control`}
@@ -147,10 +148,10 @@ function DeliveryInformation() {
                 reducer(ChangeType.PHONENUMBER, e.target.value);
               }}
             />
-            {isSubmiting && cart.information.phonenumber == "" && (
+            {isAllValid == false && cart.information.phonenumber == "" && (
               <small className="text-danger">Phonenumber is required</small>
             )}
-            {isSubmiting &&
+            {isAllValid == false &&
               !checkPhonenumber(cart.information.phonenumber) &&
               cart.information.phonenumber != "" && (
                 <small className="text-danger">
@@ -165,7 +166,9 @@ function DeliveryInformation() {
             <input
               type="email"
               className={`${
-                isSubmiting && cart.information.email == "" ? "is-invalid" : ""
+                isAllValid == false && cart.information.email == ""
+                  ? "is-invalid"
+                  : ""
               } form-control`}
               id="email"
               placeholder="you@gmail.com"
@@ -174,10 +177,10 @@ function DeliveryInformation() {
                 reducer(ChangeType.EMAIL, e.target.value);
               }}
             />
-            {isSubmiting && cart.information.email == "" && (
+            {isAllValid == false && cart.information.email == "" && (
               <small className="text-danger">Email is required</small>
             )}
-            {isSubmiting &&
+            {isAllValid == false &&
               !checkEmail(cart.information.email) &&
               cart.information.email != "" && (
                 <small className="text-danger">
@@ -210,7 +213,7 @@ function DeliveryInformation() {
                   </option>
                 ))}
             </select>
-            {isSubmiting && cart.information.address.province == "" && (
+            {isAllValid == false && cart.information.address.province == "" && (
               <small className="text-danger">Address is required</small>
             )}
           </div>
@@ -238,7 +241,7 @@ function DeliveryInformation() {
                   </option>
                 ))}
             </select>
-            {isSubmiting && cart.information.address.district == "" && (
+            {isAllValid == false && cart.information.address.district == "" && (
               <small className="text-danger">Address is required</small>
             )}
           </div>
@@ -266,7 +269,7 @@ function DeliveryInformation() {
                   </option>
                 ))}
             </select>
-            {isSubmiting && cart.information.address.ward == "" && (
+            {isAllValid == false && cart.information.address.ward == "" && (
               <small className="text-danger">Address is required</small>
             )}
           </div>
@@ -288,11 +291,11 @@ function DeliveryInformation() {
                 });
               }}
             />
-            {isSubmiting && cart.information.address.home == "" && (
+            {isAllValid == false && cart.information.address.home == "" && (
               <small className="text-danger">Address is required</small>
             )}
           </div>
-          {isSubmiting && cart.items.length == 0 && (
+          {isAllValid == false && cart.items.length == 0 && (
             <div className="col-12">
               <small className="text-danger">Your cart is empty</small>
             </div>
@@ -305,11 +308,15 @@ function DeliveryInformation() {
             type="submit"
             onClick={(e) => {
               e.preventDefault();
-              setIsSubmiting(true);
               if (user) {
                 if (!checkBill(cart)) {
+                  setIsAllValid(false);
                   return;
+                } else {
+                  setIsAllValid(true);
                 }
+                setIsSubmiting(true);
+
                 fetch(BACKEND_URL + "/checkout", {
                   method: "POST",
                   body: JSON.stringify({

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { ReactNode, useEffect, useRef, useState } from "react";
 import style from "./addproduct.module.css";
 import AddProductCard from "./AddProductCard";
 import { useParams } from "react-router";
@@ -16,8 +16,10 @@ export type ColorUtil = {
   colorname: string;
   colorcode: string;
   imgUrl: string;
+  price?: number | string;
   imgFile?: File;
   sizes: SizeOption[];
+  newSizes?: SizeOption[];
 };
 export type ProductUtil = {
   idInfo: string;
@@ -25,9 +27,12 @@ export type ProductUtil = {
 };
 
 function AddProduct({ onClose, products }: Props) {
+  const newCardRef = useRef<ReactNode>(null!);
+
   const [cards, setCards] = useState(() => {
     const temp = [];
     const map = new Map<string, ProductUtil>();
+
     products.forEach((product) => {
       if (!map.has(product.colorcode)) {
         map.set(product.colorcode, {
@@ -37,6 +42,7 @@ function AddProduct({ onClose, products }: Props) {
               colorcode: product.colorcode,
               colorname: product.colorname,
               imgUrl: product.imageurl,
+              price: product.price,
               sizes: [
                 {
                   productId: product.id,
@@ -74,7 +80,6 @@ function AddProduct({ onClose, products }: Props) {
         }
       }
     });
-    console.log(map);
 
     for (let product of map.keys()) {
       temp.push(
@@ -106,11 +111,11 @@ function AddProduct({ onClose, products }: Props) {
           </svg>
         </div>
         <div className="mt-5 p-3">
-          {cards.map((card, index) => (
-            <div key={index}>
-              {card} <hr />
-            </div>
-          ))}
+          <div>
+            {cards.map((card, index) => (
+              <div key={index}>{card}</div>
+            ))}
+          </div>
           <div className="d-flex justify-content-end gap-3">
             <div
               className={`${style["btn-add"]}`}

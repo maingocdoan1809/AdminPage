@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import styles from "./search.module.css";
-import { useNavigate } from "react-router";
 
 interface Product {
   id: string;
@@ -16,18 +16,23 @@ interface Product {
 const SearchBar: React.FC = () => {
   const navigate = useNavigate();
   const [products, setProducts] = useState<Product[]>([]);
-
   const [showSearch, setShowSearch] = useState<boolean>(false);
   const [similarProducts, setSimilarProducts] = useState<Product[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
   const storedSearchKeyword = localStorage.getItem("searchKeyword") || "";
-  const [searchKeyword, setSearchKeyword] = useState(storedSearchKeyword);
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const searchKeywordFromURL = searchParams.get("name") || "";
+  const [searchKeyword, setSearchKeyword] = useState(searchKeywordFromURL);
   const similarName = searchKeyword?.split(" ") ?? [];
   const searchColor = similarName[similarName.length - 1];
 
   useEffect(() => {
+    setSearchKeyword(searchKeywordFromURL);
+  }, [searchKeywordFromURL]);
+
+  useEffect(() => {
     const fetchSimilarProducts = async () => {
-      // Perform the search logic here based on the provided keyword
       const filteredProducts = products.filter((product) =>
         product.name.toLowerCase().includes(searchKeyword.toLowerCase())
       );

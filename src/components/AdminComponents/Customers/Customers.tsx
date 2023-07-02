@@ -1,6 +1,6 @@
-
-
 import React, { useEffect, useState } from 'react';
+import { BACKEND_URL } from '../../../env';
+import styles from "./customer.module.css"
 
 type Customer = {
   username: string;
@@ -10,7 +10,7 @@ type Customer = {
   address: string;
   dob: string;
   gender: string;
-  state: string;
+  state: number;
   priority: number;
 };
 
@@ -23,7 +23,7 @@ function Customers() {
   useEffect(() => {
     const fetchCustomers = async () => {
       try {
-        const response = await fetch('http://localhost:3000/customer');
+        const response = await fetch(BACKEND_URL + '/customer');
         if (response.ok) {
           const data = await response.json();
           setCustomers(data);
@@ -43,8 +43,14 @@ function Customers() {
 
   const handleStatusFilterChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedStatus = event.target.value;
-    setFilterStatus(selectedStatus);
+    if (selectedStatus === "Trạng thái") {
+      setFilterStatus("");
+    } else {
+      setFilterStatus(selectedStatus);
+    }
+    console.log(filterStatus);
   };
+
 
   const handleNameFilterChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setFilterName(event.target.value);
@@ -64,50 +70,49 @@ function Customers() {
   };
 
   const filteredCustomers = customers.filter((customer) => {
-    const isCodeMatch = filterCode === '' || customer.username.includes(filterCode);
-    const isNameMatch = filterName === '' || customer.fullname.includes(filterName);
-    const isStatusMatch = filterStatus === '' || customer.state === filterStatus;
+    const isCodeMatch = filterCode === "" || customer.username.includes(filterCode);
+    const isNameMatch = filterName === "" || customer.fullname.includes(filterName);
+    const isStatusMatch = filterStatus === "" || customer.state === parseInt(filterStatus);
     return isCodeMatch && isNameMatch && isStatusMatch;
   });
 
+
   return (
-    <div className="container">
-      <div className="row mt-3">
-        <div className="col-md-6">
-          <div className="input-group mb-3">
-            <input
-              type="text"
-              className="form-control"
-              placeholder="Nhập mã người dùng"
-              aria-label="Filter by code"
-              value={filterCode}
-              onChange={handleCodeFilterChange}
-            />
-            <input
-              type="text"
-              className="form-control"
-              placeholder="Nhập tên người dùng"
-              aria-label="Filter by name"
-              value={filterName}
-              onChange={handleNameFilterChange}
-            />
-            <select
-              className="form-select"
-              aria-label="Filter by status"
-              value={filterStatus}
-              onChange={handleStatusFilterChange}
-            >
-              <option value="">Trạng thái</option>
-              <option value="Active">Active</option>
-              <option value="Inactive">Inactive</option>
-            </select>
-          </div>
+    <>
+      <div
+        className={`container ${styles["container-customer"]} d-flex flex-column flex-grow-1`}
+      >
+        <div className={`${styles["form-container"]} mt-3 d-flex`}>
+          <input
+            type="text"
+            className="form-control mb-3"
+            placeholder="Nhập mã người dùng"
+            aria-label="Filter by code"
+            value={filterCode}
+            onChange={handleCodeFilterChange}
+          />
+          <input
+            type="text"
+            className="form-control mb-3"
+            placeholder="Nhập tên người dùng"
+            aria-label="Filter by name"
+            value={filterName}
+            onChange={handleNameFilterChange}
+          />
+          <select
+            className="form-select mb-3"
+            aria-label="Filter by status"
+            value={filterStatus}
+            onChange={handleStatusFilterChange}
+          >
+            <option value="">All</option>
+            <option value={1}>Active</option>
+            <option value={0}>Inactive</option>
+          </select>
         </div>
-      </div>
-      <div className="row">
-        <div className="col-md-12">
+        <div className={`mt-3 ${styles["customer-table"]}`}>
           <table className="table">
-            <thead>
+            <thead className="table-dark">
               <tr>
                 <th>Username</th>
                 <th>Fullname</th>
@@ -120,8 +125,12 @@ function Customers() {
             </thead>
             <tbody>
               {filteredCustomers.map((customer) => (
-                <tr key={customer.username}>                
-                  <td>{customer.username}</td>
+                <tr key={customer.username}>
+                  <td
+                    className={`${styles["username"]} ${styles["max-5-characters"]}`}
+                  >
+                    {customer.username}
+                  </td>
                   <td>{customer.fullname}</td>
                   <td>{customer.phonenumber}</td>
                   <td>{customer.email}</td>
@@ -130,7 +139,7 @@ function Customers() {
                   <td>
                     <div className="dropdown">
                       <button
-                        style={{ width: '150px' }}
+                        style={{ width: "150px" }}
                         className="btn btn-secondary btn-sm dropdown-toggle"
                         type="button"
                         id="dropdownMenu2"
@@ -138,17 +147,22 @@ function Customers() {
                         aria-expanded="false"
                       >
                         {customer.priority === 1
-                          ? 'Admin'
+                          ? "Admin"
                           : customer.priority === 0
-                          ? 'Customer'
-                          : 'Account lock'}
+                          ? "Customer"
+                          : "Account lock"}
                       </button>
-                      <ul className="dropdown-menu" aria-labelledby="dropdownMenu2">
+                      <ul
+                        className="dropdown-menu"
+                        aria-labelledby="dropdownMenu2"
+                      >
                         <li>
                           <button
                             className="dropdown-item"
                             value={1}
-                            onClick={() => handlePriorityChange(customer.username, 1)}
+                            onClick={() =>
+                              handlePriorityChange(customer.username, 1)
+                            }
                           >
                             Admin
                           </button>
@@ -157,7 +171,9 @@ function Customers() {
                           <button
                             className="dropdown-item"
                             value={0}
-                            onClick={() => handlePriorityChange(customer.username, 0)}
+                            onClick={() =>
+                              handlePriorityChange(customer.username, 0)
+                            }
                           >
                             Customer
                           </button>
@@ -166,7 +182,9 @@ function Customers() {
                           <button
                             className="dropdown-item"
                             value={-1}
-                            onClick={() => handlePriorityChange(customer.username, -1)}
+                            onClick={() =>
+                              handlePriorityChange(customer.username, -1)
+                            }
                           >
                             Account lock
                           </button>
@@ -180,7 +198,7 @@ function Customers() {
           </table>
         </div>
       </div>
-    </div>
+    </>
   );
 }
 
