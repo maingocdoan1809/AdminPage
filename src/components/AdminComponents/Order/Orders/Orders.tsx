@@ -162,6 +162,8 @@ function Orders() {
         } else if (selectedValue === '2') {
           return { ...order, state: 'Đang vận chuyển' };
         } else if (selectedValue === '3') {
+          console.log('123');
+
           return { ...order, state: 'Đã giao hàng' };
         } else if (selectedValue === '4') {
           return { ...order, state: 'Đã huỷ' };
@@ -247,8 +249,6 @@ function Orders() {
       setSelectedOrders([]);
     }
 
-    setAllOrders(updatedOrders);
-    setSelectedOrders([]);
     console.log("Đơn hàng được chọn:", selectedOrders);    
   };
 
