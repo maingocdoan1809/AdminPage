@@ -3,12 +3,12 @@ import { Product } from "./utils";
 import { BACKEND_URL } from "../env";
 
 type PaginationProps = {
-  generator: () => Promise<Product[]>;
+  generator: () => Promise<any[]>;
 };
 
-function usePagination({ generator }: PaginationProps) {
+function usePagination<T>({ generator }: PaginationProps) {
   const [isFetching, setIsFetching] = useState(false);
-  const [products, setProducts] = useState([] as Product[]);
+  const [products, setProducts] = useState([] as T[]);
   const [isSuccess, setIsSuccess] = useState<undefined | boolean>(undefined);
   const [hasMore, setHasMore] = useState(true);
   const [loadMore, setLoadMore] = useState(true);
@@ -20,7 +20,7 @@ function usePagination({ generator }: PaginationProps) {
         if (data.length == 0) {
           setHasMore(false);
         } else {
-          setProducts([...products, ...data]);
+          setProducts([...products, ...data] as T[]);
         }
         setIsSuccess(true);
       })

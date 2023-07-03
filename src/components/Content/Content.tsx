@@ -26,9 +26,10 @@ function Content({ category }: ContentProps) {
       .then((response) => response.json())
       .then((data) => data as Product[]);
   };
-  const { products, isFetching, isSuccess, hasMore, loadMore } = usePagination({
-    generator,
-  });
+  const { products, isFetching, isSuccess, hasMore, loadMore } =
+    usePagination<Product>({
+      generator,
+    });
   return (
     <>
       {isSuccess == false ? (

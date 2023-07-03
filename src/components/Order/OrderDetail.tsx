@@ -86,6 +86,7 @@ function OrderDetail({ order, close }: Props) {
                       ></span>{" "}
                       - Size : {p.size}
                     </span>
+                    <span>Quantity: {p.quantity}</span>
                     <b>{toMoney(p.price)}</b>
                   </div>
                 </div>

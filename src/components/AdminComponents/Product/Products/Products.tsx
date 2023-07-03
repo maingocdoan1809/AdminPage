@@ -10,16 +10,17 @@ function Products() {
   const [novalueFound, setNovalueFound] = useState(false);
   const redirect = useNavigate();
   const [currPage, setCurrPage] = useState(0);
-  const generator = async () => {
+  async function generator() {
     return fetch(BACKEND_URL + `/products?page=${currPage}`)
       .then((response) => response.json())
       .then((data) => {
         return data as Product[];
       });
-  };
-  const { products, isFetching, isSuccess, hasMore, loadMore } = usePagination({
-    generator,
-  });
+  }
+  const { products, isFetching, isSuccess, hasMore, loadMore } =
+    usePagination<Product>({
+      generator,
+    });
   const [filterdProducts, setFilterdProducts] = useState(products);
   const defferedValue = useDeferredValue(filterdProducts);
   useEffect(() => {

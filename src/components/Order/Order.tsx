@@ -16,6 +16,7 @@ function Order() {
   const [orders, setOrders] = useState<CustomerOrder>(null!);
   const [isLoading, setIsLoading] = useState<boolean | undefined>(true);
   const [viewBill, setViewBill] = useState<undefined | BillDetail>();
+
   useEffect(() => {
     fetch(`${BACKEND_URL}/checkout/${user?.username}/all`)
       .then(async (res) => {
@@ -43,7 +44,7 @@ function Order() {
           />
           <button className="btn btn-dark">Search</button>
         </div>
-        <div className={`w-100`}>
+        <div className={`w-100 table-responsive position-relative`}>
           {isLoading && (
             <div className="d-flex flex-grow-1 justify-content-center align-items-center">
               <LoadingView />
@@ -55,6 +56,7 @@ function Order() {
                 <tr>
                   <th>ID</th>
                   <th>Current State</th>
+                  <th>Order date</th>
                   <th>#</th>
                 </tr>
               </thead>
@@ -70,6 +72,7 @@ function Order() {
                       >
                         {mapStateToStatus(order.state).text}
                       </td>
+                      <td>{order.date.substring(0, 10)}</td>
                       <td>
                         <button
                           className="btn btn-primary"
