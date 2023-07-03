@@ -21,13 +21,15 @@
     white-space: nowrap;
 }
 
+.customer-table {
+    overflow-x: auto;
+}
 .customer-table td:not(:last-child) {
     white-space: nowrap;
 }
 
 @media screen and (min-width: 900px) {
     .customer-table {
-        overflow-x: auto;
         width: calc(100vw - 276px);
     }
 }
