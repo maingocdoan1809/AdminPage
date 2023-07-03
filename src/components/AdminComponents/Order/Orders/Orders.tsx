@@ -60,7 +60,7 @@ function Orders() {
             addDays(parseISO(order.datecreated), 7),
             "dd/MM/yyyy - HH:mm"
           );
-          const state = mapStateToStatus(Number(order.state));
+          const state = mapStateToStatus(Number(order.state)).text;
           return { ...order, deadline, state };
         });
         setFilteredOrders(updatedOrders);
@@ -355,6 +355,7 @@ function Orders() {
 
       setAllOrders(updatedOrders);
       setSelectedOrders([]);
+      window.location.reload();
     }
 
     console.log("Đơn hàng được chọn:", selectedOrders);
