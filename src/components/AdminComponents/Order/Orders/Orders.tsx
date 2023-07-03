@@ -261,22 +261,31 @@ function Orders() {
 
   const handleBatchConfirmation = (event: any) => {
     const selectedValue = event.target.value;
-    const updatedOrders = allOrders.map((order) => {
+    let newState = '';
+
+    if (selectedValue == 1) {
+      newState = 'Đang xử lí';
+    } else if (selectedValue == 2) {
+      newState = 'Đang vận chuyển';
+    } else if (selectedValue == 3) {
+      newState = 'Đã giao hàng';
+    } else if (selectedValue == 4) {
+      newState = 'Đã huỷ';
+    }
+
+    const confirmChange = window.confirm('Bạn có chắc chắn muốn thay đổi trạng thái?');
+    if (!confirmChange) {
+      return;
+    }
+
+    const updatedOrders = filteredOrders.map((order) => {
       if (selectedOrders.includes(order.id)) {
-        if (selectedValue === '1') {
-          return { ...order, state: 'Đang xử lí' };
-        } else if (selectedValue === '2') {
-          return { ...order, state: 'Đang vận chuyển' };
-        } else if (selectedValue === '3') {
-          return { ...order, state: 'Đã giao hàng' };
-        } else if (selectedValue === '4') {
-          return { ...order, state: 'Đã huỷ' };
-        }
+        return { ...order, state: newState };
       }
       return order;
     });
 
-    setAllOrders(updatedOrders);
+    setFilteredOrders(updatedOrders);
     setSelectedOrders([]);
     console.log("Đơn hàng được chọn:", selectedOrders);
 
@@ -295,7 +304,6 @@ function Orders() {
         .catch((error) => {
           console.log(error)
         });
-
       setAllOrders(updatedOrders);
       setSelectedOrders([]);
     }
@@ -352,13 +360,10 @@ function Orders() {
         .catch((error) => {
           console.log(error)
         });
-
       setAllOrders(updatedOrders);
       setSelectedOrders([]);
       window.location.reload();
     }
-
-    console.log("Đơn hàng được chọn:", selectedOrders);
   };
 
   const handleOrderDetail = (order: AllOrders) => {
@@ -641,17 +646,6 @@ function Orders() {
                     })}
                   >
                     Huỷ đơn hàng
-                  </button>
-                  <button
-                    className={`btn btn-primary m-3`}
-                    onClick={handleBatchConfirmation}
-                    value={0}
-                    disabled={selectedOrders.some((id) => {
-                      const order = filteredOrders.find((order) => order.id === id);
-                      return order?.state === "Chờ xác nhận" || order?.state === "Đang xử lí" || order?.state === "Đang vận chuyển" || order?.state === "Đã giao hàng";
-                    })}
-                  >
-                    Khôi phục đơn hàng
                   </button>
                 </>
               </div>
