@@ -273,6 +273,11 @@ function Orders() {
       newState = 'Đã huỷ';
     }
 
+    const confirmChange = window.confirm('Bạn có chắc chắn muốn thay đổi trạng thái?');
+    if (!confirmChange) {
+      return;
+    }
+
     const updatedOrders = filteredOrders.map((order) => {
       if (selectedOrders.includes(order.id)) {
         return { ...order, state: newState };
@@ -640,17 +645,6 @@ function Orders() {
                     })}
                   >
                     Huỷ đơn hàng
-                  </button>
-                  <button
-                    className={`btn btn-primary m-3`}
-                    onClick={handleBatchConfirmation}
-                    value={1}
-                    disabled={selectedOrders.some((id) => {
-                      const order = filteredOrders.find((order) => order.id === id);
-                      return order?.state === "Chờ xác nhận" || order?.state === "Đang xử lí" || order?.state === "Đang vận chuyển" || order?.state === "Đã giao hàng";
-                    })}
-                  >
-                    Khôi phục đơn hàng
                   </button>
                 </>
               </div>
