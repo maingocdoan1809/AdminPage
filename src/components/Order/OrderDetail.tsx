@@ -1,3 +1,4 @@
+import { BACKEND_URL } from "../../env";
 import {
   BillDetail,
   CustomerOrder,
@@ -96,7 +97,32 @@ function OrderDetail({ order, close }: Props) {
         })}
         {order.products.length > 0 && order.state <= 1 && (
           <li className="list-group-item text-end">
-            <button className="btn btn-danger">Huỷ đơn hàng</button>
+            <button
+              onClick={() => {
+                const isOk = confirm("Bạn có chắc chắn muốn hủy đơn hàng này?");
+                if (isOk) {
+                  fetch(BACKEND_URL + "/products/cancel", {
+                    method: "post",
+                    headers: {
+                      "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ selectedOrders: [order.id] }),
+                  })
+                    .then((response) => response.json())
+                    .then((data) => {
+                      alert("Đã hủy đơn hàng thành công.");
+                      location.reload();
+                    })
+                    .catch((error) => {
+                      alert("Hủy đơn hàng thất bại.");
+                      console.log(error);
+                    });
+                }
+              }}
+              className="btn btn-danger"
+            >
+              Huỷ đơn hàng
+            </button>
           </li>
         )}
       </ul>
