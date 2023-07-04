@@ -83,7 +83,13 @@ function AddProduct({ onClose, products }: Props) {
 
     for (let product of map.keys()) {
       temp.push(
-        <AddProductCard infoId={products[0].infoid} p={map.get(product)} />
+        <AddProductCard
+          onClose={() => {
+            onClose(false);
+          }}
+          infoId={products[0].infoid}
+          p={map.get(product)}
+        />
       );
     }
     return temp;
@@ -122,7 +128,12 @@ function AddProduct({ onClose, products }: Props) {
               onClick={(e) => {
                 setCards([
                   ...cards,
-                  <AddProductCard infoId={products[0].infoid} />,
+                  <AddProductCard
+                    onClose={() => {
+                      onClose(false);
+                    }}
+                    infoId={products[0].infoid}
+                  />,
                 ]);
               }}
             >

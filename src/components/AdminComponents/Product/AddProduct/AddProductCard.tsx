@@ -7,9 +7,10 @@ import Editable from "../../../Editable/Editable";
 type AddProductCardProps = {
   p?: ProductUtil;
   infoId: string;
+  onClose: () => void;
 };
 
-function AddProductCard({ p, infoId }: AddProductCardProps) {
+function AddProductCard({ p, infoId, onClose }: AddProductCardProps) {
   const id = useId();
   const ref = useRef<HTMLImageElement>(null!);
   const newSizeRef = useRef<SizeOption>(null!);
@@ -234,9 +235,16 @@ function AddProductCard({ p, infoId }: AddProductCardProps) {
                       } as ColorUtil),
                     })
                       .then(async (res) => {
+                        if (res.status == 201) {
+                          alert("Cập nhật thành công.");
+                          onClose();
+                        } else {
+                          alert("Cập nhật thất bại");
+                        }
                         console.log(await res.json());
                       })
                       .catch((err) => {
+                        alert("Cập nhật thất bại");
                         console.log(err);
                       });
                   }}

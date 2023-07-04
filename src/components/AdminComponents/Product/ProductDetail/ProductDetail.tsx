@@ -38,7 +38,7 @@ function ProductDetail() {
     fetch(BACKEND_URL + "/comments/product/" + params.id, {
       method: "GET",
     })
-      .then((response) => response.json())
+      .then(async (response) => await response.json())
       .then((data) => {
         setComments(data);
         setIsLoadingComment(false);
@@ -47,8 +47,8 @@ function ProductDetail() {
         console.log(err);
       });
     fetch(BACKEND_URL + "/categories")
-      .then((response) => {
-        return response.json();
+      .then(async (response) => {
+        return await response.json();
       })
       .then((data) => {
         setCategories(data);

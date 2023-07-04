@@ -1,2 +1,2 @@
-export const BACKEND_URL = "https://ye517l-3000.csb.app";
+export const BACKEND_URL = "http://localhost:3000";
 export const CART_KEY = "cart";
