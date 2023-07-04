@@ -11,19 +11,21 @@ import {
 import OrderDetail from "./OrderDetail";
 import LoadingView from "../LoadingView/LoadingView";
 import usePagination from "../../utilities/pagination";
+import { useLocation } from "react-router";
 
 function Order() {
   const [user, setUser] = useUser();
-  const [searchValue, setSearchValue] = useState("");
-
+  const locationState = useLocation();
+  const ursParams = new URLSearchParams(locationState.search);
+  const [searchValue, setSearchValue] = useState(() => {
+    const searchValue = ursParams.get("search");
+    return searchValue || "";
+  });
   const [currPage, setCurrPage] = useState(0);
 
   async function generator() {
-    console.log("Page: " + currPage);
-    console.log("Search value: " + searchValue);
-
     return fetch(
-      `${BACKEND_URL}/checkout/${user?.username}/all?page=${currPage}?search=${searchValue}`
+      `${BACKEND_URL}/checkout/${user?.username}/all?page=${currPage}&search=${searchValue}`
     ).then(async (res) => {
       const response = await res.json();
       return response.orders.orders as BillDetail[];
@@ -50,6 +52,19 @@ function Order() {
             className={`${styles["input"]} form-control`}
             placeholder="Enter your bill ID number"
           />
+          <button
+            className="btn btn-dark"
+            onClick={() => {
+              const pre = ursParams.get("search");
+              ursParams.set("search", searchValue);
+              location.href = location.href.replace(
+                "?search=" + (pre || ""),
+                "?search=" + searchValue
+              );
+            }}
+          >
+            Search
+          </button>
         </div>
         <div className={`w-100 table-responsive ${styles["table"]}`}>
           {isFetching && (

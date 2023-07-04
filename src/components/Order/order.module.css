@@ -2,9 +2,7 @@
   width: 300px !important;
 }
 
-.table-container {
-  overflow: scroll;
-}
+
 
 .btn-close {
   position: absolute;
@@ -23,6 +21,7 @@
 .wrapper {
   position: fixed;
   height: 100%;
+  width: 100%;
   background-color: rgba(0, 0, 0, 0.7);
   top: 0;
   left: 0;
@@ -35,10 +34,7 @@
   height: 60%;
 }
 
-.table {
-  white-space: nowrap;
-  min-width: 400px;
-}
+
 
 @media screen and (max-width: 700px) {
   .input {
